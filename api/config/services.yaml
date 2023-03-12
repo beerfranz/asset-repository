@@ -26,8 +26,3 @@ services:
     # please note that last definitions always *replace* previous ones
     App\Doctrine\AssetListener:
         tags: [doctrine.orm.entity_listener]
-
-    monolog.formatter.console:
-        class: Monolog\Formatter\LineFormatter
-        arguments:
-            - "[%%datetime%%] %%channel%%.%%level_name%%: %%message%% %%context%% %%extra%%\n"
