@@ -13,22 +13,22 @@ services:
       #- /srv/app/vendor
     environment:
       # See https://xdebug.org/docs/all_settings#mode 
-      XDEBUG_MODE: "${XDEBUG_MODE:-off}"
+      XDEBUG_MODE: "${XDEBUG_MODE:-coverage}"
     extra_hosts:
       # Ensure that host.docker.internal is correctly defined on Linux
       - host.docker.internal:host-gateway
 
-  pwa:
-    build:
-      context: ./pwa
-      target: dev 
-    volumes:
-      - ./pwa:/srv/app
-    environment:
-      API_PLATFORM_CREATE_CLIENT_ENTRYPOINT: http://caddy
-      API_PLATFORM_CREATE_CLIENT_OUTPUT: .
-      # On Linux, you may want to comment the following line for improved performance
-      WATCHPACK_POLLING: true
+  # pwa:
+  #   build:
+  #     context: ./pwa
+  #     target: dev 
+  #   volumes:
+  #     - ./pwa:/srv/app
+  #   environment:
+  #     API_PLATFORM_CREATE_CLIENT_ENTRYPOINT: http://caddy
+  #     API_PLATFORM_CREATE_CLIENT_OUTPUT: .
+  #     # On Linux, you may want to comment the following line for improved performance
+  #     # WATCHPACK_POLLING: true
 
   caddy:
     volumes:

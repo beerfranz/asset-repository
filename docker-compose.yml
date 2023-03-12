@@ -22,13 +22,15 @@ services:
       MERCURE_URL: ${CADDY_MERCURE_URL:-http://caddy/.well-known/mercure}
       MERCURE_PUBLIC_URL: https://${SERVER_NAME:-localhost}/.well-known/mercure
       MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
+      AUTH_HEADER_ROLES: x-token-user-roles
+      AUTH_HEADER_EMAIL: x-token-user-email
 
-  pwa:
-    build:
-      context: ./pwa
-      target: prod
-    environment:
-      NEXT_PUBLIC_ENTRYPOINT: http://caddy
+  # pwa:
+  #   build:
+  #     context: ./pwa
+  #     target: prod
+  #   environment:
+  #     NEXT_PUBLIC_ENTRYPOINT: http://caddy
 
   caddy:
     build:
@@ -36,7 +38,7 @@ services:
       target: app_caddy
     depends_on:
       - php
-      - pwa
+      # - pwa
     environment:
       PWA_UPSTREAM: pwa:3000
       SERVER_NAME: ${SERVER_NAME:-localhost}, caddy:80
@@ -74,6 +76,31 @@ services:
       # you may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
       # - ./api/docker/db/data:/var/lib/postgresql/data
 ###< doctrine/doctrine-bundle ###
+
+  pgweb:
+    image: sosedoff/pgweb:0.14.0
+    ports: 
+      - "8081:8081" 
+    environment:
+      - PGWEB_DATABASE_URL=postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-!ChangeMe!}@database:5432/${POSTGRES_DB:-app}?sslmode=disable
+    depends_on:
+      - database
+  # pgweb_test:
+  #   image: sosedoff/pgweb:0.14.0
+  #   ports: 
+  #     - "8082:8081" 
+  #   environment:
+  #     - PGWEB_DATABASE_URL=postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-!ChangeMe!}@database:5432/${POSTGRES_DB:-app}_test?sslmode=disable
+  #   depends_on:
+  #     - database
+  adminer:
+    image: adminer:4.8.1-standalone
+    ports:
+      - "8080:8080"
+    environment:
+      - ADMINER_DEFAULT_SERVER=database
+
+      
 
 # Mercure is installed as a Caddy module, prevent the Flex recipe from installing another service
 ###> symfony/mercure-bundle ###
