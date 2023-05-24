@@ -1,0 +1,31 @@
+templates:
+  _common_pod: &_common_pod
+    # type: pod
+    owner: DSI
+  _common_helm: &_common_helm
+    # type: helm
+    owner: DSI
+
+request:
+  method: PUT
+  path: /batch_instances
+
+data:
+  source: test_data_instances
+  instances:
+    - identifier: angular-develop-develop
+      version: 0.0.2
+      asset: angular-develop-develop
+      # <<: *_common_pod
+    - identifier: angular-develop-groot
+      asset: angular-develop-groot
+      version: 0.0.1
+      # <<: *_common_pod
+    - identifier: angular-preprod-preprod
+      asset: angular-preprod-preprod
+      version: 0.0.1
+      # <<: *_common_pod
+    - identifier: helm-angular
+      asset: helm-angular
+      version: 0.0.1
+      # <<: *_common_helm

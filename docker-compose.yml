@@ -7,7 +7,7 @@ services:
       target: app_php
     depends_on:
       - database
-    restart: unless-stopped
+#    restart: unless-stopped
     volumes:
       - php_socket:/var/run/php
     healthcheck:
@@ -41,10 +41,10 @@ services:
       # - pwa
     environment:
       PWA_UPSTREAM: pwa:3000
-      SERVER_NAME: ${SERVER_NAME:-localhost}, caddy:80
+      SERVER_NAME: ${SERVER_NAME:-localhost}, caddy:80, http://caddy:8080
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
-    restart: unless-stopped
+#    restart: unless-stopped
     volumes:
       - php_socket:/var/run/php
       - caddy_data:/data
@@ -100,7 +100,12 @@ services:
     environment:
       - ADMINER_DEFAULT_SERVER=database
 
-      
+  test_data:
+    image: linuxserver/yq:3.2.2
+    working_dir: /app
+    volumes:
+      - ./test_data:/app
+    entrypoint: ./script.sh 
 
 # Mercure is installed as a Caddy module, prevent the Flex recipe from installing another service
 ###> symfony/mercure-bundle ###

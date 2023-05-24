@@ -14,8 +14,10 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Asset[]    findAll()
  * @method Asset[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class AssetRepository extends ServiceEntityRepository
+class AssetRepository extends ServiceEntityRepository implements RogerRepositoryInterface
 {
+    use RogerRepositoryTrait;
+    
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Asset::class);
@@ -39,28 +41,47 @@ class AssetRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Asset[] Returns an array of Asset objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('a.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+   /**
+    * @return Asset[] Returns an array of Asset objects
+    */
+   public function findUserAssetsByIdentifiersNoIn($user, array $identifiers): array
+   {
+        return $this->createQueryBuilder('a')
+           ->andWhere('a.identifier not in (:identifiers)')
+           ->setParameter('identifiers', $identifiers)
+           ->andWhere('a.createdBy = :user')
+           ->setParameter('user', $user)
+           ->orderBy('a.id', 'ASC')
+           ->getQuery()
+           ->getResult()
+        ;
+   }
 
-//    public function findOneBySomeField($value): ?Asset
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    // additionalConditions = [ 'user' => $user, 'source' => $source ]
+    public function findAssetsByidentifiersNotIn(array $identifiers, array $additionalConditions = []): array
+    {
+        $query = $this->createQueryBuilder('a')
+           ->andWhere('a.identifier not in (:identifiers)')
+           ->setParameter('identifiers', $identifiers)
+           ->orderBy('a.id', 'ASC')
+        ;
+
+        foreach ($additionalConditions as $key => $value)
+        {
+            $query->andWhere('a.' . $key . ' = :' . $key)->setParameter($key, $value);
+        }
+
+        return $query->getQuery()->getResult();
+    }
+
+   public function findOneByIdentifier($value): ?Asset
+   {
+        return $this->createQueryBuilder('a')
+           ->andWhere('a.identifier = :val')
+           ->setParameter('val', $value)
+           ->getQuery()
+           ->getOneOrNullResult()
+        ;
+   }
+
 }

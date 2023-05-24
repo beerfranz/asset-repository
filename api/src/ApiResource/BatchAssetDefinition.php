@@ -2,7 +2,7 @@
 
 namespace App\ApiResource;
 
-use App\State\BatchAssetProcessor;
+use App\State\BatchAssetDefinitionProcessor;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
@@ -20,16 +20,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 #[ApiResource(
-    description: 'Batch asset',
-    processor: BatchAssetProcessor::class,
+    description: 'Batch asset definitions',
+    processor: BatchAssetDefinitionProcessor::class,
     denormalizationContext: ['groups' => ['Asset:write']],
 )]
 #[Post(security: "is_granted('ASSET_WRITE')")]
 #[Put(security: "is_granted('ASSET_WRITE')")]
-class BatchAsset
+class BatchAssetDefinition
 {
     #[Groups(['Asset:write'])]
-    public $assets;
+    public $assetDefinitions;
 
     #[Groups(['Asset:write'])]
     public $source = null;

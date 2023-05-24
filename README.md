@@ -16,8 +16,49 @@ Caddy (web server) => PHP => Database (ex: Postgres)
   * type (defined bellow)
   * attributes: a free field
   * audits (defined bellow)
-* Asset type: define a category (server, container, pod, etc...)
+* Asset type: define a category (server, container, pod, etc...)  => Template ?
 * Asset audits: track modifications on assets (create, update, remove)
+
+
+TO DO:
+* Change review plan with proof (provided by automatisation ?)
+  * owner needed (can by someone or a team/group)
+    * maybe different kind of owners, at least a main owner, + maybe a legal owner
+  * version state (dates, old)
+    * NPM: compliqué en curl, des outils npm existent: npm view express time --json => un exporter dans la CI ?
+* Data view: kind of data, assets using this data, owner, confidentiality
+* QA: test plan
+* revue des taches où je suis owner
+  * prévoir des dates (temps nécessaire, qui ?)
+* export des assets aws, azure
+
+
+
+POC:
+- envDef:
+  - develop
+  - preprod
+  - prod:
+      - fr1
+      - us1
+- versionWorkflow: workflow1:
+  - step0: develop
+  - step1: preprod
+  - step2: prod
+- asset angular
+  - workflow1
+
+data types:
+* tags: array
+* labels: key-value
+* attributes: object
+
+
+## UserStories
+
+1. new version
+  1. declare new version
+  2. follow workflow
 
 ## Security
 
@@ -37,7 +78,7 @@ Init the test database and run tests with phpunit:
 docker compose exec php php bin/console --env=test doctrine:database:create
 docker compose exec php php bin/console --env=test doctrine:schema:create
 
-docker compose exec php bin/phpunit --coverage-html tests/code_coverage/
+docker compose exec php bin/phpunit --coverage-html tests/test_coverage/
 ```
 
 **Definitions**
@@ -56,7 +97,7 @@ docker compose exec php php bin/console --env=test doctrine:schema:create
 Run tests with PHPUnit
 
 ```
-docker compose exec php bin/phpunit --coverage-html tests/code_coverage/
+docker compose exec php bin/phpunit --coverage-html tests/test_coverage/
 ```
 
 #### Create test data

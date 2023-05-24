@@ -1,0 +1,50 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Audits{% endblock %}
+
+{% block body %}
+
+<div class="row">
+  <div class="col-md-12">
+    <form id="audits-filters" class="dataTableFilters form-inline">
+      <div class="form-group">
+        <label class="form-label" for="filter-subject">Identifier</label>
+        <input class="form-control autocomplete" name="subject" type="text" id="filter-subject" placeholder="subject" 
+          autocomplete-source="/asset_audits" autocomplete-group="AssetAudit:subject" autocomplete-name="subject" />
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <table class="table" id="audits"></table>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+$(document).ready(function () {
+  var dataTableOpts = commonDataTableOpts();
+  dataTableOpts.ajax.url = '/asset_audits';
+  dataTableOpts.order = [[1, 'desc']];
+  dataTableOpts.columns = [ 
+    { data: 'id', title: 'ID' },
+    { data: 'datetime', title: 'Date' },
+    { data: 'actor', title: 'Actor' },
+    { data: 'action', title: 'Action' },
+    { data: 'subject', title: 'Subject' },
+    { data: 'data', defaultContent: "", title: 'EnvironmentDefinition', orderable: false, render: function(data, type, row, meta) { return JSON.stringify(data)} },
+  ];
+
+  rogerInit('audits', dataTableOpts);
+  
+});
+
+</script>
+
+{% endblock %}
