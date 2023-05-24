@@ -3,7 +3,6 @@
 namespace App\Tests\Factory;
 
 use App\Entity\Asset;
-use App\Tests\Factory\AssetTypeFactory;
 use App\Repository\AssetRepository;
 // use Zenstruck\Foundry\Attributes\LazyValue;
 use function Zenstruck\Foundry\lazy;
@@ -54,7 +53,7 @@ final class AssetFactory extends ModelFactory
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'createdBy' => self::faker()->lexify('????????????'),
             'identifier' => self::faker()->lexify('????????????'),
-            'type' => lazy(fn() => AssetTypeFactory::random()),
+            'owner' => lazy(fn() => OwnerFactory::random()),
         ];
     }
 

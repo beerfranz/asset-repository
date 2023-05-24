@@ -2,14 +2,14 @@
 
 namespace App\Tests\Factory;
 
-use App\Entity\AssetType;
-use App\Repository\AssetTypeRepository;
+use App\Entity\Owner;
+use App\Repository\OwnerRepository;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
 use Zenstruck\Foundry\RepositoryProxy;
 
 /**
- * @extends ModelFactory<AssetType>
+ * @extends ModelFactory<Owner>
  *
  * @method        AssetType|Proxy create(array|callable $attributes = [])
  * @method static AssetType|Proxy createOne(array $attributes = [])
@@ -27,7 +27,7 @@ use Zenstruck\Foundry\RepositoryProxy;
  * @method static AssetType[]|Proxy[] randomRange(int $min, int $max, array $attributes = [])
  * @method static AssetType[]|Proxy[] randomSet(int $number, array $attributes = [])
  */
-final class AssetTypeFactory extends ModelFactory
+final class OwnerFactory extends ModelFactory
 {
     /**
      * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#factories-as-services
@@ -57,12 +57,12 @@ final class AssetTypeFactory extends ModelFactory
     protected function initialize(): self
     {
         return $this
-            // ->afterInstantiate(function(AssetType $assetType): void {})
+            // ->afterInstantiate(function(Owner $owner): void {})
         ;
     }
 
     protected static function getClass(): string
     {
-        return AssetType::class;
+        return Owner::class;
     }
 }

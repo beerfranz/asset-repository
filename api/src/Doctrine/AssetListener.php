@@ -3,6 +3,7 @@ namespace App\Doctrine;
 
 use App\Entity\Asset;
 use App\Entity\AssetAudit;
+use App\Entity\Owner;
 
 use Doctrine\ORM\Event\PostLoadEventArgs;
 use Doctrine\ORM\Event\PostPersistEventArgs;
@@ -17,7 +18,6 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Serializer\SerializerInterface;
 
 use Psr\Log\LoggerInterface;
-// use Symfony\Bridge\Monolog\Logger;
 
 class AssetListener
 {
@@ -41,7 +41,10 @@ class AssetListener
         if ($asset->getId() === null) {
             $asset->setCreatedBy($email);
             $asset->setCreatedAt(new \DateTimeImmutable());
-            $asset->setOwner($email);
+
+            // $owner = new Owner();
+            // $owner->setName($email);
+            // $asset->setOwner($owner);
         }
     }
 
@@ -49,7 +52,7 @@ class AssetListener
     {
         $entityManager = $event->getObjectManager();
         
-        $diff = $this->serializer->normalize($asset, null);
+        $diff = $this->serializer->normalize($asset, null, ['groups' => 'Asset:read' ]);
 
         $user = $this->security->getUser();
         $email = $user->getEmail();
@@ -64,15 +67,12 @@ class AssetListener
 
         $entityManager->persist($audit);
         $entityManager->flush();
-
-        $this->logger->error('I just got the logger');
     }
 
     public function postRemove(Asset $asset, PostRemoveEventArgs $event)
     {
         $entityManager = $event->getObjectManager();
-
-        $diff = $this->serializer->normalize($asset, null, ['iri' => 'removed']);
+        $diff = $this->serializer->normalize($event->getObject(), null, ['groups' => 'Asset:read' ,'iri' => 'removed']);
 
         $user = $this->security->getUser();
         $email = $user->getEmail();

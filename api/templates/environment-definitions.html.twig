@@ -1,0 +1,47 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Environment definitions{% endblock %}
+
+{% block body %}
+
+<div class="row">
+  <div class="col-md-12">
+    <form id="environments-filters" class="dataTableFilters form-inline">
+      <div class="form-group">
+        <label class="form-label" for="filter-identifier">Identifier</label>
+        <input class="form-control autocomplete" name="name" type="text" id="filter-identifier" placeholder="name" 
+          autocomplete-source="/environment_definitions" autocomplete-group="EnvironmentDefinition:identifier" autocomplete-name="identifier" />
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-md-12">
+    <table class="table" id="environments"></table>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+$(document).ready(function () {
+  var dataTableOpts = commonDataTableOpts();
+  dataTableOpts.ajax.url = '/environment_definitions';
+  dataTableOpts.columns = [ 
+    { data: 'id', title: 'ID', render: function(data, type, row, meta){ return '<a href="/ui/assets/' + row.identifier + '">' + data + '</a>'} },
+    { data: 'identifier', title: 'Identifier', render: function(data, type, row, meta){ return '<a href="/ui/assets/' + data + '">' + data + '</a>'} },
+    { data: 'attributes', title: 'Attributes', 'orderable': false, render: function(data, type, row, meta){ return renderEnvironments(data); } },
+  ];
+
+  rogerInit('environments', dataTableOpts);
+  
+});
+
+</script>
+
+{% endblock %}

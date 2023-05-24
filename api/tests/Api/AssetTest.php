@@ -4,7 +4,6 @@ namespace App\Tests\Api;
 
 use App\Tests\Api\Functional;
 use App\Tests\Factory\AssetFactory;
-use App\Tests\Factory\AssetTypeFactory;
 
 use App\Entity\AssetType;
 
@@ -18,13 +17,9 @@ class AssetTest extends Functional
   {
     $userHeaders = $this->getAdminUser();
 
-    $assetType = AssetTypeFactory::createOne();
-    $assetTypeIri = $this->findIriBy(AssetType::class, ['name' => $assetType->getName() ]);
-
     // Create asset
     $data = [
         'identifier' => 'UnitTest',
-        'type' => $assetTypeIri,
       ];
     static::createClient()->request('POST', '/assets', [
       'json' => $data,
