@@ -1,0 +1,14 @@
+php:
+  image:
+    pullPolicy: "IfNotPresent"
+caddy:
+  image:
+    pullPolicy: "IfNotPresent"
+ingress:
+  enabled: true
+  hosts:
+  - hostname: app.local
+    paths:
+    - path: '/'
+  annotations: 
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"

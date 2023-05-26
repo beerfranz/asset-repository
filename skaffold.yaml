@@ -1,0 +1,28 @@
+apiVersion: skaffold/v4beta4
+kind: Config
+metadata:
+  name: asset-repository
+build:
+  artifacts:
+    - image: asset-repository-php
+      context: ./api
+      docker:
+        target: app_php
+    - image: asset-repository-caddy
+      context: ./api
+      docker:
+        target: app_caddy
+
+deploy:
+  kubeContext: minikube
+  helm:
+    releases:
+    - name: asset-repository
+      chartPath: helm/api-platform
+      setValueTemplates:
+        php.image.repository: "{{.IMAGE_REPO_asset_repository_php}}"
+        php.image.tag: "{{.IMAGE_TAG_asset_repository_php}}@{{.IMAGE_DIGEST_asset_repository_php}}"
+        caddy.image.repository: "{{.IMAGE_REPO_asset_repository_caddy}}"
+        caddy.image.tag: "{{.IMAGE_TAG_asset_repository_caddy}}@{{.IMAGE_DIGEST_asset_repository_caddy}}"
+      valuesFiles:
+        - skaffold-values.yaml

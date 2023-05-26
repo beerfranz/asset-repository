@@ -1,34 +1,31 @@
 # Default values for api-platform.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-
+enabled: true
 php:
   image:
-    repository: "chart-example.local/api-platform/php"
+    repository: "asset-repository-php"
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
   appEnv: prod
   appDebug: "0"
   appSecret: ""
-  corsAllowOrigin: "^https?://.*?\\.chart-example\\.local$"
-  trustedHosts: "^127\\.0\\.0\\.1|localhost|.*\\.chart-example\\.local$"
+  corsAllowOrigin: "^https?://.*?\\.app\\.local$"
+  trustedHostRegexps:
+    - "127\\.0\\.0\\.1"
+    - "localhost"
+    - ".*\\.app\\.local"
+    - "app\\.local"
   trustedProxies:
     - "127.0.0.1"
     - "10.0.0.0/8"
     - "172.16.0.0/12"
     - "192.168.0.0/16"
 
-pwa:
-  image:
-    repository: "chart-example.local/api-platform/pwa"
-    pullPolicy: IfNotPresent
-    # Overrides the image tag whose default is the chart appVersion.
-    tag: ""
-
 caddy:
   image:
-    repository: "chart-example.local/api-platform/caddy"
+    repository: "asset-repository-caddy"
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
@@ -38,24 +35,27 @@ mercure:
   publicUrl: https://chart-example.local/.well-known/mercure
   # Change me!
   jwtSecret: "!ChangeMe!"
-  corsAllowedOrigins: "^https?://.*?\\.chart-example\\.local$"
+  corsAllowedOrigins: "^https?://.*?\\.app\\.local$"
 
 # Full configuration: https://github.com/bitnami/charts/tree/master/bitnami/postgresql
 postgresql:
   enabled: true
   # If bringing your own PostgreSQL, the full uri to use
-  url: postgresql://api-platform:!ChangeMe!@database:5432/api?serverVersion=13&charset=utf8
-  postgresqlUsername: "example"
-  postgresqlPassword: "!ChangeMe!"
-  postgresqlDatabase: "api"
+  # url: postgresql://api-platform:!ChangeMe!@database:5432/api?serverVersion=13&charset=utf8
   # Persistent Volume Storage configuration.
   # ref: https://kubernetes.io/docs/user-guide/persistent-volumes
   persistence:
     enabled: false
   pullPolicy: IfNotPresent
-  image:
-    repository: bitnami/postgresql
-    tag: 13
+  # image:
+  #   repository: bitnami/postgresql
+  #   tag: 13
+  auth:
+    existingSecret: asset-repository
+    postgresPassword: "foo"
+    username: "example"
+    password: "ChangeMe"
+    database: "api"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -121,6 +121,9 @@ autoscaling:
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
+
+pdb:
+  enabled: false
 
 nodeSelector: {}
 
