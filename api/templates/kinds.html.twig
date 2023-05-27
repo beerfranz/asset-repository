@@ -1,0 +1,45 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Sources{% endblock %}
+
+{% block body %}
+
+<div class="row">
+  <div class="col-md-12">
+    <form id="kinds-filters" class="dataTableFilters form-inline">
+      <div class="form-group">
+        <label class="form-label" for="filter-identifier">Identifier</label>
+        <input class="form-control autocomplete" name="identifier" type="text" id="filter-identifier" placeholder="identifier" 
+          autocomplete-source="/kinds" autocomplete-group="Kind:identifier" autocomplete-name="identifier" />
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <table class="table" id="kinds"></table>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+$(document).ready(function () {
+  var dataTableOpts = commonDataTableOpts();
+  dataTableOpts.ajax.url = '/kinds';
+  dataTableOpts.columns = [ 
+    { data: 'id', title: 'ID' },
+    { data: 'identifier', title: 'Identifier' },
+  ];
+
+  rogerInit('kinds', dataTableOpts);
+
+});
+
+</script>
+
+{% endblock %}

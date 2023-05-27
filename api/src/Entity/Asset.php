@@ -45,8 +45,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Patch(security: "is_granted('ASSET_WRITE')")]
 #[Delete(security: "is_granted('ASSET_WRITE')")]
 #[ApiFilter(OrderFilter::class, properties: ['id', 'identifier'])]
-#[ApiFilter(AutocompleteFilter::class, properties: [ 'identifier', 'assetDefinition.identifier'])]
-#[ApiFilter(GroupFilter::class, arguments: ['parameterName' => 'groups', 'overrideDefaultGroups' => true, 'whitelist' => ['Asset:identifier', 'AssetDefinition:identifier']])]
+#[ApiFilter(AutocompleteFilter::class, properties: [ 'identifier', 'assetDefinition.identifier', 'kind.identifier'])]
+#[ApiFilter(GroupFilter::class, arguments: ['parameterName' => 'groups', 'overrideDefaultGroups' => true, 'whitelist' => ['Asset:identifier', 'AssetDefinition:identifier', 'Kind:identifier']])]
 #[UniqueEntity(fields: ['identifier'], message: 'There is already an asset this identifier')]
 class Asset
 {
@@ -57,7 +57,7 @@ class Asset
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['Asset:read', 'Asset:write', 'Asset:identifier'])]
+    #[Groups(['Asset:read', 'Asset:write', 'Asset:identifier', 'Instance:read'])]
     private ?string $identifier = null;
 
     #[ORM\Column(nullable: true)]
@@ -100,6 +100,10 @@ class Asset
     #[ORM\ManyToOne(inversedBy: 'assets')]
     #[Groups(['Asset:read', 'Asset:write'])]
     private ?Version $version = null;
+
+    #[ORM\ManyToOne(inversedBy: 'assets', cascade: ['persist'])]
+    #[Groups(['Asset:read', 'Asset:write', 'Asset:kind'])]
+    private ?Kind $kind = null;
 
     public function __construct()
     {
@@ -288,6 +292,18 @@ class Asset
     public function setVersion(?Version $version): self
     {
         $this->version = $version;
+
+        return $this;
+    }
+
+    public function getKind(): ?Kind
+    {
+        return $this->kind;
+    }
+
+    public function setKind(?Kind $kind): self
+    {
+        $this->kind = $kind;
 
         return $this;
     }

@@ -4,6 +4,7 @@ namespace App\State;
 
 use App\Entity\Asset;
 use App\Entity\AssetDefinition;
+use App\Entity\Kind;
 
 trait TraitDefinitionPropagate {
     public function updateAssets(AssetDefinition $assetDefinition) {
@@ -27,6 +28,7 @@ trait TraitDefinitionPropagate {
         }
 
         $assetRepo = $this->entityManager->getRepository(Asset::class);
+        $kindRepo = $this->entityManager->getRepository(Kind::class);
 
         foreach($envs as $environmentName)
         {
@@ -40,7 +42,22 @@ trait TraitDefinitionPropagate {
                 $asset->setIdentifier($assetIdentifier);
             }
 
-            $labels = array_merge($asset->getLabels(), $assetDefinition->getLabels());
+            $labels = $assetDefinition->getLabels();
+
+            if (isset($labels['kind'])) {
+                $kindIdentifier = $labels['kind'];
+                $kind = $kindRepo->findOneByIdentifier($kindIdentifier);
+
+                if ($kind === null) {
+                    $kind = new Kind();
+                    $kind->setIdentifier($kindIdentifier);
+                }
+
+                $asset->setKind($kind);
+                unset($labels['kind']);
+            }
+
+            $labels = array_merge($asset->getLabels(), $labels);
             $labels['environment'] = $environmentName;
             $asset->setLabels($labels);
 
@@ -50,9 +67,7 @@ trait TraitDefinitionPropagate {
             $asset->setAssetDefinition($assetDefinition);
 
             $this->entityManager->persist($asset);
-
+            $this->entityManager->flush();
         }
-
-        $this->entityManager->flush();
     }
 }

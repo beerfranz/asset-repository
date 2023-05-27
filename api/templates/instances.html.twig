@@ -36,7 +36,7 @@ $(document).ready(function () {
 		{ data: 'id', title: 'ID' },
 		{ data: 'identifier', title: 'Identifier' },
 		{ data: 'version', title: 'Version', render: function(data, type, row, meta) { return renderConformity(data, row.conformityDetails['version']); } },
-		{ data: 'asset', title: 'Asset', 'orderable': false, render: function(data, type, row, meta){ return '<a href="/ui' + data + '">' + data + '</a>'} },
+		{ data: 'asset.identifier', title: 'Asset', 'orderable': false, render: function(data, type, row, meta){ return '<a href="/ui/assets/' + data + '">' + data + '</a>'} },
 		{ data: 'conformity', title: 'Conformity', 'orderable': false, render: function(data, type, row, meta) { return renderBool(data); } },
 		{ data: 'source.name', title: 'Source', defaultContent: '', 'orderable': false },
   ];
