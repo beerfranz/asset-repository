@@ -82,4 +82,10 @@ class IndexController extends AbstractController
   {
     return $this->render('sources.html.twig', [ 'navbar' => [ 'sources' => 'active' ] ]);
   }
+
+  #[Route('/ui/kinds', name: 'getKinds', methods: ['GET'])]
+  public function getKinds(Request $request): Response
+  {
+    return $this->render('kinds.html.twig', [ 'navbar' => [ 'kinds' => 'active' ] ]);
+  }
 }
