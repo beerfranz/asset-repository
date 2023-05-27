@@ -28,7 +28,7 @@ final class AutocompleteFilter extends AbstractFilter
         }
 
         $rootAlias = $queryBuilder->getRootAliases()[0];
-
+        
         $this->addFilter($queryBuilder, $filter, $value, $rootAlias);
     }
 

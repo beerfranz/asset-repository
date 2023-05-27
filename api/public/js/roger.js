@@ -68,11 +68,13 @@ function rogerInitFilters(filterId, dataTableId) {
       $(this).val(val);
 
     if (val = urlParams.get($(this).attr('name') + '_partial')) {
-      console.log('partial');
       $(this).val(val);
       $(this).attr('name', $(this).attr('name') + '_partial');
     }
   });
+
+  form.append('<button type="submit" class="btn btn-primary">Submit</button>');
+  form.append('<button type="button" class="btn btn-secondary form-clear">Clear</button>');
 
   // mmmmhh... faire un input caché pour savoir si c'est recherche partial ou exact
   // https://api-platform.com/docs/core/filters/#creating-custom-filters
@@ -81,6 +83,9 @@ function rogerInitFilters(filterId, dataTableId) {
     var url = element.attr('autocomplete-source');
     var elementName = element.attr('autocomplete-name');
     var group = element.attr('autocomplete-group');
+
+    const regexp = /^(.*)\.(.*)$/g;
+    var found = [...elementName.matchAll(regexp)];
 
     element.autocomplete({
       minLength: 3,
@@ -95,7 +100,15 @@ function rogerInitFilters(filterId, dataTableId) {
           headers: { 'Accept': "application/ld+json" },
           data: filters,
           success: function(data) {
-            response(data['hydra:member'].map(x => x[elementName]));
+            if (responseField = element.attr('autocomplete-response-field')) {
+              response(data['hydra:member'].map(x => x[responseField]));
+            }
+            else if (found.length === 0) {
+              response(data['hydra:member'].map(x => x[elementName] ));
+            } else {
+              response(data['hydra:member'].map(x => x[found[0][1]][found[0][2]] ));
+            }
+            
           }
         });
       },
@@ -132,4 +145,10 @@ function rogerInit(id, dataTableOpts) {
 
 $('.dropdown').hover(function(){ 
   $('.dropdown-toggle', this).trigger('click'); 
+});
+
+$(document).on('click', '.form-clear', function(e){
+  var form = $(this).parents('form');
+  form[0].reset();
+  form.submit();
 });

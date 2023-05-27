@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Serializer\Filter\GroupFilter;
 
 use App\Repository\AssetDefinitionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -26,6 +27,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 )]
 #[ApiFilter(OrderFilter::class, properties: ['id', 'identifier'])]
 #[ApiFilter(AutocompleteFilter::class, properties: [ 'identifier'])]
+#[ApiFilter(GroupFilter::class, arguments: ['parameterName' => 'groups', 'overrideDefaultGroups' => true, 'whitelist' => ['AssetDefinition:identifier']])]
 #[UniqueEntity(fields: ['identifier'], message: 'There is already an asset this identifier')]
 class AssetDefinition
 {

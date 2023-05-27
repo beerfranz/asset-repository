@@ -15,6 +15,7 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Serializer\Filter\GroupFilter;
 
 use App\Doctrine\AssetListener;
 use App\Repository\AssetRepository;
@@ -44,7 +45,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Patch(security: "is_granted('ASSET_WRITE')")]
 #[Delete(security: "is_granted('ASSET_WRITE')")]
 #[ApiFilter(OrderFilter::class, properties: ['id', 'identifier'])]
-#[ApiFilter(AutocompleteFilter::class, properties: [ 'identifier'])]
+#[ApiFilter(AutocompleteFilter::class, properties: [ 'identifier', 'assetDefinition.identifier'])]
+#[ApiFilter(GroupFilter::class, arguments: ['parameterName' => 'groups', 'overrideDefaultGroups' => true, 'whitelist' => ['Asset:identifier', 'AssetDefinition:identifier']])]
 #[UniqueEntity(fields: ['identifier'], message: 'There is already an asset this identifier')]
 class Asset
 {
@@ -92,7 +94,7 @@ class Asset
     private Collection $instances;
 
     #[ORM\ManyToOne(inversedBy: 'assets', cascade: ['persist', 'remove'])]
-    #[Groups(['Asset:read'])]
+    #[Groups(['Asset:read', 'AssetDefinition:identifier'])]
     private ?AssetDefinition $assetDefinition = null;
 
     #[ORM\ManyToOne(inversedBy: 'assets')]

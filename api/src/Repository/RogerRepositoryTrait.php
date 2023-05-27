@@ -64,9 +64,32 @@ trait RogerRepositoryTrait {
         return $filter;
     }
 
+    protected function isSubResourceFilter($filter) {
+        if (1 === preg_match('/^(.*)\.(.*)$/', $filter, $matches)) {
+            return $matches[1];
+        }
+        return false;
+    }
+
+    protected function decodeSubResource(string $filter) {
+        if (1 === preg_match('/^(.*)\.(.*)$/', $filter, $matches)) {
+            return $matches;
+        }
+        return false;
+    }
+
     protected function addFilter($queryBuilder, $filter, $value, $rootAlias) {
+        
+        if ($matches = $this->decodeSubResource($filter)) {
+            $subResource = $matches[1];
+            $queryBuilder->leftJoin($rootAlias . '.' . $subResource, 'u');
+            $rootAlias = 'u';
+
+            $filter = $matches[2];
+        }
 
         if ($property = $this->isPartial($filter)) {
+
             $field = $rootAlias . '.' . $property;
             $queryBuilder->andWhere($field . ' LIKE :' . $filter)
                          ->setParameter($filter, '%' . $value . '%');

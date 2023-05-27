@@ -11,6 +11,11 @@
         <label class="form-label" for="filter-identifier">Identifier</label>
         <input class="form-control autocomplete" name="identifier" type="text" id="filter-identifier" placeholder="identifier" 
           autocomplete-source="/assets" autocomplete-group="Asset:identifier" autocomplete-name="identifier" />
+
+        <label class="form-label" for="filter-identifier-definition">Definition</label>
+        <input class="form-control autocomplete" name="assetDefinition.identifier" type="text" id="filter-identifier-definition" placeholder="definition" 
+          autocomplete-source="/asset_definitions" autocomplete-group="AssetDefinition:identifier" autocomplete-name="assetDefinition.identifier"
+          autocomplete-response-field="identifier" />
       </div>
     </form>
   </div>
