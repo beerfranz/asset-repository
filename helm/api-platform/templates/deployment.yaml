@@ -1,24 +1,26 @@
+{{- if .Values.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "api-platform.fullname" . }}
+  name: {{ include "common.names.fullname" . }}
   labels:
-    {{- include "api-platform.labels" . | nindent 4 }}
+    {{- include "common.labels.standard" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "api-platform.selectorLabels" . | nindent 6 }}
+      {{- include "common.labels.matchLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
       labels:
-        {{- include "api-platform.selectorLabels" . | nindent 8 }}
+        {{- include "common.labels.matchLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -36,21 +38,22 @@ spec:
           env:
             - name: SERVER_NAME
               value: :80
-            - name: PWA_UPSTREAM
-              value: {{ include "api-platform.fullname" . }}-pwa:3000
             - name: MERCURE_PUBLISHER_JWT_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "api-platform.fullname" . }}
+                  name: {{ include "common.names.fullname" . }}
                   key: mercure-jwt-secret
             - name: MERCURE_SUBSCRIBER_JWT_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "api-platform.fullname" . }}
+                  name: {{ include "common.names.fullname" . }}
                   key: mercure-jwt-secret
           ports:
             - name: http
               containerPort: 80
+              protocol: TCP
+            - name: https
+              containerPort: 443
               protocol: TCP
             - name: admin
               containerPort: 2019
@@ -58,6 +61,9 @@ spec:
           volumeMounts:
             - mountPath: /var/run/php
               name: php-socket
+            - name: caddy-conf
+              mountPath: /etc/caddy
+              readOnly: true
           lifecycle:
             preStop:
               exec:
@@ -83,52 +89,62 @@ spec:
             - name: TRUSTED_HOSTS
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "api-platform.fullname" . }}
+                  name: {{ include "common.names.fullname" . }}
                   key: php-trusted-hosts
             - name: TRUSTED_PROXIES
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "api-platform.fullname" . }}
+                  name: {{ include "common.names.fullname" . }}
                   key: php-trusted-proxies
             - name: APP_ENV
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "api-platform.fullname" . }}
+                  name: {{ include "common.names.fullname" . }}
                   key: php-app-env
             - name: APP_DEBUG
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "api-platform.fullname" . }}
+                  name: {{ include "common.names.fullname" . }}
                   key: php-app-debug
+            - name: AUTH_HEADER_EMAIL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "common.names.fullname" . }}
+                  key: auth_header_email
+            - name: AUTH_HEADER_ROLES
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "common.names.fullname" . }}
+                  key: auth_header_roles
             - name: APP_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "api-platform.fullname" . }}
+                  name: {{ include "common.names.fullname" . }}
                   key: php-app-secret
             - name: CORS_ALLOW_ORIGIN
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "api-platform.fullname" . }}
+                  name: {{ include "common.names.fullname" . }}
                   key: php-cors-allow-origin
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "api-platform.fullname" . }}
+                  name: {{ include "common.names.fullname" . }}
                   key: database-url
             - name: MERCURE_URL
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "api-platform.fullname" . }}
+                  name: {{ include "common.names.fullname" . }}
                   key: mercure-url
             - name: MERCURE_PUBLIC_URL
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "api-platform.fullname" . }}
+                  name: {{ include "common.names.fullname" . }}
                   key: mercure-public-url
             - name: MERCURE_JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "api-platform.fullname" . }}
+                  name: {{ include "common.names.fullname" . }}
                   key: mercure-jwt-secret
           volumeMounts:
             - mountPath: /var/run/php
@@ -158,6 +174,12 @@ spec:
       volumes:
       - name: php-socket
         emptyDir: {}
+      - name: caddy-conf
+        configMap:
+          name: {{ include "common.names.fullname" . }}
+          items:
+            - key: Caddyfile
+              path: Caddyfile
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -170,3 +192,4 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+{{- end }}
