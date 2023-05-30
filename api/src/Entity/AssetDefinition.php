@@ -72,10 +72,19 @@ class AssetDefinition
     #[Groups(['AssetDefinition:read', 'AssetDefinition:write'])]
     private array $labels = [];
 
+    #[ORM\OneToMany(mappedBy: 'assetDefinitionFrom', targetEntity: AssetDefinitionRelation::class, orphanRemoval: true)]
+    #[Groups(['AssetDefinition:read'])]
+    private Collection $relationsFrom;
+
+    #[ORM\OneToMany(mappedBy: 'assetDefinitionTo', targetEntity: AssetDefinitionRelation::class, orphanRemoval: true)]
+    private Collection $relationsTo;
+
     public function __construct()
     {
         $this->assets = new ArrayCollection();
         $this->versions = new ArrayCollection();
+        $this->relationsFrom = new ArrayCollection();
+        $this->relationsTo = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -223,6 +232,66 @@ class AssetDefinition
     public function setLabels(array $labels): self
     {
         $this->labels = $labels;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AssetDefinitionRelation>
+     */
+    public function getRelationsFrom(): Collection
+    {
+        return $this->relationsFrom;
+    }
+
+    public function addRelationFrom(AssetDefinitionRelation $assetDefinitionRelation): self
+    {
+        if (!$this->relationsFrom->contains($assetDefinitionRelation)) {
+            $this->relationsFrom->add($assetDefinitionRelation);
+            $assetDefinitionRelation->setAssetDefinitionFrom($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRelationFrom(AssetDefinitionRelation $assetDefinitionRelation): self
+    {
+        if ($this->relationsFrom->removeElement($assetDefinitionRelation)) {
+            // set the owning side to null (unless already changed)
+            if ($assetDefinitionRelation->getAssetDefinitionFrom() === $this) {
+                $assetDefinitionRelation->setAssetDefinitionFrom(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AssetDefinitionRelation>
+     */
+    public function getRelationsTo(): Collection
+    {
+        return $this->relationsTo;
+    }
+
+    public function addRelationsTo(AssetDefinitionRelation $assetDefinitionRelationsTo): self
+    {
+        if (!$this->relationsTo->contains($assetDefinitionRelationsTo)) {
+            $this->relationsTo->add($assetDefinitionRelationsTo);
+            $assetDefinitionRelationsTo->setAssetDefinitionTo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRelationsTo(AssetDefinitionRelation $assetDefinitionRelationsTo): self
+    {
+        if ($this->relationsTo->removeElement($assetDefinitionRelationsTo)) {
+            // set the owning side to null (unless already changed)
+            if ($assetDefinitionRelationsTo->getAssetDefinitionTo() === $this) {
+                $assetDefinitionRelationsTo->setAssetDefinitionTo(null);
+            }
+        }
 
         return $this;
     }

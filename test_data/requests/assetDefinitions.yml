@@ -11,10 +11,19 @@ data:
     labels:
       kind: app
     environmentDefinition: application
+  - identifier: angular-helm
+    relations:
+      - identifier: angular
+        relation: package
+    labels:
+      kind: helm
+    owner: DevSecOps
   - identifier: kubernetes
     name: Kubernetes
     labels:
       kind: orchestrator
     owner: DevSecOps
     environmentDefinition: kubernetes
-
+    relations:
+      - identifier: angular-helm
+        relation: host

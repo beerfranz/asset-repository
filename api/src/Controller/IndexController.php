@@ -88,4 +88,10 @@ class IndexController extends AbstractController
   {
     return $this->render('kinds.html.twig', [ 'navbar' => [ 'kinds' => 'active' ] ]);
   }
+
+  #[Route('/ui/map', name: 'getMap', methods: ['GET'])]
+  public function getMap(Request $request): Response
+  {
+    return $this->render('map.html.twig', [ 'navbar' => [ 'map' => 'active' ] ]);
+  }
 }

@@ -46,13 +46,14 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
-            <li class="dropdown {{ navbar.asset_definitions|default('') }} {{ navbar.environment_definitions|default('') }}">
+            <li class="dropdown {{ navbar.asset_definitions|default('') }} {{ navbar.environment_definitions|default('') }} {{ navbar.map|default('') }}">
               <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Architecture <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
                 <li class="{{ navbar.asset_definitions|default('') }}"><a href="/ui/asset_definitions">Asset Definitions</a></li>
                 <li class="{{ navbar.environment_definitions|default('') }}"><a href="/ui/environment_definitions">Environment Definitions</a></li>
+                <li class="{{ navbar.map|default('') }}"><a href="/ui/map">Map</a></li>
               </ul>
             </li>
             <li class="{{ navbar.assets|default('') }}"><a href="/ui/assets">Assets</a></li>

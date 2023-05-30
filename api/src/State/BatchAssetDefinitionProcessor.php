@@ -3,6 +3,7 @@
 namespace App\State;
 
 use App\Entity\AssetDefinition;
+use App\Entity\AssetDefinitionRelation;
 use App\Entity\Owner;
 use App\Entity\Source;
 use App\Entity\EnvironmentDefinition;
@@ -26,12 +27,26 @@ final class BatchAssetDefinitionProcessor extends CommonState implements Process
 {
     use TraitDefinitionPropagate;
 
+    protected $assetDefinitionState;
+
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        RequestStack $request,
+        LoggerInterface $logger,
+        Security $security,
+        AssetDefinitionState $assetDefinitionState,
+    ) {
+        parent::__construct($entityManager, $request, $logger, $security);
+        $this->assetDefinitionState = $assetDefinitionState;
+    }
+
     /**
      * @param BatchAssetDefinitionDto $data
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
         $repo = $this->entityManager->getRepository(AssetDefinition::class);
+        $repoRelation = $this->entityManager->getRepository(AssetDefinitionRelation::class);
         $repoOwner = $this->entityManager->getRepository(Owner::class);
         $repoSource = $this->entityManager->getRepository(Source::class);
 
@@ -43,39 +58,31 @@ final class BatchAssetDefinitionProcessor extends CommonState implements Process
 
         foreach($data->assetDefinitions as $input)
         {
-            $identifier = $input['identifier'];
+            if (!isset($input['owner']))
+                $input['owner'] = $data->owner;
 
-            $assetDefinition = $repo->findOneByIdentifier($identifier);
+            if (!isset($input['source']))
+                $input['source'] = $data->source;
 
-            if ($assetDefinition === null)
-            {
-                $assetDefinition = new AssetDefinition();
-                $assetDefinition->setIdentifier($identifier);
-            }
-
-            if (isset($input['name']))
-                $assetDefinition->setName($input['name']);
-
-            $this->setOwner($assetDefinition, $input['owner'] ?? $data->owner);
-            $this->setSource($assetDefinition, $input['source'] ?? $data->source);
-
-            if (isset($input['environmentDefinition'])) {
-                $repoEnvironmentDefinition = $this->entityManager->getRepository(EnvironmentDefinition::class);
-                $environmentDefinition = $repoEnvironmentDefinition->findOneByIdentifier($input['environmentDefinition']);
-                $assetDefinition->setEnvironmentDefinition($environmentDefinition);
-            }
-
-            if (isset($input['tags']))
-                $assetDefinition->setTags($input['tags']);
-
-            if (isset($input['labels'])) {
-                $assetDefinition->setLabels($input['labels']);
-            }
-            
+            $assetDefinition = $this->assetDefinitionState->processOneAssetDefinition($input);
             $identifiers[] = $assetDefinition->getIdentifier();
 
-            $this->entityManager->persist($assetDefinition);
-            $this->entityManager->flush();
+            if (isset($input['relations']))
+            {
+                foreach($input['relations'] as $relation)
+                {
+                    if (isset($relation['identifier']) && isset($relation['relation'])) {
+                        $assetDefinitionRelationTo = $repo->findOneByIdentifier($relation['identifier']);
+
+                        // Add only minimal data
+                        if ($assetDefinitionRelationTo === null) {
+                            throw new \Exception('Cannot create a relation between ' . $assetDefinition->getIdentifier() . ' and ' . $relation['identifier'] . '. No AssetDefinition with the identifier ' . $relation['identifier'] . '. You must create the AssetDefinition before.');
+                        }
+
+                        $this->assetDefinitionState->processOneAssetDefinitionRelation($assetDefinition, $assetDefinitionRelationTo, $relation);
+                    }
+                }
+            }
 
             $this->updateAssets($assetDefinition);
         }
