@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\AssetRepository;
+use App\Repository\AssetDefinitionRepository;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -57,6 +58,14 @@ class IndexController extends AbstractController
   public function getAssetDefinitions(Request $request): Response
   {
     return $this->render('asset-definitions.html.twig', [ 'navbar' => [ 'asset_definitions' => 'active' ] ]);
+  }
+
+  #[Route('/ui/asset_definitions/{identifier}', name: 'getAssetDefinition', methods: ['GET'])]
+  public function getAssetDefinition(string $identifier, AssetDefinitionRepository $repo, Request $request): Response
+  {
+    $assetDefinition = $repo->findOneByIdentifier($identifier);
+
+    return $this->render('asset-definition.html.twig', [ 'assetDefinition' => $assetDefinition ]);
   }
 
   #[Route('/ui/environment_definitions', name: 'getEnvironmentDefinitions', methods: ['GET'])]
