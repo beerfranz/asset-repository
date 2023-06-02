@@ -3,6 +3,9 @@ name: Release Charts
 on:
   push:
     branches: ['release']
+  pull_request:
+    branches: [ 'main' ]
+    paths: [ 'helm/api-platform/**']
 
 jobs:
   release:
