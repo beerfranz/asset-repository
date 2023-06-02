@@ -1,7 +1,7 @@
 name: Release Charts
 
 on:
-  release: [published]
+  release: [published, prereleased]
 
 jobs:
   release:
