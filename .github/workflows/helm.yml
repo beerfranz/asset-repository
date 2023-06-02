@@ -1,8 +1,9 @@
 name: Release Charts
 
 on:
-  release:
-    types: [published, prereleased]
+  push:
+    branches: [main]
+  pull_request:
 
 jobs:
   release:
