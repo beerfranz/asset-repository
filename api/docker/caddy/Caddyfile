@@ -9,14 +9,14 @@ log
 
 # Matches requests for HTML documents, for static files and for Next.js files,
 # except for known API paths and paths with extensions handled by API Platform
-@pwa expression `(
-        header({'Accept': '*text/html*'})
-        && !path(
-            '/docs*', '/graphql*', '/bundles*', '/contexts*', '/_profiler*', '/_wdt*', '/ui*',
-            '*.json*', '*.html', '*.csv', '*.yml', '*.yaml', '*.xml'
-        )
-    )
-    || path('/favicon.ico', '/manifest.json', '/robots.txt', '/_next*', '/sitemap*')`
+# @pwa expression `(
+#         header({'Accept': '*text/html*'})
+#         && !path(
+#             '/docs*', '/graphql*', '/bundles*', '/contexts*', '/_profiler*', '/_wdt*', '/ui*',
+#             '*.json*', '*.html', '*.csv', '*.yml', '*.yaml', '*.xml'
+#         )
+#     )
+#     || path('/favicon.ico', '/manifest.json', '/robots.txt', '/_next*', '/sitemap*')`
 
 route {
     root * /srv/app/public
@@ -43,10 +43,10 @@ route {
 
     # Comment the following line if you don't want Next.js to catch requests for HTML documents.
     # In this case, they will be handled by the PHP app.
-    reverse_proxy @pwa http://{$PWA_UPSTREAM}
+    # reverse_proxy @pwa http://{$PWA_UPSTREAM}
 
     php_fastcgi unix//var/run/php/php-fpm.sock {
-        header_up x-token-user-roles ASSET_ADMIN
+        header_up x-token-user-roles ROLE_ASSET_ADMIN
         header_up x-token-user-email admin@fake.io
     }
     encode zstd gzip

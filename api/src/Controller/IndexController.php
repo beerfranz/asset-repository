@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\AssetRepository;
+use App\Repository\AssetDefinitionRepository;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -59,6 +60,14 @@ class IndexController extends AbstractController
     return $this->render('asset-definitions.html.twig', [ 'navbar' => [ 'asset_definitions' => 'active' ] ]);
   }
 
+  #[Route('/ui/asset_definitions/{identifier}', name: 'getAssetDefinition', methods: ['GET'])]
+  public function getAssetDefinition(string $identifier, AssetDefinitionRepository $repo, Request $request): Response
+  {
+    $assetDefinition = $repo->findOneByIdentifier($identifier);
+
+    return $this->render('asset-definition.html.twig', [ 'assetDefinition' => $assetDefinition ]);
+  }
+
   #[Route('/ui/environment_definitions', name: 'getEnvironmentDefinitions', methods: ['GET'])]
   public function getEnvironmentDefinitions(Request $request): Response
   {
@@ -87,5 +96,11 @@ class IndexController extends AbstractController
   public function getKinds(Request $request): Response
   {
     return $this->render('kinds.html.twig', [ 'navbar' => [ 'kinds' => 'active' ] ]);
+  }
+
+  #[Route('/ui/map', name: 'getMap', methods: ['GET'])]
+  public function getMap(Request $request): Response
+  {
+    return $this->render('map.html.twig', [ 'navbar' => [ 'map' => 'active' ] ]);
   }
 }

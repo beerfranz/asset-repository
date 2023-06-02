@@ -1,0 +1,112 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Map{% endblock %}
+
+{% block body %}
+
+<div id="cy" style="width:1000px; height:500px;"></div>
+
+
+{% endblock %}
+
+{% block js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.25.0/cytoscape.min.js"></script>
+
+<script>
+
+var cyLayout = { name: 'random', fit: true, padding: 30 };
+var cyContainer = $('#cy');
+var cyStyles = [
+  {
+    selector: 'node',
+    style: {
+      'background-color': '#666',
+      'label': 'data(id)'
+    }
+  },
+  {
+    selector: 'edge',
+    style: {
+      'width': 3,
+      'line-color': '#ccc',
+      'target-arrow-color': '#ccc',
+      'target-arrow-shape': 'triangle',
+      'curve-style': 'bezier'
+    }
+  },
+  {
+    selector: ':parent',
+    style: {
+      width: 80,
+      height: 120,
+      'background-opacity': 0.05
+    }
+  },
+]
+
+$(document).ready(function() {
+  $.ajax({
+    url: '/asset_definitions',
+    headers: { 'Accept': "application/ld+json" },
+    data: function(d) {
+      var url = new URL(window.location);
+      var urlParams = url.searchParams;
+      urlParams.forEach((value, key) => {
+        urlParams.delete(key);
+      });
+
+      var params = {
+        itemsPerPage: d.length,
+        page: (d.start / d.length) + 1,
+        order: {}
+      };
+      var order_key = d.columns[d.order[0].column].data;
+      params.order[order_key] = d.order[0].dir.toUpperCase();
+
+      // Filters
+      $('.dataTableFilters').serializeArray().forEach(filter => {
+        // console.log(filter);
+
+        if (filter.value != '') {
+          urlParams.set(filter.name, filter.value);
+          params[filter.name] = filter.value;
+        }
+        
+        // If multiple values:
+        // urlParams.append('id', '101');
+        // urlParams.append('id', '102');
+      });
+
+      window.history.pushState({ additionalInformation: 'Updated the URL with JS' }, 'JS filter', url);
+
+      return params;
+    },
+    success: function(data) {
+      var cyElements = [];
+      data['hydra:member'].forEach(function (d) {
+        cyElements.push({ data: { id: d.identifier } });
+        d.relationsFrom.forEach(function (r) {
+          if (r.group === true) {
+            cyElements = cyElements.filter(function( obj ) {
+              return obj.data.id !== r.assetDefinitionTo.identifier;
+            });
+            cyElements.push({ data: { id: r.assetDefinitionTo.identifier, parent: d.identifier }});
+          } else {
+            cyElements.push({ data: { id: r.id, source: d.identifier, target: r.assetDefinitionTo.identifier }});
+          }
+          
+        });
+      });
+      var cy = cytoscape({
+        container: cyContainer,
+        layout: cyLayout,
+        elements: cyElements,
+        style: cyStyles,
+      });
+    }
+  });
+});
+
+</script>
+
+{% endblock %}

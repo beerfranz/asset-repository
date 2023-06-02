@@ -40,10 +40,10 @@ class AssetVoter extends Voter
 
         switch ($attribute) {
             case 'ASSET_READ':
-                if ( in_array('ASSET_ADMIN', $user->getRoles()) or in_array('ASSET_READONLY', $user->getRoles()) ) { return true; }
+                if ( in_array('ROLE_ASSET_ADMIN', $user->getRoles()) or in_array('ROLE_ASSET_READONLY', $user->getRoles()) ) { return true; }
                 break;
             case 'ASSET_WRITE':
-                if ( in_array('ASSET_ADMIN', $user->getRoles())) { return true; }
+                if ( in_array('ROLE_ASSET_ADMIN', $user->getRoles())) { return true; }
                 break;
         }
 
