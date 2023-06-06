@@ -3,6 +3,25 @@ entries:
   asset-repository:
   - apiVersion: v2
     appVersion: 0.0.2
+    created: "2023-06-06T22:23:14.539461435Z"
+    dependencies:
+    - name: common
+      repository: https://charts.bitnami.com/bitnami
+      version: 2.2.1
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami/
+      version: 12.5.5
+    description: Asset database
+    digest: bd8879960617a7a7c9615a3eb4f2fc183100915b7f57526681d5827559c5da40
+    home: https://github.com/beerfranz/asset-repository
+    name: asset-repository
+    type: application
+    urls:
+    - https://github.com/beerfranz/asset-repository/releases/download/asset-repository-0.0.3/asset-repository-0.0.3.tgz
+    version: 0.0.3
+  - apiVersion: v2
+    appVersion: 0.0.2
     created: "2023-06-02T23:20:26.237073813Z"
     dependencies:
     - name: common
@@ -39,4 +58,4 @@ entries:
     urls:
     - https://github.com/beerfranz/asset-repository/releases/download/asset-repository-0.0.1/asset-repository-0.0.1.tgz
     version: 0.0.1
-generated: "2023-06-02T23:20:26.237087413Z"
+generated: "2023-06-06T22:23:14.539475435Z"
