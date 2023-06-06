@@ -11,58 +11,9 @@ data:
   php-cors-allow-origin: {{ .Values.php.corsAllowOrigin | quote }}
   php-trusted-hosts: ^{{ join "|" .Values.php.trustedHostRegexps }}$
   php-trusted-proxies: "{{ join "," .Values.php.trustedProxies }}"
-  auth_header_roles: x-token-user-roles
-  auth_header_email: x-token-user-email
+  auth-header-roles: x-token-user-roles
+  auth-header-email: x-token-user-email
   mercure-url: "http://{{ include "common.names.fullname" . }}/.well-known/mercure"
   mercure-public-url: {{ .Values.mercure.publicUrl | default "http://127.0.0.1/.well-known/mercure" | quote }}
-  Caddyfile: |
-    {
-        # Debug
-        {$CADDY_DEBUG}
-    }
-
-    {$SERVER_NAME}
-
-    log
-
-    # Matches requests for HTML documents, for static files and for Next.js files,
-    # except for known API paths and paths with extensions handled by API Platform
-    @pwa expression `(
-            header({'Accept': '*text/html*'})
-            && !path(
-                '/docs*', '/graphql*', '/bundles*', '/contexts*', '/_profiler*', '/_wdt*', '/ui*',
-                '*.json*', '*.html', '*.csv', '*.yml', '*.yaml', '*.xml'
-            )
-        )
-        || path('/favicon.ico', '/manifest.json', '/robots.txt', '/_next*', '/sitemap*')`
-
-    route {
-        root * /srv/app/public
-        # mercure {
-        #     # Transport to use (default to Bolt)
-        #     transport_url {$MERCURE_TRANSPORT_URL:bolt:///data/mercure.db}
-        #     # Publisher JWT key
-        #     publisher_jwt {env.MERCURE_PUBLISHER_JWT_KEY} {env.MERCURE_PUBLISHER_JWT_ALG}
-        #     # Subscriber JWT key
-        #     subscriber_jwt {env.MERCURE_SUBSCRIBER_JWT_KEY} {env.MERCURE_SUBSCRIBER_JWT_ALG}
-        #     # Allow anonymous subscribers (double-check that it's what you want)
-        #     anonymous
-        #     # Enable the subscription API (double-check that it's what you want)
-        #     subscriptions
-        #     # Extra directives
-        #     {$MERCURE_EXTRA_DIRECTIVES}
-        # }
-        vulcain
-
-        # Add links to the API docs and to the Mercure Hub if not set explicitly (e.g. the PWA)
-        header ?Link `</docs.jsonld>; rel="http://www.w3.org/ns/hydra/core#apiDocumentation", </.well-known/mercure>; rel="mercure"`
-        # Disable Topics tracking if not enabled explicitly: https://github.com/jkarlin/topics
-        header ?Permissions-Policy "browsing-topics=()"
-
-        php_fastcgi unix//var/run/php/php-fpm.sock {
-            header_up x-token-user-roles ASSET_ADMIN
-            header_up x-token-user-email admin@fake.io
-        }
-        encode zstd gzip
-        file_server
-    }
+  Caddyfile: |-
+    {{- include "common.tplvalues.render" (dict "value" .Values.caddy.configBlock "context" $ ) | nindent 4 }}

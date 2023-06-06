@@ -23,7 +23,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     normalizationContext: ['groups' => ['Instance:read']],
     denormalizationContext: ['groups' => ['Instance:write']],
-    security: "is_granted('ASSET_READ')"
+    security: "is_granted('ASSET_READ')",
+    routePrefix: '/entity',
 )]
 class Instance
 {
@@ -112,7 +113,12 @@ class Instance
     public function getConformity(): bool
     {
         $this->conformity = [];
-        $assetVersion = $this->asset->getVersion() === null ? null : $this->asset->getVersion()->getName();
+        if ($this->asset !== null) {
+            $assetVersion = $this->asset->getVersion() === null ? null : $this->asset->getVersion()->getName();
+        } else {
+            $assetVersion = null;
+        }
+        
         if ($assetVersion !== $this->version)
             $this->conformity['version'] = [ 'assetData' => $assetVersion ];
 

@@ -10,5 +10,13 @@ ingress:
   - hostname: app.local
     paths:
     - path: '/'
+      port: http
   annotations: 
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
+
+existingSecret: "my-existing-secret"
+postgresql:
+  auth:
+    existingSecret: "my-existing-secret"
+    username: app
+    database: api
