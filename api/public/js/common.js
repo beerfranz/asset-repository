@@ -147,6 +147,15 @@ function renderEnvironments(data) {
   return result;
 }
 
+function renderAsset(data) {
+  var render = renderWarningIfEmpty(data);
+  if (render === data) {
+    return '<a href="/ui/assets/' + data + '">' + data + '</a>';
+  } else {
+    return render;
+  }
+}
+
 function renderWarningIfEmpty(data) {
   if (data === undefined || data.length === 0)
     data = '<span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true" data-toggle="tooltip" title="Undefined"></span>';

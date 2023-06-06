@@ -37,14 +37,14 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[Post(security: "is_granted('ASSET_WRITE')")]
 #[Get]
 #[Put(security: "is_granted('ASSET_WRITE')")]
-#[Put(name: 'put_collection_by_source', uriTemplate: '/sources/{sourceId}/assets', 
-    security: "is_granted('ASSET_WRITE')", uriVariables: [ 'sourceId'], 
-    input: AssetBatchDto::class, output: AssetBatchDto::class,)]
-#[Post(security: "is_granted('ASSET_WRITE')", uriTemplate: '/sources/{sourceId}/assets', uriVariables: [ 'sourceId'], input: AssetBatchDto::class, output: AssetBatchDto::class)]
+#[Put(name: 'put_collection_by_source', uriTemplate: '/sources/{sourceId}/assets', uriVariables: [ 'sourceId'], 
+    security: "is_granted('ASSET_WRITE')", input: AssetBatchDto::class, output: AssetBatchDto::class,)]
+#[Post(name: 'post_collection_by_source', uriTemplate: '/sources/{sourceId}/assets', uriVariables: [ 'sourceId'] ,
+    security: "is_granted('ASSET_WRITE')", input: AssetBatchDto::class, output: AssetBatchDto::class)]
 #[Patch(security: "is_granted('ASSET_WRITE')")]
 #[Delete(security: "is_granted('ASSET_WRITE')")]
 #[UniqueEntity(fields: ['identifier'], message: 'There is already an asset this identifier')]
-class Assetv2
+class Asset
 {
     #[Groups(['Asset:read'])]
     public ?int $id = null;
