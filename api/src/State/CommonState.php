@@ -5,6 +5,7 @@ namespace App\State;
 use App\Entity\Owner;
 use App\Entity\Source;
 use App\Entity\Version;
+use App\Entity\Kind;
 
 use App\Repository\RogerRepositoryInterface;
 
@@ -137,5 +138,21 @@ abstract class CommonState {
             $object->setVersion($version);
         }
         return $object;
+    }
+
+    protected function setKindByIdentifier($object, $identifier)
+    {
+        $kindRepo = $this->entityManager->getRepository(Kind::class);
+        $kind = $kindRepo->findOneByIdentifier($identifier);
+
+        // If no kind find in the DB, create a kind
+        if ($kind === null)
+        {
+            $kind = new Kind();
+            $kind->setIdentifier($identifier);
+            $this->entityManager->persist($kind);
+        }
+
+        $object->setKind($kind);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\ApiResource;
 
-use App\State\AssetProcessor;
+use App\State\AssetState;
 use App\Entity\AssetAudit;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -28,17 +28,23 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ApiResource(
     normalizationContext: ['groups' => ['Asset:read']],
-    denormalizationContext: ['grAssetoups' => ['Asset:write']],
-    security: "is_granted('ASSET_READ')"
+    denormalizationContext: ['groups' => ['Asset:write']],
+    security: "is_granted('ASSET_READ')",
+    processor: AssetState::class,
+    provider: AssetState::class,
 )]
 #[GetCollection]
 #[Post(security: "is_granted('ASSET_WRITE')")]
 #[Get]
 #[Put(security: "is_granted('ASSET_WRITE')")]
+#[Put(name: 'put_collection_by_source', uriTemplate: '/sources/{sourceId}/assets', uriVariables: [ 'sourceId'], 
+    security: "is_granted('ASSET_WRITE')", input: AssetBatchDto::class, output: AssetBatchDto::class,)]
+#[Post(name: 'post_collection_by_source', uriTemplate: '/sources/{sourceId}/assets', uriVariables: [ 'sourceId'] ,
+    security: "is_granted('ASSET_WRITE')", input: AssetBatchDto::class, output: AssetBatchDto::class)]
 #[Patch(security: "is_granted('ASSET_WRITE')")]
 #[Delete(security: "is_granted('ASSET_WRITE')")]
 #[UniqueEntity(fields: ['identifier'], message: 'There is already an asset this identifier')]
-class Assetv2
+class Asset
 {
     #[Groups(['Asset:read'])]
     public ?int $id = null;

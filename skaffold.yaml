@@ -13,6 +13,10 @@ build:
       docker:
         target: app_caddy
 
+# manifests:
+#   rawYaml:
+#     - skaffold-extra-manifests.yaml
+
 deploy:
   kubeContext: minikube
   helm:
@@ -27,3 +31,7 @@ deploy:
         caddy.image.tag: "{{.IMAGE_TAG_asset_repository_caddy}}@{{.IMAGE_DIGEST_asset_repository_caddy}}"
       valuesFiles:
         - skaffold-values.yaml
+    hooks:
+      before:
+        - host:
+            command: [ "kubectl", "--context=minikube", "apply", "-f", "skaffold-extra-manifests.yaml" ]

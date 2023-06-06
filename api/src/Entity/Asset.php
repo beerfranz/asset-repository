@@ -36,7 +36,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     normalizationContext: ['groups' => ['Asset:read']],
     denormalizationContext: ['groups' => ['Asset:write']],
-    security: "is_granted('ASSET_READ')"
+    security: "is_granted('ASSET_READ')",
+    routePrefix: '/entity',
 )]
 #[GetCollection]
 #[Post(security: "is_granted('ASSET_WRITE')")]

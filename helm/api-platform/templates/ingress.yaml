@@ -29,7 +29,7 @@ spec:
           {{- range .paths }}
           - path: {{ .path | default "/" }}
             pathType: {{ .pathType | default "Prefix" }}
-            backend: {{- include "common.ingress.backend" ( dict "serviceName" $fullName "servicePort" $svcPort "context" $) | nindent 14 }}
+            backend: {{- include "common.ingress.backend" ( dict "serviceName" $fullName "servicePort" .port "context" $) | nindent 14 }}
           {{- end }}
     {{- end }}
   {{- if or (and .Values.ingress.tls (or (include "common.ingress.certManagerRequest" ( dict "annotations" .Values.ingress.annotations )) .Values.ingress.selfSigned)) .Values.ingress.extraTls }}

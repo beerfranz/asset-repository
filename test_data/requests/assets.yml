@@ -3,20 +3,25 @@ templates:
     labels:
       app: angular
       technology: K8s-pod
-    owner: DSI
-    source: test_data_assets
+    kind:
+      identifier: app
   _common_helm: &_common_helm
-    owner: DevSecOps
+    owner:
+      identifier: DevSecOps
     source: test_data_assets
+    kind:
+      identifier: helm
     labels:
       app: angular
       technology: helm
 
 request:
   method: PUT
-  path: /batch_assets
+  path: /sources/test_data_assets/assets
 
 data:
+  owner:
+    identifier: DSI
   assets:
     - identifier: angular-develop-develop
       version: 0.0.1
@@ -30,3 +35,4 @@ data:
     - identifier: helm-angular
       version: 0.0.1
       <<: *_common_helm
+

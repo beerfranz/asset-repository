@@ -13,18 +13,19 @@ for json in $(find . -type f -name *.json); do
 	path=$(jq -r .request.path ${json})
 	jq -r .data ${json} > ${data_file}
 
-	http_code=$(curl -X ${method} -s -o /dev/null -w "%{http_code}" -k -H 'Content-type: application/json' http://caddy:8080${path} -d @${data_file})
+	request="curl -X ${method} -s -k -H 'Content-type: application/json' ${ASSET_REPOSITORY_URL}${path} -d @${data_file}"
+	http_code=$(eval "${request} -w '%{http_code}' -o /dev/null")
 	case $http_code in
 		"200"|"201")
 		;;
 		*) echo "Error, bad response code ${http_code}";
-			echo "request:"
-			echo "curl -X ${method} -s -o /dev/null -w "%{http_code}" -k -H 'Content-type: application/json' http://caddy:8080${path} -d @${data_file}"
-			echo "data:"
-			cat ${data_file}
+			echo "request: ${request}"
+			echo -n "data: "
+			jq -c . ${data_file}
+			# eval ${request}
 		exit 1
 	esac
-	# curl -k -H 'Content-type: application/json' -H 'Host: localhost' https://caddy/assets
+
 done
 
 for tmp in $(find . -type f -name *.yml.json); do

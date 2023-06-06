@@ -100,12 +100,13 @@ services:
     environment:
       - ADMINER_DEFAULT_SERVER=database
 
-  test_data:
-    image: linuxserver/yq:3.2.2
-    working_dir: /app
+  yaml_exporter:
+    build:
+      context: test_data
+    environment:
+      - ASSET_REPOSITORY_URL=http://caddy:8080
     volumes:
-      - ./test_data:/app
-    entrypoint: ./script.sh 
+      - ./test_data/requests:/app/requests
 
 # Mercure is installed as a Caddy module, prevent the Flex recipe from installing another service
 ###> symfony/mercure-bundle ###
