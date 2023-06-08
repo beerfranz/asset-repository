@@ -101,7 +101,12 @@ function rogerInitFilters(filterId, dataTableId) {
           data: filters,
           success: function(data) {
             if (responseField = element.attr('autocomplete-response-field')) {
-              response(data['hydra:member'].map(x => x[responseField]));
+              if (responseField.split('.').length == 2 ) {
+                item = responseField.split('.');
+                response(data['hydra:member'].map(x => x[item[0]][item[1]]));
+              } else {
+                response(data['hydra:member'].map(x => x[responseField]));
+              }
             }
             else if (found.length === 0) {
               response(data['hydra:member'].map(x => x[elementName] ));

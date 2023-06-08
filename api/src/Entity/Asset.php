@@ -46,8 +46,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Patch(security: "is_granted('ASSET_WRITE')")]
 #[Delete(security: "is_granted('ASSET_WRITE')")]
 #[ApiFilter(OrderFilter::class, properties: ['id', 'identifier'])]
-#[ApiFilter(AutocompleteFilter::class, properties: [ 'identifier', 'assetDefinition.identifier', 'kind.identifier'])]
-#[ApiFilter(GroupFilter::class, arguments: ['parameterName' => 'groups', 'overrideDefaultGroups' => true, 'whitelist' => ['Asset:identifier', 'AssetDefinition:identifier', 'Kind:identifier']])]
+#[ApiFilter(AutocompleteFilter::class, properties: [ 'identifier', 'assetDefinition.identifier', 'kind.identifier', 'environment.identifier'])]
+#[ApiFilter(GroupFilter::class, arguments: ['parameterName' => 'groups', 'overrideDefaultGroups' => true, 'whitelist' => ['Asset:identifier', 'AssetDefinition:identifier', 'Kind:identifier', 'Asset:environment']])]
 #[UniqueEntity(fields: ['identifier'], message: 'There is already an asset this identifier')]
 class Asset
 {
@@ -105,6 +105,10 @@ class Asset
     #[ORM\ManyToOne(inversedBy: 'assets', cascade: ['persist'])]
     #[Groups(['Asset:read', 'Asset:write', 'Asset:kind'])]
     private ?Kind $kind = null;
+
+    #[ORM\ManyToOne(inversedBy: 'Assets')]
+    #[Groups(['Asset:read', 'Asset:environment'])]
+    private ?Environment $environment = null;
 
     public function __construct()
     {
@@ -305,6 +309,18 @@ class Asset
     public function setKind(?Kind $kind): self
     {
         $this->kind = $kind;
+
+        return $this;
+    }
+
+    public function getEnvironment(): ?Environment
+    {
+        return $this->environment;
+    }
+
+    public function setEnvironment(?Environment $environment): self
+    {
+        $this->environment = $environment;
 
         return $this;
     }

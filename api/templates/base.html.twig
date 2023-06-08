@@ -47,7 +47,7 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
-            {% if is_granted('ROLE_ARCHITECT_ADMIN') %}
+            {% if is_granted('ROLE_ASSET_ADMIN') %}
             <li class="dropdown {{ navbar.asset_definitions|default('') }} {{ navbar.environment_definitions|default('') }} {{ navbar.map|default('') }}">
               <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Architecture <span class="caret"></span>
@@ -60,6 +60,7 @@
             </li>
             {% endif %}
             {% if is_granted('ROLE_ASSET_ADMIN') %}
+            <li class="{{ navbar.environments|default('') }}"><a href="/ui/environments">Environments</a></li>
             <li class="{{ navbar.assets|default('') }}"><a href="/ui/assets">Assets</a></li>
             <li class="{{ navbar.instances|default('') }}"><a href="/ui/instances">Instances</a></li>
             <li class="{{ navbar.versions|default('') }}"><a href="/ui/versions">Versions</a></li>
