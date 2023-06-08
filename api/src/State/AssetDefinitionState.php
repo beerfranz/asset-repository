@@ -5,10 +5,10 @@ namespace App\State;
 use App\Entity\AssetDefinition;
 use App\Entity\AssetDefinitionRelation;
 use App\Entity\EnvironmentDefinition;
-use App\Entity\Version;
+use App\Entity\Source;
 use App\Entity\Owner;
 use App\ApiResource\Version as VersionDto;
-use App\ApiResource\BatchAssetDefinition;
+use App\ApiResource\AssetDefinitionBatchDto;
 
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;
@@ -27,8 +27,10 @@ use Psr\Log\LoggerInterface;
 
 final class AssetDefinitionState extends CommonState implements ProcessorInterface, ProviderInterface
 {
-    protected $repo;
-    protected $repoEnvironmentDefinition;
+    protected $assetDefinitionRepo;
+    protected $environmentDefinitionRepo;
+    protected $relationRepo;
+    protected $sourceRepo;
 
     use TraitDefinitionPropagate;
 
@@ -39,14 +41,25 @@ final class AssetDefinitionState extends CommonState implements ProcessorInterfa
         Security $security,
     ) {
         parent::__construct($entityManager, $request, $logger, $security);
-        $this->repo = $entityManager->getRepository(AssetDefinition::class);
-        $this->repoEnvironmentDefinition = $entityManager->getRepository(EnvironmentDefinition::class);
-        $this->repoRelation = $entityManager->getRepository(AssetDefinitionRelation::class);
+        $this->assetDefinitionRepo = $entityManager->getRepository(AssetDefinition::class);
+        $this->environmentDefinitionRepo = $entityManager->getRepository(EnvironmentDefinition::class);
+        $this->relationRepo = $entityManager->getRepository(AssetDefinitionRelation::class);
+        $this->sourceRepo = $entityManager->getRepository(Source::class);
     }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
-        return false;
+        if ($operation instanceof CollectionOperationInterface)
+        {
+            return $this->getCollection($this->assetRepo, $context);
+        }
+
+        if ($context['input']['class'] === AssetDefinitionBatchDto::class) {
+            $output = new AssetDefinitionBatchDto();
+            return $output;
+        }
+        
+        return $this->assetRepo->findOneByIdentifier(null, $uriVariables['name']);
     }
     
     /**
@@ -54,14 +67,72 @@ final class AssetDefinitionState extends CommonState implements ProcessorInterfa
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
-        return false;
+        
+        if ($data instanceof AssetDefinitionBatchDto)
+        {
+            $identifiers = [];
+
+            foreach($data->getAssetDefinitions() as $input)
+            {
+                if (isset($uriVariables['sourceId'])) {
+                    if ($input['source'] !== null && $input['source'] !== $uriVariables['sourceId'])
+                        throw new \Exception('Invalid source "' . $input['source'] . '" for the asset definition "'. $input['identifier'] . '". The source must be omitted or same as the URL path "' . $uriVariables['sourceId'] . '"');
+                    $input['source'] = $uriVariables['sourceId'];
+                }
+
+                $assetDefinition = $this->processOneAssetDefinition($input);
+                $identifiers[] = $assetDefinition->getIdentifier();
+
+                if (isset($input['relations']))
+                {
+                    foreach($input['relations'] as $relation)
+                    {
+                        if (isset($relation['identifier']) && isset($relation['relation'])) {
+                            $assetDefinitionRelationTo = $this->assetDefinitionRepo->findOneByIdentifier($relation['identifier']);
+
+                            // Add only minimal data
+                            if ($assetDefinitionRelationTo === null) {
+                                throw new \Exception('Cannot create a relation between ' . $assetDefinition->getIdentifier() . ' and ' . $relation['identifier'] . '. No AssetDefinition with the identifier ' . $relation['identifier'] . '. You must create the AssetDefinition before.');
+                            }
+
+                            $this->processOneAssetDefinitionRelation($assetDefinition, $assetDefinitionRelationTo, $relation);
+                        }
+                    }
+                }
+
+                $this->updateAssets($assetDefinition);
+
+            }
+            
+            if ($operation instanceof Put && $uriVariables['sourceId'] !== null)
+            {
+                $source = $this->sourceRepo->findOneByName($uriVariables['sourceId']);
+
+                $assetDefinitionsToRemove = $this->assetDefinitionRepo->findAssetDefinitionsByidentifiersNotIn($identifiers, [ 'source' => $source->getId() ] );
+                foreach ($assetDefinitionsToRemove as $assetDefinition)
+                {
+                    foreach ($assetDefinition->getAssets() as $asset) {
+                        $asset->setAssetDefinition(null);
+                        $this->entityManager->persist($asset);
+                    }
+
+                    // Delete the asset
+                    $this->entityManager->remove($assetDefinition);
+                }
+                $this->entityManager->flush();
+            
+            }
+        } else {
+            $identifiers[] = $this->processOneAsset($input)->getIdentifier();
+        }
+
     }
 
     public function processOneAssetDefinition($data)
     {
         $identifier = $data['identifier'];
 
-        $assetDefinition = $this->repo->findOneByIdentifier($identifier);
+        $assetDefinition = $this->assetDefinitionRepo->findOneByIdentifier($identifier);
 
         if ($assetDefinition === null)
         {
@@ -78,7 +149,7 @@ final class AssetDefinitionState extends CommonState implements ProcessorInterfa
         $this->setSource($assetDefinition, $data['source']);
 
         if (isset($data['environmentDefinition'])) {
-            $environmentDefinition = $this->repoEnvironmentDefinition->findOneByIdentifier($data['environmentDefinition']);
+            $environmentDefinition = $this->environmentDefinitionRepo->findOneByIdentifier($data['environmentDefinition']);
             $assetDefinition->setEnvironmentDefinition($environmentDefinition);
         }
 
@@ -97,7 +168,7 @@ final class AssetDefinitionState extends CommonState implements ProcessorInterfa
 
     public function processOneAssetDefinitionRelation(AssetDefinition $assetDefinitionRelationFrom, AssetDefinition $assetDefinitionRelationTo, $data)
     {
-        $assetDefinitionRelation = $this->repoRelation->findOneByIdentifier($assetDefinitionRelationFrom, $assetDefinitionRelationTo);
+        $assetDefinitionRelation = $this->relationRepo->findOneByIdentifier($assetDefinitionRelationFrom, $assetDefinitionRelationTo);
 
         if ($assetDefinitionRelation === null)
         {
