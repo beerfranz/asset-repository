@@ -98,6 +98,12 @@ class IndexController extends AbstractController
     return $this->render('kinds.html.twig', [ 'navbar' => [ 'kinds' => 'active' ] ]);
   }
 
+  #[Route('/ui/environments', name: 'getEnvironments', methods: ['GET'])]
+  public function getEnvironments(Request $request): Response
+  {
+    return $this->render('environments.html.twig', [ 'navbar' => [ 'environments' => 'active' ] ]);
+  }
+
   #[Route('/ui/map', name: 'getMap', methods: ['GET'])]
   public function getMap(Request $request): Response
   {

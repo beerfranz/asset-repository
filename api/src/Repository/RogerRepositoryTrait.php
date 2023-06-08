@@ -82,8 +82,9 @@ trait RogerRepositoryTrait {
         
         if ($matches = $this->decodeSubResource($filter)) {
             $subResource = $matches[1];
-            $queryBuilder->leftJoin($rootAlias . '.' . $subResource, 'u');
-            $rootAlias = 'u';
+            $alias = 't_' . uniqid();
+            $queryBuilder->leftJoin($rootAlias . '.' . $subResource, $alias);
+            $rootAlias = $alias;
 
             $filter = $matches[2];
         }

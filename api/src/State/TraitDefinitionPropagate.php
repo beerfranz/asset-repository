@@ -4,10 +4,16 @@ namespace App\State;
 
 use App\Entity\Asset;
 use App\Entity\AssetDefinition;
+use App\Entity\Environment;
+use App\Entity\EnvironmentDefinition;
 use App\Entity\Kind;
 
 trait TraitDefinitionPropagate {
     public function updateAssets(AssetDefinition $assetDefinition) {
+        $assetRepo = $this->entityManager->getRepository(Asset::class);
+        $kindRepo = $this->entityManager->getRepository(Kind::class);
+        $environmentRepo = $this->entityManager->getRepository(Environment::class);
+
         $envs = [];
 
         $environmentDefinition = $assetDefinition->getEnvironmentDefinition();
@@ -15,24 +21,43 @@ trait TraitDefinitionPropagate {
         if ($environmentDefinition === null)
             return true;
 
-        foreach($environmentDefinition->getAttributes() as $env => $value)
+        foreach($environmentDefinition->getAttributes() as $envIdentifier => $value)
         {
             if (is_array($value)) {
-                foreach($value as $subEnv)
+                foreach($value as $subEnvIdentifier)
                 {
-                    $envs[] = $env . '-' . $subEnv;
+                    $subEnvIdentifier = $envIdentifier . '-' . $subEnvIdentifier;
+                    $env = $environmentRepo->findOneByIdentifier($subEnvIdentifier);
+                    if ($env === null) {
+                        $env = new Environment();
+                        $env->setIdentifier($subEnvIdentifier);
+                        $env->setName(ucfirst($subEnvIdentifier));
+
+                        $this->entityManager->persist($env);
+                        $this->entityManager->flush();
+                    }
+                    $envs[] = $env;
                 }
             } else {
+                $env = $environmentRepo->findOneByIdentifier($envIdentifier);
+                if ($env === null) {
+                    $env = new Environment();
+                    $env->setIdentifier($envIdentifier);
+                    $env->setName(ucfirst($envIdentifier));
+
+                    $this->entityManager->persist($env);
+                    $this->entityManager->flush();
+                }
                 $envs[] = $env;
             }
         }
 
-        $assetRepo = $this->entityManager->getRepository(Asset::class);
-        $kindRepo = $this->entityManager->getRepository(Kind::class);
-
-        foreach($envs as $environmentName)
+        
+        foreach($envs as $environment)
         {
-            $assetIdentifier = $assetDefinition->getIdentifier() . '-' . $environmentName;
+            $environmentIdentifier = $environment->getIdentifier();
+
+            $assetIdentifier = $assetDefinition->getIdentifier() . '-' . $environmentIdentifier;
 
             $asset = $assetRepo->findOneByIdentifier($assetIdentifier);
 
@@ -42,6 +67,7 @@ trait TraitDefinitionPropagate {
                 $asset->setIdentifier($assetIdentifier);
             }
 
+            // labels
             $labels = $assetDefinition->getLabels();
 
             if (isset($labels['kind'])) {
@@ -58,16 +84,21 @@ trait TraitDefinitionPropagate {
             }
 
             $labels = array_merge($asset->getLabels(), $labels);
-            $labels['environment'] = $environmentName;
+            $labels['environment'] = $environment->getName();
             $asset->setLabels($labels);
 
+            // Owner
             $asset->setOwner($assetDefinition->getOwner());
+            // Source
             $asset->setSource($assetDefinition->getSource());
-
+            // AssetDefinition
             $asset->setAssetDefinition($assetDefinition);
+            // Environment
+            $asset->setEnvironment($environment);
 
             $this->entityManager->persist($asset);
             $this->entityManager->flush();
         }
     }
+
 }

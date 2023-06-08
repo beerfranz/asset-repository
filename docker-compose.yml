@@ -100,7 +100,7 @@ services:
     environment:
       - ADMINER_DEFAULT_SERVER=database
 
-  yaml_exporter:
+  test_data:
     build:
       context: test_data
     environment:
