@@ -24,6 +24,7 @@ services:
       MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       AUTH_HEADER_ROLES: x-token-user-roles
       AUTH_HEADER_EMAIL: x-token-user-email
+      JWTS_URL: https://keycloak/realms/myRealm/protocol/openid-connect/certs
 
   # pwa:
   #   build:
@@ -101,8 +102,7 @@ services:
       - ADMINER_DEFAULT_SERVER=database
 
   test_data:
-    build:
-      context: test_data
+    image: ghcr.io/beerfranz/asset-repository-file-exporter:0.0.2
     environment:
       - ASSET_REPOSITORY_URL=http://caddy:8080
     volumes:

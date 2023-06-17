@@ -6,6 +6,7 @@
 parameters:
     auth.header.email: '%env(AUTH_HEADER_EMAIL)%'
     auth.header.roles: '%env(AUTH_HEADER_ROLES)%'
+    jwts_url: '%env(resolve:JWTS_URL)%'
 
 services:
     # default configuration for services in *this* file
