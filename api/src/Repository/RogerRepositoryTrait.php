@@ -4,12 +4,13 @@ namespace App\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 // use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 
 trait RogerRepositoryTrait {
 
-   public function rogerFindBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): array
+   public function rogerFindBy(array $criteria, array $orderBy = null, $limit = null, $offset = null, $paginator = false): array|Paginator
    {
        $q = $this->createQueryBuilder('s')
             ->setMaxResults($limit)
@@ -27,7 +28,13 @@ trait RogerRepositoryTrait {
             $this->addFilter($q, $filter, $value, $rootAlias);
         }
 
-        return $q->getQuery()->getResult();
+        $query = $q->getQuery();
+
+        if ($paginator) {
+            return new Paginator($query, $fetchJoinCollection = true);
+        }
+
+        return $query->getResult();
    }
 
     public function findOneByName($value): ?Object

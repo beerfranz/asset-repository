@@ -24,22 +24,22 @@ abstract class Functional extends ApiTestCase {
 
 	protected function getAdminUser()
 	{
-		return [ 'x-token-user-email' => 'unittest-admin@local.com', 'x-token-user-roles' => 'ASSET_ADMIN' ];
+		return [ 'x-token-user-email' => 'unittest-admin@local.com', 'x-token-user-roles' => 'ROLE_ASSET_ADMIN' ];
 	}
 
 	protected function getReadUser()
 	{
-		return [ 'x-token-user-email' => 'unittest-reader@local.com', 'x-token-user-roles' => 'ASSET_READ' ];
+		return [ 'x-token-user-email' => 'unittest-reader@local.com', 'x-token-user-roles' => 'ROLE_ASSET_READ' ];
 	}
 
 	protected function getWriteUser1()
 	{
-		return [ 'x-token-user-email' => 'unittest-writer-1@local.com', 'x-token-user-roles' => 'ASSET_WRITE' ];
+		return [ 'x-token-user-email' => 'unittest-writer-1@local.com', 'x-token-user-roles' => 'ROLE_ASSET_WRITE' ];
 	}
 
 	protected function getWriteUser2()
 	{
-		return [ 'x-token-user-email' => 'unittest-writer-2@local.com', 'x-token-user-roles' => 'ASSET_WRITE' ];
+		return [ 'x-token-user-email' => 'unittest-writer-2@local.com', 'x-token-user-roles' => 'ROLE_ASSET_WRITE' ];
 	}
 
 	protected function getClientAdmin()

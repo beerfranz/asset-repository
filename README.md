@@ -33,6 +33,11 @@ TO DO:
 * export des assets aws, azure
 
 
+module Versions:
+* registry: collection of packages
+  * package: attributes
+  * version: just a number
+* release: collection of packages
 
 POC:
 - envDef:
@@ -67,6 +72,23 @@ Caddy add HTTP headers containing user identifier and roles.
 The PHP app use this HTTP headers to check authorizations.
 
 ## Developer guide
+
+### Performances
+
+**Memory**
+* https://stackoverflow.com/questions/26616861/memory-leak-when-executing-doctrine-query-in-loop
+* https://www.doctrine-project.org/projects/doctrine-orm/en/2.11/reference/batch-processing.html#iterating-large-results-for-data-processing
+* https://accesto.com/blog/how-to-improve-code-performance-in-5-easy-steps/
+* Debug memory usage:
+```
+echo '<pre>';
+$vars = get_defined_vars();
+foreach($vars as $name=>$var)
+{
+    echo '<strong>' . $name . '</strong>: ' . strlen(serialize($var)) . '<br />';
+}
+exit();
+```
 
 ### Tests
 

@@ -10,6 +10,7 @@ services:
 #    restart: unless-stopped
     volumes:
       - php_socket:/var/run/php
+    command: [ "-d", "memory_limit=512M" ]
     healthcheck:
       interval: 10s
       timeout: 3s
@@ -24,6 +25,7 @@ services:
       MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       AUTH_HEADER_ROLES: x-token-user-roles
       AUTH_HEADER_EMAIL: x-token-user-email
+      PHP_MEMORY_LIMIT: 512M
 
   # pwa:
   #   build:

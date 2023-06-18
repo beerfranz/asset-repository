@@ -30,6 +30,9 @@ class Version
     #[Groups(['Version:read'])]
     private ?AssetDefinition $assetDefinition = null;
 
+    #[ORM\ManyToOne(inversedBy: 'versions')]
+    private ?Registry $registry = null;
+
     public function __construct()
     {
         $this->assets = new ArrayCollection();
@@ -90,6 +93,18 @@ class Version
     public function setAssetDefinition(?AssetDefinition $assetDefinition): self
     {
         $this->assetDefinition = $assetDefinition;
+
+        return $this;
+    }
+
+    public function getRegistry(): ?Registry
+    {
+        return $this->registry;
+    }
+
+    public function setRegistry(?Registry $registry): self
+    {
+        $this->registry = $registry;
 
         return $this;
     }

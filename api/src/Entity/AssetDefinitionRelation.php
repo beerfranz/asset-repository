@@ -21,12 +21,12 @@ class AssetDefinitionRelation
     #[Groups(['AssetDefinition:read'])]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'assetDefinitionRelations', cascade: ['persist'])]
+    #[ORM\ManyToOne(inversedBy: 'relationsFrom', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['AssetDefinition:read'])]
     private ?AssetDefinition $assetDefinitionFrom = null;
 
-    #[ORM\ManyToOne(inversedBy: 'assetDefinitionRelationsTo', cascade: ['persist'])]
+    #[ORM\ManyToOne(inversedBy: 'relationsTo', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['AssetDefinition:read'])]
     private ?AssetDefinition $assetDefinitionTo = null;

@@ -79,6 +79,25 @@
 	</div>
 </div>
 
+<div class="row">
+	<div class="col-md-12">
+	    <h3>Audits</h3>
+	    <table class="table">
+	      <thead><tr><th>Datetime</th><th>Actor</th><th>Action</th><th>Data</th></tr></thead>
+	      <tbody id="audit-table">
+	      	{% for audit in asset.assetAudits %}
+	      		<tr>
+	      			<td>{{ audit.datetime }}</td>
+	      			<td>{{ audit.actor }}</td>
+	      			<td>{{ audit.action }}</td>
+	      			<td>{{ audit.data }}</td>
+	      		</tr>
+	      	{% endfor %}
+	      </tbody>
+	    </table>
+	</div>
+</div>
+
 {% endblock %}
 
 {% block js %}

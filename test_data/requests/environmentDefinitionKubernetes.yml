@@ -6,7 +6,4 @@ data:
   identifier: kubernetes
   name: Kubernetes
   attributes:
-    dev-aws-fr1: {}
-    prod-aws-fr1: {}
-    admin-aws-fr1: {}
-    prod-aws-us1: {}
+    main: {}

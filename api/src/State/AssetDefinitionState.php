@@ -116,6 +116,11 @@ final class AssetDefinitionState extends CommonState implements ProcessorInterfa
                         $this->entityManager->persist($asset);
                     }
 
+                    foreach ($assetDefinition->getVersions() as $version) {
+                        $version->setAssetDefinition(null);
+                        $this->entityManager->persist($version);
+                    }
+
                     // Delete the asset
                     $this->entityManager->remove($assetDefinition);
                 }

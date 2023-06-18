@@ -43,22 +43,25 @@ abstract class CommonState {
         $order = [ 'id' => 'asc'];
         $criteria = [];
 
-        foreach ($context['filters'] as $filter => $value)
-        {
-            switch($filter) {
-                case '_': break;
-                case 'page':
-                case 'itemsPerPage':
-                case 'order':
-                    $$filter = $value;
-                    break;
-                default:
-                    $criteria[$filter] = $value;
+        if (isset($context['filters'])) {
+
+            foreach ($context['filters'] as $filter => $value)
+            {
+                switch($filter) {
+                    case '_': break;
+                    case 'page':
+                    case 'itemsPerPage':
+                    case 'order':
+                        $$filter = $value;
+                        break;
+                    default:
+                        $criteria[$filter] = $value;
+                }
             }
         }
 
         if ($repo instanceof RogerRepositoryInterface) {
-            return $repo->rogerFindBy($criteria, $order, $itemsPerPage, ($page - 1) * $itemsPerPage);
+            return $repo->rogerFindBy($criteria, $order, $itemsPerPage, ($page - 1) * $itemsPerPage, true);
         }
 
         return $repo->findBy($criteria, $order, $itemsPerPage, ($page - 1) * $itemsPerPage);
@@ -86,6 +89,9 @@ abstract class CommonState {
 
     protected function setSource($object, $name)
     {
+        if ($object->getSource() !== null)
+            return $object;
+        
         if ($name !== null)
         {
             $repoSource = $this->entityManager->getRepository(Source::class);

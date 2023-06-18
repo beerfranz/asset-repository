@@ -81,7 +81,7 @@ class Asset
     #[ORM\ManyToOne(inversedBy: 'assets', cascade: ['persist'])]
     private ?Owner $owner = null;
 
-    #[ORM\ManyToOne(inversedBy: 'assets', cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(inversedBy: 'assets', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: true)]
     #[Groups(['Asset:read'])]
     private ?Source $source = null;
@@ -94,7 +94,7 @@ class Asset
     #[Groups(['Asset:read'])]
     private Collection $instances;
 
-    #[ORM\ManyToOne(inversedBy: 'assets', cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(inversedBy: 'assets')]
     #[Groups(['Asset:read', 'AssetDefinition:identifier'])]
     private ?AssetDefinition $assetDefinition = null;
 
@@ -106,7 +106,7 @@ class Asset
     #[Groups(['Asset:read', 'Asset:write', 'Asset:kind'])]
     private ?Kind $kind = null;
 
-    #[ORM\ManyToOne(inversedBy: 'Assets')]
+    #[ORM\ManyToOne(inversedBy: 'assets')]
     #[Groups(['Asset:read', 'Asset:environment'])]
     private ?Environment $environment = null;
 

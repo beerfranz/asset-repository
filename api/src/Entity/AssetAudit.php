@@ -34,23 +34,23 @@ class AssetAudit
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['AssetAudit:read', 'Asset:read', 'Asset:write'])]
+    #[Groups(['AssetAudit:read', 'Asset:read'])]
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Groups(['AssetAudit:read', 'AssetAudit:write', 'Asset:read', 'Asset:write'])]
+    #[Groups(['AssetAudit:read', 'AssetAudit:write', 'Asset:read'])]
     private ?\DateTimeImmutable $datetime = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['AssetAudit:read', 'AssetAudit:write', 'Asset:read', 'Asset:write'])]
+    #[Groups(['AssetAudit:read', 'AssetAudit:write', 'Asset:read'])]
     private ?string $actor = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['AssetAudit:read', 'AssetAudit:write', 'Asset:read', 'Asset:write'])]
+    #[Groups(['AssetAudit:read', 'AssetAudit:write', 'Asset:read'])]
     private ?string $action = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['AssetAudit:read', 'AssetAudit:write', 'Asset:read', 'Asset:write', 'AssetAudit:identifier'])]
+    #[Groups(['AssetAudit:read', 'AssetAudit:write', 'Asset:read', 'AssetAudit:identifier'])]
     private ?string $subject = null;
 
     #[ORM\ManyToOne(inversedBy: 'assetAudits')]
@@ -58,7 +58,7 @@ class AssetAudit
     private ?Asset $asset = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['AssetAudit:read', 'AssetAudit:write', 'Asset:read', 'Asset:write'])]
+    #[Groups(['AssetAudit:read', 'AssetAudit:write', 'Asset:read'])]
     private array $data = [];
 
     public function getId(): ?int

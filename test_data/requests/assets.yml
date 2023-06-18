@@ -1,19 +1,7 @@
 templates:
-  _common_pod: &_common_pod
-    labels:
-      app: angular
-      technology: K8s-pod
+  _app: &_app
     kind:
       identifier: app
-  _common_helm: &_common_helm
-    owner:
-      identifier: DevSecOps
-    source: test_data_assets
-    kind:
-      identifier: helm
-    labels:
-      app: angular
-      technology: helm
 
 request:
   method: PUT
@@ -23,16 +11,18 @@ data:
   owner:
     identifier: DSI
   assets:
-    - identifier: angular-develop-develop
-      version: 0.0.1
-      <<: *_common_pod
-    - identifier: angular-develop-groot
-      version: 0.0.1
-      <<: *_common_pod
-    - identifier: angular-preprod-preprod
-      version: 0.0.1
-      <<: *_common_pod
-    - identifier: helm-angular
-      version: 0.0.1
-      <<: *_common_helm
-
+    - identifier: front-integration-main
+      version: 1.0.1-branch-1
+      <<: *_app
+    - identifier: front-integration-test1
+      version: 1.0.1-branch-2
+      <<: *_app
+    - identifier: front-preprod-main
+      version: 1.0.0
+      <<: *_app
+    - identifier: front-prod-main
+      version: 1.0.0
+      <<: *_app
+    # - identifier: orphaned-app
+    #   version: 1.0.0
+    #   <<: *_app

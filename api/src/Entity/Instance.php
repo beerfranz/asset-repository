@@ -35,7 +35,7 @@ class Instance
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['Instance:read', 'Instance:write', 'Instance:identifier'])]
+    #[Groups(['Instance:read', 'Instance:write', 'Instance:identifier', 'Asset:read'])]
     private ?string $identifier = null;
 
     #[ORM\Column(nullable: true)]
@@ -52,7 +52,7 @@ class Instance
 
     private array $conformity = [];
 
-    #[ORM\ManyToOne(inversedBy: 'instances', cascade: ['persist'])]
+    #[ORM\ManyToOne(inversedBy: 'instances')]
     #[Groups(['Instance:read', 'Instance:write'])]
     private ?Source $source = null;
 

@@ -8,14 +8,34 @@ data:
     identifier: DSI
   source: test_data_assetDefinitions
   assetDefinitions:
-  - identifier: angular
-    name: Angular
+  - identifier: database
+    name: Database
+    kind:
+      identifier: database
+    # relations:
+    #   - identifier: backend
+    #     relation: connection
+  - identifier: front
+    name: Front
     kind:
       identifier: app
     environmentDefinition: application
-  - identifier: angular-helm
+  - identifier: backend
+    name: Backend
+    kind:
+      identifier: app
+    environmentDefinition: application
+  - identifier: front-helm
     relations:
-      - identifier: angular
+      - identifier: front
+        relation: package
+    kind:
+      identifier: helm
+    owner: 
+      identifier: DevSecOps
+  - identifier: backend-helm
+    relations:
+      - identifier: backend
         relation: package
     kind:
       identifier: helm
@@ -28,5 +48,5 @@ data:
     owner: DevSecOps
     environmentDefinition: kubernetes
     relations:
-      - identifier: angular-helm
+      - identifier: front-helm
         relation: host
