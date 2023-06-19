@@ -52,7 +52,7 @@ class Instance
 
     private array $conformity = [];
 
-    #[ORM\ManyToOne(inversedBy: 'instances')]
+    #[ORM\ManyToOne(inversedBy: 'instances', cascade: ['persist'])]
     #[Groups(['Instance:read', 'Instance:write'])]
     private ?Source $source = null;
 
