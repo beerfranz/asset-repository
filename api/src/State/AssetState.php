@@ -87,23 +87,12 @@ final class AssetState extends CommonState implements ProcessorInterface, Provid
                 // $this->assetRepo->deleteBySourceAndidentifiersNotIn($source, $identifiers);
                 $assetToRemove = $this->assetRepo->findAssetsByidentifiersNotIn($identifiers, [ 'source' => $source ]);
                 foreach ($assetToRemove as $asset) {
-                    foreach ($asset->getAssetAudits() as $audit) {
-                        $audit->setAsset(null);
-                        $this->entityManager->persist($audit);
-                    }
-                    $this->entityManager->remove($asset);
-                    $this->entityManager->flush();
-                    $this->entityManager->clear();
+                    $this->delete($asset);
                 }
             }
         } else {
             if ($operation instanceof Delete) {
-                foreach ($data->getAssetAudits() as $audit) {
-                    $audit->setAsset(null);
-                    $this->entityManager->persist($audit);
-                }
-                $this->entityManager->remove($data);
-                $this->entityManager->flush();
+                $this->delete($data);
             } else {
                 if (isset($uriVariables['id']))
                 $data->id = $uriVariables['id'];
@@ -155,8 +144,9 @@ final class AssetState extends CommonState implements ProcessorInterface, Provid
         // Source
         $this->setSource($asset, $data['source']);
 
-        if (isset($data['labels']))
+        if (isset($data['labels'])){
             $asset->setLabels($data['labels']);
+        }
 
         // Kind
         if (isset($data['kind'])) {
@@ -178,5 +168,15 @@ final class AssetState extends CommonState implements ProcessorInterface, Provid
         $this->entityManager->clear();
 
         return $asset;
+    }
+
+    protected function delete(Asset $asset) {
+        foreach ($asset->getAssetAudits() as $audit) {
+            $audit->setAsset(null);
+            $this->entityManager->persist($audit);
+        }
+        $this->entityManager->remove($asset);
+        $this->entityManager->flush();
+        $this->entityManager->clear();
     }
 }

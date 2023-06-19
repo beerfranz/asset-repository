@@ -58,36 +58,36 @@ class AssetTest extends Functional
     ]);
 
     // Update asset
-    // static::createClient()->request('PATCH', '/assets/1', [ 
-    //   'headers' => array_merge($userHeaders, [ 'Content-Type' => 'application/merge-patch+json']),
-    //   'json' => [ 'attributes' => [ 'test' => 'one test' ] ] 
-    // ]);
-    // $this->assertResponseStatusCodeSame(200);
-    // $this->assertJsonContains([
-    //   '@context' => '/contexts/Asset',
-    //   '@type' => 'Asset',
-    //   'identifier' => 'UnitTest',
-    //   'createdBy' => $userHeaders['x-token-user-email'],
-    //   'attributes' => [ 'test' => 'one test' ],
-    // ]);
+    static::createClient()->request('PATCH', '/assets/1', [ 
+      'headers' => array_merge($userHeaders, [ 'Content-Type' => 'application/merge-patch+json']),
+      'json' => [ 'attributes' => [ 'test' => 'one test' ] ] 
+    ]);
+    $this->assertResponseStatusCodeSame(200);
+    $this->assertJsonContains([
+      '@context' => '/contexts/Asset',
+      '@type' => 'Asset',
+      // 'identifier' => 'UnitTest',
+      // 'createdBy' => $userHeaders['x-token-user-email'],
+      'attributes' => [ 'test' => 'one test' ],
+    ]);
 
     // Audit update
-    // static::createClient()->request('GET', '/asset_audits/2', [ 'headers' => $userHeaders ]);
-    // $this->assertResponseStatusCodeSame(200);
-    // $this->assertJsonContains([
-    //   '@context' => '/contexts/AssetAudit',
-    //   '@type' => 'AssetAudit',
-    //   'subject' => 'UnitTest',
-    //   'action' => 'update',
-    //   'actor' => $userHeaders['x-token-user-email'],
-    // ]);
+    static::createClient()->request('GET', '/asset_audits/2', [ 'headers' => $userHeaders ]);
+    $this->assertResponseStatusCodeSame(200);
+    $this->assertJsonContains([
+      '@context' => '/contexts/AssetAudit',
+      '@type' => 'AssetAudit',
+      'subject' => 'UnitTest',
+      'action' => 'update',
+      'actor' => $userHeaders['x-token-user-email'],
+    ]);
 
     // Delete asset
     static::createClient()->request('DELETE', '/assets/1', [ 'headers' => $userHeaders ]);
     $this->assertResponseStatusCodeSame(204);
 
     // Audit deletion
-    static::createClient()->request('GET', '/asset_audits/2', [ 'headers' => $userHeaders ]);
+    static::createClient()->request('GET', '/asset_audits/3', [ 'headers' => $userHeaders ]);
     $this->assertResponseStatusCodeSame(200);
     $this->assertJsonContains([
       '@context' => '/contexts/AssetAudit',

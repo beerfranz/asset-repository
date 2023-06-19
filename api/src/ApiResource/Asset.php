@@ -50,7 +50,7 @@ class Asset
     public ?int $id = null;
 
     #[Groups(['Asset:read', 'Asset:write'])]
-    public ?string $identifier;
+    public ?string $identifier = null;
 
     #[Groups(['Asset:read', 'Asset:write'])]
     #[Constraints\Collection(
@@ -62,6 +62,9 @@ class Asset
 
     #[Groups(['Asset:read', 'Asset:write'])]
     public array $attributes = [];
+
+    #[Groups(['Asset:read', 'Asset:write'])]
+    public array $labels = [];
 
     #[Groups(['Asset:read'])]
     public ?\DateTimeImmutable $createdAt = null;

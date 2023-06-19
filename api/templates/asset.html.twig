@@ -22,7 +22,9 @@
 	    <table class="table">
 	      <thead><tr><th>Attribute</th><th>Value</th></tr></thead>
 	      <tbody id="instance-table">
+	      	{% if asset.version %}
 	      	<tr><td>Version</td><td>{{ asset.version.name }}</td></tr>
+	      	{% endif %}
 	      	{% for attribute, value in asset.attributes %}
 	      		<tr>
 	      			<td>{{ attribute }}</td>
