@@ -95,7 +95,7 @@ class AssetTest extends Functional
       'subject' => 'UnitTest',
       'action' => 'remove',
       'actor' => $userHeaders['x-token-user-email'],
-      // 'data' => array_merge($data, [ 'attributes' => [ 'test' => 'one test' ] ]),
+      'data' => array_merge($data, [ 'attributes' => [ 'test' => 'one test' ] ]),
     ]);
 
   }
