@@ -70,6 +70,9 @@ abstract class CommonState {
 
     protected function setOwner($object, $name)
     {
+        if (isset($name['identifier']))
+            $name = $name['identifier'];
+
     	if ($name !== null)
         {
             $repoOwner = $this->entityManager->getRepository(Owner::class);
