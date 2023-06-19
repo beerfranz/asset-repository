@@ -22,7 +22,9 @@
 	    <table class="table">
 	      <thead><tr><th>Attribute</th><th>Value</th></tr></thead>
 	      <tbody id="instance-table">
+	      	{% if asset.version %}
 	      	<tr><td>Version</td><td>{{ asset.version.name }}</td></tr>
+	      	{% endif %}
 	      	{% for attribute, value in asset.attributes %}
 	      		<tr>
 	      			<td>{{ attribute }}</td>
@@ -72,6 +74,25 @@
 	      			<td>{{ instance.identifier }}</td>
 	      			<td>{{ instance.version }}</td>
 	      			<td class="renderBool">{{ instance.conformity }}</td>
+	      		</tr>
+	      	{% endfor %}
+	      </tbody>
+	    </table>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+	    <h3>Audits</h3>
+	    <table class="table">
+	      <thead><tr><th>Datetime</th><th>Actor</th><th>Action</th><th>Data</th></tr></thead>
+	      <tbody id="audit-table">
+	      	{% for audit in asset.assetAudits %}
+	      		<tr>
+	      			<td>{{ audit.datetime }}</td>
+	      			<td>{{ audit.actor }}</td>
+	      			<td>{{ audit.action }}</td>
+	      			<td>{{ audit.data }}</td>
 	      		</tr>
 	      	{% endfor %}
 	      </tbody>

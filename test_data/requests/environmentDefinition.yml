@@ -6,14 +6,12 @@ data:
   identifier: application
   name: Application
   attributes:
-    develop:
-      - develop
-      - avalon-us
-      - groot
+    integration:
+      - main
+      - test1
     preprod:
-      - preprod
-      - preprod-azure
+      - main
     prod:
-      - prod
-      - us1
-      - azure-fr1
+      - main
+      - client1
+      - client2

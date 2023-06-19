@@ -5,19 +5,25 @@ request:
 
 data:
   instances:
-    - identifier: angular-develop-develop
-      version: 0.0.2
+    - identifier: front-integration-main
+      version: 1.0.1-branch-1
       asset:
-        identifier: angular-develop-develop
-    - identifier: angular-develop-groot
+        identifier: front-integration-main
+    - identifier: front-integration-test1
+      version: 1.0.1-branch-2
       asset:
-        identifier: angular-develop-groot
-      version: 0.0.1
-    - identifier: angular-preprod-preprod
+        identifier: front-integration-main
+    - identifier: front-preprod-main-bad-version
+      version: 0.1.0
       asset:
-        identifier: angular-preprod-preprod
-      version: 0.0.1
-    - identifier: helm-angular
+        identifier: front-preprod-main
+    - identifier: front-prod-main-0
+      version: 1.0.0
       asset:
-        identifier: helm-angular
-      version: 0.0.1
+        identifier: front-prod-main
+    - identifier: front-prod-main-1
+      version: 1.0.0
+      asset:
+        identifier: front-prod-main
+    # - identifier: orphaned-instance-1
+    #   version: 1.0.0

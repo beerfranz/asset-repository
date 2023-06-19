@@ -3,6 +3,7 @@
 namespace App\State;
 
 use App\Entity\Asset;
+use App\Entity\Instance;
 use App\Entity\Owner;
 use App\Entity\Source;
 use App\ApiResource\Asset as AssetDto;
@@ -11,6 +12,7 @@ use App\ApiResource\AssetBatchDto;
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\State\ProcessorInterface;
 use ApiPlatform\State\ProviderInterface;
 
@@ -25,6 +27,8 @@ use Psr\Log\LoggerInterface;
 final class AssetState extends CommonState implements ProcessorInterface, ProviderInterface
 {
     protected $assetRepo;
+    protected $instanceRepo;
+    protected $sourceRepo;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -35,6 +39,7 @@ final class AssetState extends CommonState implements ProcessorInterface, Provid
         parent::__construct($entityManager, $request, $logger, $security);
         $this->assetRepo = $entityManager->getRepository(Asset::class);
         $this->sourceRepo = $entityManager->getRepository(Source::class);
+        $this->instanceRepo = $entityManager->getRepository(Instance::class);
     }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
@@ -44,12 +49,12 @@ final class AssetState extends CommonState implements ProcessorInterface, Provid
             return $this->getCollection($this->assetRepo, $context);
         }
 
-        if ($context['input']['class'] === AssetBatchDto::class) {
+        if (isset($context['input']['class']) && $context['input']['class'] === AssetBatchDto::class) {
             $output = new AssetBatchDto();
             return $output;
         }
-        
-        return $this->assetRepo->findOneByIdentifier(null, $uriVariables['name']);
+
+        return $this->assetRepo->find($uriVariables['id']);
     }
     
     /**
@@ -78,32 +83,40 @@ final class AssetState extends CommonState implements ProcessorInterface, Provid
             if ($operation instanceof Put && $uriVariables['sourceId'] !== null)
             {
                 $source = $this->sourceRepo->findOneByName($uriVariables['sourceId']);
-            
-                $assetsToRemove = $this->assetRepo->findAssetsByidentifiersNotIn($identifiers, [ 'source' => $source->getId() ]);
-                foreach ($assetsToRemove as $asset)
-                {
-                    // Drop the link between the asset to remove and the audit, without deleting the audit
-                    foreach ($asset->getAssetAudits() as $audit) {
-                        $audit->setAsset(null);
-                        $this->entityManager->persist($audit);
-                    }
-                    
-                    // Delete the asset
-                    $this->entityManager->remove($asset);
-                    $this->entityManager->flush();
+
+                // $this->assetRepo->deleteBySourceAndidentifiersNotIn($source, $identifiers);
+                $assetToRemove = $this->assetRepo->findAssetsByidentifiersNotIn($identifiers, [ 'source' => $source ]);
+                foreach ($assetToRemove as $asset) {
+                    $this->delete($asset);
                 }
             }
         } else {
-            $identifiers[] = $this->processOneAsset($input)->getIdentifier();
+            if ($operation instanceof Delete) {
+                $this->delete($data);
+            } else {
+                if (isset($uriVariables['id']))
+                $data->id = $uriVariables['id'];
+
+                $asset = $this->processOneAsset((array) $data);
+
+                $data->id = $asset->getId();
+            }
+            
         }
     }
 
     protected function processOneAsset($data): Asset
     {
-        $identifier = $data['identifier'];
+        if (isset($data['identifier'])) {
+            $identifier = $data['identifier'];
 
-        $asset = $this->assetRepo->findOneByIdentifier($identifier);
-
+            $asset = $this->assetRepo->findOneByIdentifier($identifier);
+        } else {
+            $asset = $this->assetRepo->find($data['id']);
+            if ($asset === null)
+                throw new NotFoundHttpException('Sorry not existing!');
+        }
+        
         if ($asset === null)
         {
             $asset = new Asset();
@@ -131,8 +144,9 @@ final class AssetState extends CommonState implements ProcessorInterface, Provid
         // Source
         $this->setSource($asset, $data['source']);
 
-        if (isset($data['labels']))
+        if (isset($data['labels'])){
             $asset->setLabels($data['labels']);
+        }
 
         // Kind
         if (isset($data['kind'])) {
@@ -151,7 +165,18 @@ final class AssetState extends CommonState implements ProcessorInterface, Provid
 
         $this->entityManager->persist($asset);
         $this->entityManager->flush();
+        $this->entityManager->clear();
 
         return $asset;
+    }
+
+    protected function delete(Asset $asset) {
+        foreach ($asset->getAssetAudits() as $audit) {
+            $audit->setAsset(null);
+            $this->entityManager->persist($audit);
+        }
+        $this->entityManager->remove($asset);
+        $this->entityManager->flush();
+        $this->entityManager->clear();
     }
 }

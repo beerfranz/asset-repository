@@ -57,11 +57,11 @@ class AssetDefinition
     #[Groups(['AssetDefinition:read', 'AssetDefinition:write'])]
     private ?EnvironmentDefinition $environmentDefinition = null;
 
-    #[ORM\ManyToOne(inversedBy: 'assetDefinitions', cascade: ['persist'])]
+    #[ORM\ManyToOne(inversedBy: 'assetDefinitions')]
     #[Groups(['AssetDefinition:read', 'AssetDefinition:write'])]
     private ?Owner $owner = null;
 
-    #[ORM\ManyToOne(inversedBy: 'assetDefinitions', cascade: ['persist'])]
+    #[ORM\ManyToOne(inversedBy: 'assetDefinitions')]
     #[Groups(['AssetDefinition:read', 'AssetDefinition:write'])]
     private ?Source $source = null;
 

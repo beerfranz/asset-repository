@@ -10,6 +10,7 @@ services:
 #    restart: unless-stopped
     volumes:
       - php_socket:/var/run/php
+    command: [ "-d", "memory_limit=512M" ]
     healthcheck:
       interval: 10s
       timeout: 3s

@@ -7,12 +7,14 @@ use App\Entity\AssetDefinition;
 use App\Entity\Environment;
 use App\Entity\EnvironmentDefinition;
 use App\Entity\Kind;
+use App\Entity\Source;
 
 trait TraitDefinitionPropagate {
     public function updateAssets(AssetDefinition $assetDefinition) {
         $assetRepo = $this->entityManager->getRepository(Asset::class);
         $kindRepo = $this->entityManager->getRepository(Kind::class);
         $environmentRepo = $this->entityManager->getRepository(Environment::class);
+        $sourceRepo = $this->entityManager->getRepository(Source::class);
 
         $envs = [];
 
@@ -52,12 +54,26 @@ trait TraitDefinitionPropagate {
             }
         }
 
+        $identifiers = [];
+
+        $sourceIdentifier = $assetDefinition->getSource()->getName() . '-' . $assetDefinition->getIdentifier();
+
+        $source = $sourceRepo->findOneByName($sourceIdentifier);
+        if (null === $source) {
+            $source = new Source();
+            $source->setName($sourceIdentifier);
+
+            $this->entityManager->persist($source);
+            $this->entityManager->flush();
+        }
         
         foreach($envs as $environment)
         {
             $environmentIdentifier = $environment->getIdentifier();
 
             $assetIdentifier = $assetDefinition->getIdentifier() . '-' . $environmentIdentifier;
+
+            $identifiers[] = $assetIdentifier;
 
             $asset = $assetRepo->findOneByIdentifier($assetIdentifier);
 
@@ -90,7 +106,7 @@ trait TraitDefinitionPropagate {
             // Owner
             $asset->setOwner($assetDefinition->getOwner());
             // Source
-            $asset->setSource($assetDefinition->getSource());
+            $asset->setSource($source);
             // AssetDefinition
             $asset->setAssetDefinition($assetDefinition);
             // Environment
@@ -99,6 +115,9 @@ trait TraitDefinitionPropagate {
             $this->entityManager->persist($asset);
             $this->entityManager->flush();
         }
+
+        $assetRepo->deleteBySourceAndidentifiersNotIn($source, $identifiers);
+
     }
 
 }

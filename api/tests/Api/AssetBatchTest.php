@@ -14,14 +14,18 @@ class AssetBatchTest extends Functional
   {
     $client = $this->getClientAdmin();
 
-    $client->request('POST', '/batch_assets', [
+    $client->request('POST', '/sources/unit_test_batch_asset/assets', [
       'json' => [
+        'owner' => [ 'identifier' => 'Someone' ],
         'assets' => [
           [
             'identifier' => 'UnitTest1',
+            'kind' => [ 'identifier' => 'app' ],
           ],
           [
             'identifier' => 'UnitTest2',
+            'kind' => [ 'identifier' => 'app' ],
+            'owner' => [ 'identifier' => 'CISO' ],
           ],
         ]
       ]
@@ -29,8 +33,8 @@ class AssetBatchTest extends Functional
 
     $this->assertResponseStatusCodeSame(201);
     $this->assertJsonContains([
-      '@context' => '/contexts/BatchAsset',
-      '@type' => 'BatchAsset',
+      '@context' => [ 'assets' => 'AssetBatchDto/assets' ],
+      '@type' => 'AssetBatchDto',
       'assets' => [
         [ 'identifier' => 'UnitTest1' ],
         [ 'identifier' => 'UnitTest2' ],
@@ -62,30 +66,36 @@ class AssetBatchTest extends Functional
     $client = $this->getClientAdmin();
 
     // Create 2 assets
-    $client->request('PUT', '/batch_assets', [
+    $client->request('PUT', '/sources/unit_test_batch_asset/assets', [
       'json' => [
+        'owner' => [ 'identifier' => 'Someone' ],
         'assets' => [
           [
             'identifier' => 'UnitTest1',
+            'kind' => [ 'identifier' => 'app' ],
           ],
           [
             'identifier' => 'UnitTest2',
+            'kind' => [ 'identifier' => 'app' ],
           ],
         ]
       ]
     ]);
-    $this->assertResponseStatusCodeSame(201);
+    $this->assertResponseStatusCodeSame(200);
 
     // Update 1 asset, create a third asset, implicitly delete 1 asset
-    $client->request('PUT', '/batch_assets', [
+    $client->request('PUT', '/sources/unit_test_batch_asset/assets', [
       'json' => [
+        'owner' => [ 'identifier' => 'Someone' ],
         'assets' => [
           [
             'identifier' => 'UnitTest1',
+            'kind' => [ 'identifier' => 'app' ],
             'attributes' => [ 'test' => 'an attribute' ]
           ],
           [
             'identifier' => 'UnitTest3',
+            'kind' => [ 'identifier' => 'app' ],
           ],
         ]
       ]

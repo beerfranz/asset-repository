@@ -17,6 +17,9 @@ for json in $(find . -type f -name *.json); do
 	http_code=$(eval "${request} -w '%{http_code}' -o /dev/null")
 	case $http_code in
 		"200"|"201")
+			# echo "request: ${request}"
+			# echo -n "data: "
+			# jq -c . ${data_file}
 		;;
 		*) echo "Error, bad response code ${http_code}";
 			echo "request: ${request}"

@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Asset;
+use App\Entity\Source;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * @extends ServiceEntityRepository<Asset>
@@ -41,24 +43,8 @@ class AssetRepository extends ServiceEntityRepository implements RogerRepository
         }
     }
 
-   /**
-    * @return Asset[] Returns an array of Asset objects
-    */
-   public function findUserAssetsByIdentifiersNoIn($user, array $identifiers): array
-   {
-        return $this->createQueryBuilder('a')
-           ->andWhere('a.identifier not in (:identifiers)')
-           ->setParameter('identifiers', $identifiers)
-           ->andWhere('a.createdBy = :user')
-           ->setParameter('user', $user)
-           ->orderBy('a.id', 'ASC')
-           ->getQuery()
-           ->getResult()
-        ;
-   }
-
     // additionalConditions = [ 'user' => $user, 'source' => $source ]
-    public function findAssetsByidentifiersNotIn(array $identifiers, array $additionalConditions = []): array
+    public function findAssetsByidentifiersNotIn(array $identifiers, array $additionalConditions = []): Paginator
     {
         $query = $this->createQueryBuilder('a')
            ->andWhere('a.identifier not in (:identifiers)')
@@ -71,7 +57,9 @@ class AssetRepository extends ServiceEntityRepository implements RogerRepository
             $query->andWhere('a.' . $key . ' = :' . $key)->setParameter($key, $value);
         }
 
-        return $query->getQuery()->getResult();
+        return new Paginator($query->getQuery(), $fetchJoinCollection = true);
+
+        // return $query->getQuery()->getResult();
     }
 
    public function findOneByIdentifier($value): ?Asset
@@ -83,5 +71,18 @@ class AssetRepository extends ServiceEntityRepository implements RogerRepository
            ->getOneOrNullResult()
         ;
    }
+
+    public function deleteBySourceAndIdentifiersNotIn(Source $source, array $identifiers): bool
+    {
+        $query = $this->createQueryBuilder('a')
+                      ->delete()
+                      ->where('a.source = :source')
+                      ->setParameter('source', $source->getId())
+                      ->andWhere('a.identifier not in (:identifiers)')
+                      ->setParameter('identifiers', $identifiers)
+                      ->getQuery();
+
+        return $query->getResult();
+    }
 
 }

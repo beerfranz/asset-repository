@@ -24,7 +24,7 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+// use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ApiResource(
     normalizationContext: ['groups' => ['Asset:read']],
@@ -37,13 +37,13 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[Post(security: "is_granted('ASSET_WRITE')")]
 #[Get]
 #[Put(security: "is_granted('ASSET_WRITE')")]
-#[Put(name: 'put_collection_by_source', uriTemplate: '/sources/{sourceId}/assets', uriVariables: [ 'sourceId'], 
+#[Put(name: 'put_assets_by_source', uriTemplate: '/sources/{sourceId}/assets', uriVariables: [ 'sourceId'], 
     security: "is_granted('ASSET_WRITE')", input: AssetBatchDto::class, output: AssetBatchDto::class,)]
-#[Post(name: 'post_collection_by_source', uriTemplate: '/sources/{sourceId}/assets', uriVariables: [ 'sourceId'] ,
+#[Post(name: 'post_assets_by_source', uriTemplate: '/sources/{sourceId}/assets', uriVariables: [ 'sourceId'] ,
     security: "is_granted('ASSET_WRITE')", input: AssetBatchDto::class, output: AssetBatchDto::class)]
 #[Patch(security: "is_granted('ASSET_WRITE')")]
 #[Delete(security: "is_granted('ASSET_WRITE')")]
-#[UniqueEntity(fields: ['identifier'], message: 'There is already an asset this identifier')]
+##[UniqueEntity(fields: ['identifier'], message: 'There is already an asset this identifier')]
 class Asset
 {
     #[Groups(['Asset:read'])]
@@ -53,10 +53,18 @@ class Asset
     public ?string $identifier = null;
 
     #[Groups(['Asset:read', 'Asset:write'])]
-    public ?string $type = null;
+    #[Constraints\Collection(
+        fields: [
+            'identifier' => new Constraints\Required(),
+        ]
+    )]
+    public ?array $kind = null;
 
     #[Groups(['Asset:read', 'Asset:write'])]
     public array $attributes = [];
+
+    #[Groups(['Asset:read', 'Asset:write'])]
+    public array $labels = [];
 
     #[Groups(['Asset:read'])]
     public ?\DateTimeImmutable $createdAt = null;
@@ -75,6 +83,11 @@ class Asset
     public function __construct()
     {
         $this->assetAudits = new ArrayCollection();
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**
