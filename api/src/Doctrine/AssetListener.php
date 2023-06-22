@@ -41,10 +41,6 @@ class AssetListener
         if ($asset->getId() === null) {
             $asset->setCreatedBy($email);
             $asset->setCreatedAt(new \DateTimeImmutable());
-
-            // $owner = new Owner();
-            // $owner->setName($email);
-            // $asset->setOwner($owner);
         }
     }
 
@@ -92,7 +88,11 @@ class AssetListener
     public function postUpdate(Asset $asset, PostUpdateEventArgs $event)
     {
         $entityManager = $event->getObjectManager();
-        $diff = $entityManager->getUnitOfWork()->getEntityChangeSet($asset);
+        $diffs = $entityManager->getUnitOfWork()->getEntityChangeSet($asset);
+
+        foreach($diffs as $name => $value) {
+            $diffs[$name] = $this->serializer->normalize($value, null, ['groups' => 'Asset:read']);
+        }
 
         $user = $this->security->getUser();
         $email = $user->getEmail();
@@ -102,7 +102,7 @@ class AssetListener
               ->setActor($email)
               ->setAction('update')
               ->setSubject($asset->getIdentifier())
-              ->setData(['diff' => $diff ]);
+              ->setData(['diff' => $diffs ]);
 
         $entityManager->persist($audit);
         $entityManager->flush();
