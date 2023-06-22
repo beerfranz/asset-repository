@@ -1,5 +1,7 @@
 # AssetRepository
 
+**This project is in active development, still not validated in production environment**
+
 The goal of this project is to build an inventory database of assets with this specificities:
 * OpenSource
 * Cloud service

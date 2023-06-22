@@ -13,10 +13,12 @@ final class InstanceBatchDto
                 new Assert\NotBlank
             ]),
             'asset' => new Assert\Collection(
-                fields: [ 'identifier' => new Assert\Required(new Assert\NotBlank),
-            ]),
+                fields: [ 'identifier' => new Assert\Required(new Assert\NotBlank) ],
+                allowMissingFields: true
+            ),
         ],
-        allowExtraFields: true
+        allowExtraFields: true,
+        allowMissingFields: true
     )])]
     #[Groups(['Instance:read', 'Instance:write'])]
     public array $instances = [];
