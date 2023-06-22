@@ -25,7 +25,6 @@ class AssetListener
     private $security;
     private $serializer;
     private $logger;
-    private $audits = [];
 
     public function __construct(Security $security, SerializerInterface $serializer, LoggerInterface $logger)
     {
