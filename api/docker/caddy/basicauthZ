@@ -1,0 +1,2 @@
+basicAuthAdmin "ROLE_ASSET_ADMIN"
+default        "ROLE_ASSET_READONLY"

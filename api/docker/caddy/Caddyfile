@@ -1,24 +1,43 @@
 {
     # Debug
     {$CADDY_DEBUG}
+    # admin 0.0.0.0:2019
+    servers {
+        metrics
+    }
+
+    order authenticate before respond
+    order authorize before basicauth
+
+    security {
+        oauth identity provider generic {
+            realm generic
+            driver generic
+            client_id {$OAUTH_CLIENT_ID}
+            client_secret {$OAUTH_CLIENT_SECRET}
+            scopes {$OAUTH_CLIENT_SCOPES}
+            metadata_url {$OAUTH_METADATA_URL}
+        }
+
+        authentication portal authz_proxy_portal {
+            crypto key sign-verify {$JWT_SHARED_KEY}
+            enable identity provider generic
+        }
+
+        authorization policy mypolicy {
+            set auth url /auth/oauth2/generic/
+            crypto key verify {$JWT_SHARED_KEY}
+            allow roles ROLE_ASSET_ADMIN
+            validate bearer header
+            inject headers with claims
+        }
+    }
 }
 
-{$SERVER_NAME}
-
-log
-
-# Matches requests for HTML documents, for static files and for Next.js files,
-# except for known API paths and paths with extensions handled by API Platform
-# @pwa expression `(
-#         header({'Accept': '*text/html*'})
-#         && !path(
-#             '/docs*', '/graphql*', '/bundles*', '/contexts*', '/_profiler*', '/_wdt*', '/ui*',
-#             '*.json*', '*.html', '*.csv', '*.yml', '*.yaml', '*.xml'
-#         )
-#     )
-#     || path('/favicon.ico', '/manifest.json', '/robots.txt', '/_next*', '/sitemap*')`
-
-route {
+(serve) {
+    # tracing {
+    #     span caddy
+    # }
     root * /srv/app/public
     # mercure {
     #     # Transport to use (default to Bolt)
@@ -35,6 +54,7 @@ route {
     #     {$MERCURE_EXTRA_DIRECTIVES}
     # }
     vulcain
+    push
 
     # Add links to the API docs and to the Mercure Hub if not set explicitly (e.g. the PWA)
     header ?Link `</docs.jsonld>; rel="http://www.w3.org/ns/hydra/core#apiDocumentation", </.well-known/mercure>; rel="mercure"`
@@ -45,10 +65,72 @@ route {
     # In this case, they will be handled by the PHP app.
     # reverse_proxy @pwa http://{$PWA_UPSTREAM}
 
-    php_fastcgi unix//var/run/php/php-fpm.sock {
-        header_up x-token-user-roles ROLE_ASSET_ADMIN
-        header_up x-token-user-email admin@fake.io
-    }
     encode zstd gzip
-    file_server
 }
+
+{$SERVER_NAME_SSO} {
+    log
+
+    route /auth/* {
+        authenticate with authz_proxy_portal
+    }
+
+    route {
+        authorize with mypolicy
+        import serve
+
+        php_fastcgi unix//var/run/php/php-fpm.sock
+
+        file_server
+    }
+}
+
+# {$SERVER_NAME_BASIC_AUTH} {
+#     log
+
+#     @basicauth {
+#         header Authorization "Basic *"
+#     }
+
+#     route @basicauth {
+#         # Use the command caddy hash-password to generate a hash
+#         basicauth {
+#             import basicauthN
+#         }
+#         map {http.auth.user.id} {roles} {
+#             import basicauthZ
+#         }
+
+#         import serve
+
+#         php_fastcgi unix//var/run/php/php-fpm.sock {
+#             header_up x-token-user-roles {roles}
+#             header_up x-token-user-email {http.auth.user.id}
+#         }
+#         file_server
+#     }
+# }
+
+{$SERVER_NAME} {
+    log
+
+    route {
+        import serve
+        php_fastcgi unix//var/run/php/php-fpm.sock {
+            header_up x-token-user-roles ROLE_ASSET_ADMIN
+            header_up x-token-user-email admin@fake.io
+        }
+        file_server
+    }
+}
+
+# Matches requests for HTML documents, for static files and for Next.js files,
+# except for known API paths and paths with extensions handled by API Platform
+# @pwa expression `(
+#         header({'Accept': '*text/html*'})
+#         && !path(
+#             '/docs*', '/graphql*', '/bundles*', '/contexts*', '/_profiler*', '/_wdt*', '/ui*',
+#             '*.json*', '*.html', '*.csv', '*.yml', '*.yaml', '*.xml'
+#         )
+#     )
+#     || path('/favicon.ico', '/manifest.json', '/robots.txt', '/_next*', '/sitemap*')`
