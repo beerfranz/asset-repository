@@ -22,10 +22,6 @@
         authentication portal authz_proxy_portal {
             crypto key sign-verify {$JWT_SHARED_KEY}
             enable identity provider generic
-            transform user {
-                match realm azure
-                action add role ROLE_ASSET_ADMIN
-            }
         }
 
         authorization policy mypolicy {
@@ -70,7 +66,6 @@
     # reverse_proxy @pwa http://{$PWA_UPSTREAM}
 
     encode zstd gzip
-    # file_server
 }
 
 {$SERVER_NAME_SSO} {
