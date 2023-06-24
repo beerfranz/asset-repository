@@ -2,33 +2,19 @@
 
 namespace App\Security;
 
-use App\Entity\User;
-use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Firebase\JWT\JWK;
 use Firebase\JWT\JWT;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
-use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
-use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
-class JwtAuthenticator extends AbstractAuthenticator
+class JwtAuthenticator extends RogerAuthenticator
 {
-    public function __construct(
-        private EntityManagerInterface $entityManager,
-        private ParameterBagInterface $parameterBag,
-        private TagAwareCacheInterface $cacheApp,
-        private UserRepository $userRepository
-    ) {}
 
     /**
      * Called on every request to decide if this authenticator should be
@@ -37,7 +23,14 @@ class JwtAuthenticator extends AbstractAuthenticator
      */
     public function supports(Request $request): ?bool
     {
-        return $request->headers->has('Authorization');
+        if ($request->headers->has('Authorization'))
+            $this->token = $request->headers->get('Authorization');
+        elseif ($request->cookies->has('access_token'))
+            $this->token = $request->cookies->get('access_token');
+        else
+            return false;
+
+        return true;
     }
 
     /**
@@ -47,13 +40,12 @@ class JwtAuthenticator extends AbstractAuthenticator
      */
     public function authenticate(Request $request): Passport
     {
-        // Get token from header
-        $jwtToken = $request->headers->get('Authorization');
-        if (false === str_starts_with($jwtToken, 'Bearer ')) {
-            throw new AuthenticationException('Invalid token');
-        }
 
-        $jwtToken = str_replace('Bearer ', '', $jwtToken);
+        // Get token from header
+        $jwtToken = $this->token;
+        if (true === str_starts_with($jwtToken, 'Bearer ')) {
+            $jwtToken = str_replace('Bearer ', '', $jwtToken);
+        }
 
         // Decode the token
         $parts = explode('.', $jwtToken);
@@ -61,27 +53,19 @@ class JwtAuthenticator extends AbstractAuthenticator
             throw new AuthenticationException('Invalid token');
         }
 
-        $header = json_decode(base64_decode($parts[0]), true);
+        $header = json_decode(base64_decode($parts[0]));
 
         // Validate token
         try {
-            $decodedToken = JWT::decode($jwtToken, $this->getJwks(), [$header['alg']]);
+            if ($this->parameterBag->get('jwt_skip_verify'))
+                $decodedToken = JWT::jsonDecode(JWT::urlsafeB64Decode($parts[1]));
+            else
+                $decodedToken = JWT::decode($jwtToken, $this->getJwks($header->alg), $headerRef);
         } catch (Exception $e) {
+            echo $e->getMessage();exit;
             throw new AuthenticationException($e->getMessage());
         }
-
-        return new SelfValidatingPassport(
-            new UserBadge($decodedToken->sub, function (string $userId) {
-                $user = $this->userRepository->find($userId);
-                if (null === $user) {
-                    $user = new User($userId);
-                    $this->entityManager->persist($user);
-                    $this->entityManager->flush();
-                }
-
-                return $user;
-            })
-        );;
+        return $this->userPassport($decodedToken->email, $decodedToken->roles);
     }
 
     /**
@@ -115,11 +99,11 @@ class JwtAuthenticator extends AbstractAuthenticator
     /**
      * @return array
      */
-    private function getJwks(): array
+    private function getJwks($defaultAlg): array
     {
         $jwkData = $this->cacheApp->get('jwk_keys', function(ItemInterface $item) {
             $jwkData = json_decode(
-                file_get_contents($this->parameterBag->get('jwts_url')),
+                file_get_contents($this->parameterBag->get('jwks_url')),
                 true
             );
 
@@ -129,6 +113,6 @@ class JwtAuthenticator extends AbstractAuthenticator
             return $jwkData;
         });
 
-        return JWK::parseKeySet($jwkData);
+        return JWK::parseKeySet($jwkData, $defaultAlg);
     }
 }

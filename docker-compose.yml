@@ -24,7 +24,8 @@ services:
       MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       AUTH_HEADER_ROLES: x-token-user-roles
       AUTH_HEADER_EMAIL: x-token-user-email
-      JWTS_URL: https://keycloak/realms/myRealm/protocol/openid-connect/certs
+      JWKS_URL: ${OAUTH_JWTS_URL}
+      JWT_SKIP_VERIFY: "true"
 
   # pwa:
   #   build:
@@ -42,14 +43,21 @@ services:
       # - pwa
     environment:
       PWA_UPSTREAM: pwa:3000
-      SERVER_NAME: ${SERVER_NAME:-localhost}, caddy:80, http://caddy:8080
+      SERVER_NAME: localhost:443, caddy:80, http://caddy:8080
+      SERVER_NAME_SSO: localhost:8443
+      SERVER_NAME_BASIC_AUTH: localhost:8888
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
+      OAUTH_CLIENT_ID: ${OAUTH_CLIENT_ID}
+      OAUTH_CLIENT_SECRET: ${OAUTH_CLIENT_SECRET}
+      OAUTH_CLIENT_SCOPES: openid email profile offline_access
+      OAUTH_METADATA_URL: ${OAUTH_METADATA_URL}
+      JWT_SHARED_KEY: you-should-change-this-1
 #    restart: unless-stopped
     volumes:
       - php_socket:/var/run/php
       - caddy_data:/data
-      - caddy_config:/config
+      - ./api/docker/caddy:/etc/caddy
     ports:
       # HTTP
       - target: 80
@@ -63,6 +71,22 @@ services:
       - target: 443
         published: ${HTTP3_PORT:-443}
         protocol: udp
+      # Caddy admin
+      - target: 2019
+        published: ${HTTP_PORT:-2019}
+        protocol: tcp
+      # HTTPS SSO
+      - target: 8443
+        published: ${HTTPS_PORT:-8443}
+        protocol: tcp
+      # HTTP/3 SSO
+      - target: 8443
+        published: ${HTTP3_PORT:-8443}
+        protocol: udp
+      # HTTP Basicauth
+      - target: 8888
+        published: ${HTTPS_PORT:-8888}
+        protocol: tcp
 
 ###> doctrine/doctrine-bundle ###
   database:

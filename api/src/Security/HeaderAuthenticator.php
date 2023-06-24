@@ -8,27 +8,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
-use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
-use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
-use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-
-use App\Entity\User;
-
-use Doctrine\ORM\EntityManagerInterface;
     
-class HeaderAuthenticator extends AbstractAuthenticator
+class HeaderAuthenticator extends RogerAuthenticator
 {
-    private $entityManager;
-    private $params;
-
-    public function __construct(EntityManagerInterface $entityManager, ParameterBagInterface $params)
-    {
-        $this->entityManager = $entityManager;
-        $this->params = $params;
-    }
-
 
     /**
      * Called on every request to decide if this authenticator should be
@@ -37,12 +20,13 @@ class HeaderAuthenticator extends AbstractAuthenticator
      */
     public function supports(Request $request): ?bool
     {
-        return true;
+        $emailHeader = $this->parameterBag->get('auth.header.email', 'X-Token-User-Email');
+        return $request->headers->has($emailHeader);
     }
 
     public function authenticate(Request $request): Passport
     {
-        $emailHeader = $this->params->get('auth.header.email', 'X-Token-User-Email');
+        $emailHeader = $this->parameterBag->get('auth.header.email', 'X-Token-User-Email');
         $email = $request->headers->get($emailHeader);
         if (null === $email) {
             // The token header was empty, authentication fails with HTTP Status
@@ -51,7 +35,7 @@ class HeaderAuthenticator extends AbstractAuthenticator
             throw new CustomUserMessageAuthenticationException('No email provided in the HTTP header ' . $emailHeader);
         }
 
-        $roleHeader = $this->params->get('auth.header.roles', 'X-ROLES');
+        $roleHeader = $this->parameterBag->get('auth.header.roles', 'X-ROLES');
         $role = $request->headers->get($roleHeader);
         if (null === $role) {
             throw new CustomUserMessageAuthenticationException('No role provided in the HTTP header ' . $roleHeader);
@@ -59,22 +43,7 @@ class HeaderAuthenticator extends AbstractAuthenticator
 
         $roles = explode(' ', $role);
 
-        $repo = $this->entityManager->getRepository(User::class);
-        $user = $repo->findOneBy([ 'email' => $email ]);
-        if ($user === null)
-        {
-            $user = new User();
-            $user->setEmail($email);
-            $user->setRoles($roles);
-            $this->entityManager->persist($user);
-            $this->entityManager->flush();
-        } else {
-            $user->setRoles($roles);
-            $this->entityManager->persist($user);
-            $this->entityManager->flush();
-        }
-
-        return new SelfValidatingPassport(new UserBadge($email));
+        return $this->userPassport($email, $roles);
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
