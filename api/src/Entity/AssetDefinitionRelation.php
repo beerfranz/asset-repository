@@ -13,6 +13,8 @@ class AssetDefinitionRelation
         'group' => [ 'isGroup' => true ] , 'groupedBy' => [ 'inversed' => true ],
         'host' => [ 'isGroup' => true ], 'hostedBy' => [ 'inversed' => true ],
         'package' => [ 'isGroup' => true ], 'packagedBy' => [ 'inversed' => true ],
+        'connect' => [ 'isGroup' => false ], 'connected' => [ 'inversed' => true ],
+        'data' => [ 'isGroup' => false ],
     ];
 
     #[ORM\Id]
@@ -32,6 +34,7 @@ class AssetDefinitionRelation
     private ?AssetDefinition $assetDefinitionTo = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['AssetDefinition:read'])]
     private ?string $name = null;
 
     public function getId(): ?int

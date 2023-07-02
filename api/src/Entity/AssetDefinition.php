@@ -73,10 +73,10 @@ class AssetDefinition
     private array $labels = [];
 
     #[ORM\OneToMany(mappedBy: 'assetDefinitionFrom', targetEntity: AssetDefinitionRelation::class, orphanRemoval: true)]
-    #[Groups(['AssetDefinition:read'])]
     private Collection $relationsFrom;
 
     #[ORM\OneToMany(mappedBy: 'assetDefinitionTo', targetEntity: AssetDefinitionRelation::class, orphanRemoval: true)]
+    #[Groups(['AssetDefinition:read'])]
     private Collection $relationsTo;
 
     public function __construct()

@@ -12,9 +12,6 @@ data:
     name: Database
     kind:
       identifier: database
-    # relations:
-    #   - identifier: backend
-    #     relation: connection
   - identifier: front
     name: Front
     kind:
@@ -25,6 +22,9 @@ data:
     kind:
       identifier: app
     environmentDefinition: application
+    relations:
+      - identifier: database
+        relation: connect
   - identifier: front-helm
     relations:
       - identifier: front
@@ -41,6 +41,14 @@ data:
       identifier: helm
     owner: 
       identifier: DevSecOps
+  - identifier: microservice-1-helm
+    kind:
+      identifier: helm
+    owner: 
+      identifier: DevSecOps
+    relations:
+      - identifier: database
+        relation: connect
   - identifier: kubernetes
     name: Kubernetes
     kind:
@@ -50,3 +58,25 @@ data:
     relations:
       - identifier: front-helm
         relation: host
+      - identifier: backend-helm
+        relation: host
+      - identifier: microservice-1-helm
+        relation: host
+  - identifier: web-browser
+    kind:
+      identifier: client
+    owner:
+      identifier: user
+    relations:
+      - identifier: front
+        relation: connect
+      - identifier: backend
+        relation: connect
+  - identifier: mobile-app
+    kind:
+      identifier: client
+    owner:
+      identifier: DSI
+    relations:
+      - identifier: backend
+        relation: connect
