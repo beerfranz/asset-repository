@@ -37,6 +37,10 @@ class AssetDefinitionRelation
     #[Groups(['AssetDefinition:read'])]
     private ?string $name = null;
 
+    #[ORM\ManyToOne(inversedBy: 'assetDefinitionRelations', cascade: ['persist'])]
+    #[Groups(['AssetDefinition:read'])]
+    private ?Source $source = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -74,6 +78,18 @@ class AssetDefinitionRelation
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSource(): ?Source
+    {
+        return $this->source;
+    }
+
+    public function setSource(?Source $source): self
+    {
+        $this->source = $source;
 
         return $this;
     }

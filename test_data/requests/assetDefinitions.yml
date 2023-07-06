@@ -12,6 +12,7 @@ data:
     name: Database
     kind:
       identifier: database
+    environmentDefinition: application
   - identifier: front
     name: Front
     kind:
@@ -33,6 +34,12 @@ data:
       identifier: helm
     owner: 
       identifier: DevSecOps
+  # - identifier: front-ecs
+  #   relations:
+  #     - identifier: front
+  #       relation: package
+  #   kind:
+  #     identifier: ecs-task-definition
   - identifier: backend-helm
     relations:
       - identifier: backend

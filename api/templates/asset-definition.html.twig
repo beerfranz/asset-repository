@@ -63,13 +63,14 @@
 	<div class="col-md-12">
 	    
 	    <table class="table">
-	      <thead><tr><th>ID</th><th>Type</th><th>Identifier</th></tr></thead>
+	      <thead><tr><th>ID</th><th>Type</th><th>Identifier</th><th>Source</th></tr></thead>
 	      <tbody id="instance-table">
 	      	{% for relation in assetDefinition.relationsFrom %}
 	      		<tr>
 	      			<td>{{ relation.id }}</td>
 	      			<td>{{ relation.name }}</td>
 	      			<td><a href="/ui/asset_definitions/{{ relation.assetDefinitionTo.identifier }}">{{ relation.assetDefinitionTo.identifier }}</a></td>
+	      			<td>{{ relation.source.name }}</td>
 	      		</tr>
 	      	{% endfor %}
 	      </tbody>

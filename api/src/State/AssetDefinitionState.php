@@ -71,6 +71,7 @@ final class AssetDefinitionState extends CommonState implements ProcessorInterfa
         if ($data instanceof AssetDefinitionBatchDto)
         {
             $identifiers = [];
+            $relations = [];
 
             foreach($data->getAssetDefinitions() as $input)
             {
@@ -95,7 +96,10 @@ final class AssetDefinitionState extends CommonState implements ProcessorInterfa
                                 throw new \Exception('Cannot create a relation between ' . $assetDefinition->getIdentifier() . ' and ' . $relation['identifier'] . '. No AssetDefinition with the identifier ' . $relation['identifier'] . '. You must create the AssetDefinition before.');
                             }
 
-                            $this->processOneAssetDefinitionRelation($assetDefinition, $assetDefinitionRelationTo, $relation);
+                            if (!isset($relation['source']))
+                                $relation['source'] = $input['source'];
+
+                            $relations[] = $this->processOneAssetDefinitionRelation($assetDefinition, $assetDefinitionRelationTo, $relation)->getId();
                         }
                     }
                 }
@@ -123,6 +127,14 @@ final class AssetDefinitionState extends CommonState implements ProcessorInterfa
 
                     // Delete the asset
                     $this->entityManager->remove($assetDefinition);
+                }
+                $this->entityManager->flush();
+
+
+                $relationsToRemove = $this->relationRepo->findRelationByIdsNotIn($relations, [ 'source' => $source->getId() ] );
+                foreach ($relationsToRemove as $relation)
+                {
+                    $this->entityManager->remove($relation);
                 }
                 $this->entityManager->flush();
             
@@ -171,7 +183,7 @@ final class AssetDefinitionState extends CommonState implements ProcessorInterfa
         return $assetDefinition;
     }
 
-    public function processOneAssetDefinitionRelation(AssetDefinition $assetDefinitionRelationFrom, AssetDefinition $assetDefinitionRelationTo, $data)
+    public function processOneAssetDefinitionRelation(AssetDefinition $assetDefinitionRelationFrom, AssetDefinition $assetDefinitionRelationTo, $data): AssetDefinitionRelation
     {
         $assetDefinitionRelation = $this->relationRepo->findOneByIdentifier($assetDefinitionRelationFrom, $assetDefinitionRelationTo);
 
@@ -183,8 +195,11 @@ final class AssetDefinitionState extends CommonState implements ProcessorInterfa
         }
 
         $assetDefinitionRelation->setName($data['relation']);
+        $this->setSource($assetDefinitionRelation, $data['source']);
 
         $this->entityManager->persist($assetDefinitionRelation);
         $this->entityManager->flush();
+
+        return $assetDefinitionRelation;
     }
 }

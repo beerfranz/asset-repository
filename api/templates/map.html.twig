@@ -84,16 +84,24 @@ $(document).ready(function() {
     success: function(data) {
       var cyElements = [];
       data['hydra:member'].forEach(function (d) {
-        if (d.relationsTo.length === 0)
+        if (d.relationsTo.length === 0) {
           cyElements.push({ data: { id: d.identifier } });
+        }
         else {
           d.relationsTo.forEach(function (r) {
             if (r.group === true) {
-              cyElements.push({ data: { id: d.identifier, parent: r.assetDefinitionFrom.identifier }});
+              if (cyElements.find(x => x.data.id === d.identifier)) {
+                let elementIndex = cyElements.findIndex(x => x.data.id === d.identifier);
+                cyElements[elementIndex].data.parent = r.assetDefinitionFrom.identifier;
+              }
+              else {
+                cyElements.push({ data: { id: d.identifier, parent: r.assetDefinitionFrom.identifier }});
+              }
             }
             else {
-              console.log(r.name);
-              cyElements.push({ data: { id: d.identifier } });
+              if (! cyElements.find(x => x.data.id === d.identifier)) {
+                cyElements.push({ data: { id: d.identifier } });
+              }
               cyElements.push({ data: { id: r.id, name: r.name, source: r.assetDefinitionFrom.identifier, target: d.identifier }});
             }
           });
