@@ -110,10 +110,25 @@ class Asset
     #[Groups(['Asset:read', 'Asset:environment'])]
     private ?Environment $environment = null;
 
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
+    private ?self $parent = null;
+
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
+    private Collection $children;
+
+    #[ORM\OneToMany(mappedBy: 'fromAsset', targetEntity: Relation::class)]
+    private Collection $fromRelations;
+
+    #[ORM\OneToMany(mappedBy: 'toAsset', targetEntity: Relation::class)]
+    private Collection $toRelations;
+
     public function __construct()
     {
         $this->assetAudits = new ArrayCollection();
         $this->instances = new ArrayCollection();
+        $this->children = new ArrayCollection();
+        $this->fromRelations = new ArrayCollection();
+        $this->toRelations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -321,6 +336,108 @@ class Asset
     public function setEnvironment(?Environment $environment): self
     {
         $this->environment = $environment;
+
+        return $this;
+    }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): self
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getChildren(): Collection
+    {
+        return $this->children;
+    }
+
+    public function addChild(self $child): self
+    {
+        if (!$this->children->contains($child)) {
+            $this->children->add($child);
+            $child->setParent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChild(self $child): self
+    {
+        if ($this->children->removeElement($child)) {
+            // set the owning side to null (unless already changed)
+            if ($child->getParent() === $this) {
+                $child->setParent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Relation>
+     */
+    public function getFromRelations(): Collection
+    {
+        return $this->fromRelations;
+    }
+
+    public function addFromRelation(Relation $fromRelation): self
+    {
+        if (!$this->fromRelations->contains($fromRelation)) {
+            $this->fromRelations->add($fromRelation);
+            $fromRelation->setFromAsset($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFromRelation(Relation $fromRelation): self
+    {
+        if ($this->fromRelations->removeElement($fromRelation)) {
+            // set the owning side to null (unless already changed)
+            if ($fromRelation->getFromAsset() === $this) {
+                $fromRelation->setFromAsset(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Relation>
+     */
+    public function getToRelations(): Collection
+    {
+        return $this->toRelations;
+    }
+
+    public function addToRelation(Relation $toRelation): self
+    {
+        if (!$this->toRelations->contains($toRelation)) {
+            $this->toRelations->add($toRelation);
+            $toRelation->setToAsset($this);
+        }
+
+        return $this;
+    }
+
+    public function removeToRelation(Relation $toRelation): self
+    {
+        if ($this->toRelations->removeElement($toRelation)) {
+            // set the owning side to null (unless already changed)
+            if ($toRelation->getToAsset() === $this) {
+                $toRelation->setToAsset(null);
+            }
+        }
 
         return $this;
     }

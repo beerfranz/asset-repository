@@ -176,6 +176,8 @@ final class AssetDefinitionState extends CommonState implements ProcessorInterfa
         if (isset($data['labels'])) {
             $assetDefinition->setLabels($data['labels']);
         }
+        if (isset($data['kind']))
+            $assetDefinition->addLabel('kind', $data['kind']['identifier']);
 
         $this->entityManager->persist($assetDefinition);
         $this->entityManager->flush();

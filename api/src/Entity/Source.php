@@ -35,11 +35,15 @@ class Source
     #[Groups(['Source:read'])]
     private Collection $instances;
 
+    #[ORM\OneToMany(mappedBy: 'source', targetEntity: Relation::class)]
+    private Collection $relations;
+
     public function __construct()
     {
         $this->assets = new ArrayCollection();
         $this->assetDefinitions = new ArrayCollection();
         $this->instances = new ArrayCollection();
+        $this->relations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -143,6 +147,36 @@ class Source
             // set the owning side to null (unless already changed)
             if ($instance->getSource() === $this) {
                 $instance->setSource(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Relation>
+     */
+    public function getRelations(): Collection
+    {
+        return $this->relations;
+    }
+
+    public function addRelation(Relation $relation): self
+    {
+        if (!$this->relations->contains($relation)) {
+            $this->relations->add($relation);
+            $relation->setSource($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRelation(Relation $relation): self
+    {
+        if ($this->relations->removeElement($relation)) {
+            // set the owning side to null (unless already changed)
+            if ($relation->getSource() === $this) {
+                $relation->setSource(null);
             }
         }
 
