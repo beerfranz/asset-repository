@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1d4a90ea42388e171d4659e82849e2f3",
+    "content-hash": "901146dc176f3289e48b917ba45f7f40",
     "packages": [
         {
             "name": "api-platform/core",
@@ -175,6 +175,39 @@
                 }
             ],
             "time": "2023-02-28T10:15:08+00:00"
+        },
+        {
+            "name": "beerfranz/service-bundle",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "/srv/ServiceBundle",
+                "reference": "d51ae0aca754a0654f8a86f03ecdd5f1dfa64612"
+            },
+            "require": {
+                "firebase/php-jwt": "^6.7",
+                "php": ">=7.4",
+                "symfony/framework-bundle": "^6.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Beerfranz\\ServiceBundle\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Beerfranz",
+                    "email": "francois.guegnaud@gmail.com"
+                }
+            ],
+            "description": "Common code for a micro-service, like authentication",
+            "transport-options": {
+                "relative": false
+            }
         },
         {
             "name": "doctrine/cache",
@@ -8464,7 +8497,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "beerfranz/service-bundle": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

@@ -16,8 +16,8 @@ security:
             lazy: true
             provider: users
             custom_authenticators:
-                - App\Security\HeaderAuthenticator
-                - App\Security\JwtAuthenticator
+                - Beerfranz\ServiceBundle\Security\HeaderAuthenticator
+                - Beerfranz\ServiceBundle\Security\JwtAuthenticator
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
