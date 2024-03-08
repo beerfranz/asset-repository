@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\AssetRepository;
 use App\Repository\AssetDefinitionRepository;
+use App\Repository\InstanceRepository;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,11 +43,11 @@ class IndexController extends AbstractController
   }
 
   #[Route('/ui/instances/{identifier}', name: 'getInstance', methods: ['GET'])]
-  public function getInstance(string $identifier, AssetRepository $repo, Request $request): Response
+  public function getInstance(string $identifier, InstanceRepository $repo, Request $request): Response
   {
-    $asset = $repo->findOneByIdentifier($identifier);
+    $instance = $repo->findOneByIdentifier($identifier);
 
-    return $this->render('instance.html.twig', [ 'asset' => $asset, 'navbar' => [ 'instances' => 'active' ] ]);
+    return $this->render('instance.html.twig', [ 'instance' => $instance, 'navbar' => [ 'instances' => 'active' ] ]);
   }
   #[Route('/ui/instances', name: 'getInstances', methods: ['GET'])]
   public function getInstances(Request $request): Response

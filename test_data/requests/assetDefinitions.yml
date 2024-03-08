@@ -48,7 +48,7 @@ data:
       identifier: helm
     owner: 
       identifier: DevSecOps
-  - identifier: microservice-1-helm
+  - identifier: microservice-1
     kind:
       identifier: helm
     owner: 
@@ -56,6 +56,12 @@ data:
     relations:
       - identifier: database
         relation: connect
+  - identifier: microservice-1-helm
+    kind:
+      identifier: helm
+    relations:
+      - identifier: microservice-1
+        relation: package
   - identifier: kubernetes
     name: Kubernetes
     kind:

@@ -1,0 +1,18 @@
+{% if attributes | length > 0 %}
+  <table class="table">
+    <thead><tr><th>Attribute</th><th>Value</th></tr></thead>
+    <tbody id="attributes-table">
+      {% if version is defined %}
+        <tr><td>Version</td><td>{{ version }}</td></tr>
+      {% endif %}
+      {% for attribute, value in attributes %}
+        <tr>
+          <td>{{ attribute }}</td>
+          <td>{{ value }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  No attributes
+{% endif %}

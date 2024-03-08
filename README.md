@@ -11,9 +11,10 @@ The goal of this project is to build an inventory database of assets with this s
 
 Caddy (web server) => PHP => Database (ex: Postgres)
 
+
 ## Definitions
 
-* Asset: it can be what you want: a server, a container, a Kubernetes pod, etc...
+* Asset: it can be what you want: a server, a container, a Kubernetes pod, etc...  eq: Catalog
   * owner: the owner of the asset (ISO 27001 requirement)
   * type (defined bellow)
   * attributes: a free field
@@ -21,6 +22,13 @@ Caddy (web server) => PHP => Database (ex: Postgres)
 * Asset type: define a category (server, container, pod, etc...)  => Template ?
 * Asset audits: track modifications on assets (create, update, remove)
 
+* Instance: something that is or was running. eq: Inventory
+  * optionaly (prefered) link to an asset
+  * STATE:
+    * Servers: TODO
+    * Pod: TODO
+    * Container: TODO
+    * systemd: TODO
 
 TO DO:
 * Change review plan with proof (provided by automatisation ?)
@@ -33,6 +41,8 @@ TO DO:
 * revue des taches où je suis owner
   * prévoir des dates (temps nécessaire, qui ?)
 * export des assets aws, azure
+* notion de parent en plus des relations ? ou split relations en parent, data, group ?
+  * ou différentes vues dans asset. ex: backend (parent | vue macro) => backend-helm + ecs-task + container (vue micro)
 
 
 module Versions:
@@ -60,6 +70,10 @@ data types:
 * labels: key-value
 * attributes: object
 
+
+Product (ex: backend, front)
+* have assets
+* sub-products
 
 ## UserStories
 

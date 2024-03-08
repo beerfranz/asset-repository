@@ -99,6 +99,6 @@
         }
     },
     "repositories": [
-        {"type": "path", "url":  "/srv/ServiceBundle"}
+        {"type": "git", "url":  "https://github.com/beerfranz/ServiceBundle" }
     ]
 }
