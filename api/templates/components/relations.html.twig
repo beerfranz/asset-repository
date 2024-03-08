@@ -1,0 +1,20 @@
+{% if relations | length > 0 %}
+  <div class="col-md-4 table-responsive">
+
+    <table class="table-striped table table-bordered table-hover table-condensed">
+      <thead><tr><th>ID</th><th>Kind</th><th>Target</th></tr></thead>
+      <tbody id="instance-table">
+        {% for relation in relations %}
+          <tr>
+            <td>{{ relation.id }}</td>
+            <td>{{ relation.kind }}</td>
+            <td>{{ relation.toAsset.identifier }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  </div>
+{% else %}
+  <p class="text-muted">No relation</p>
+{% endif %}

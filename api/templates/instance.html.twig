@@ -5,15 +5,15 @@
 {% block body %}
 
 <div class="row">
-	<div class="col-md-12">
-	    <h2>{{ instance.kind.name | default('') }} {{ instance.identifier }} {{ instance.friendlyName | default('') }}</h2>
-	</div>
+  <div class="col-md-12">
+      <h2>{{ instance.kind.name | default('') }} {{ instance.identifier }} {{ instance.friendlyName | default('') }}</h2>
+  </div>
 </div>
 
 <div class="row">
-	<div class="col-md-12">
-	    <h3>Attributes</h3>
-	</div>
+  <div class="col-md-12">
+      <h3>Attributes</h3>
+  </div>
 </div>
 
 <div class="row">
@@ -23,91 +23,44 @@
 </div>
 
 {# <div class="row">
-	<div class="col-md-12">
-	    <h3>Labels</h3>
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-12">
-	    <table class="table">
-	      <thead><tr><th>Label</th><th>Value</th></tr></thead>
-	      <tbody id="instance-table">
-	      	{% for label, value in instance.labels %}
-	      		<tr>
-	      			<td>{{ label }}</td>
-	      			<td>{{ value }}</td>
-	      		</tr>
-	      	{% endfor %}
-	      </tbody>
-	    </table>
-	</div>
+  <div class="col-md-12">
+    <h3>Labels</h3>
+    {% include 'components/labels.html.twig' with { 'labels': instance.labels } %}
+  </div>
 </div> #}
 
 {# <div class="row">
-	<div class="col-md-12">
-	    <h3>Relations</h3>
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-12">
-	    
-	    <table class="table">
-	      <thead><tr><th>ID</th><th>Kind</th><th>Target</th></tr></thead>
-	      <tbody id="instance-table">
-	      	{% for relation in instance.fromRelations %}
-	      		<tr>
-	      			<td>{{ relation.id }}</td>
-	      			<td>{{ relation.kind }}</td>
-	      			<td>{{ relation.toAsset.identifier }}</td>
-	      		</tr>
-	      	{% endfor %}
-	      </tbody>
-	    </table>
-	</div>
+  <div class="col-md-12">
+    <h3>Relations</h3>
+    {% include 'components/relations.html.twig' with { 'relations': instance.fromRelations } %}
+  </div>
 </div> #}
 
-{% if instance.asset %}
-
 <div class="row">
-	<div class="col-md-12">
-	    <h3>Asset</h3>
-	</div>
+  <div class="col-md-12 table-responsive">
+    <h3>Asset</h3>
+    {% if instance.asset %}
+      <table class="table-striped table table-bordered table-hover table-condensed">
+        <thead><tr class="bg-info"><th>ID</th><th>Identifier</th><th>Conformity</th></tr></thead>
+        <tbody id="asset-table">
+          <tr>
+            <td>{{ instance.asset.id }}</td>
+            <td>{{ instance.asset.identifier }}</td>
+            <td class="renderBool">{{ instance.conformity }}</td>
+          </tr>
+        </tbody>
+      </table>
+    {% else %}
+      No asset
+    {% endif %}
+  </div>
 </div>
-<div class="row">
-	<div class="col-md-12">
-	    
-	    <table class="table">
-	      <thead><tr><th>ID</th><th>Identifier</th><th>Conformity</th></tr></thead>
-	      <tbody id="instance-table">
-      		<tr>
-      			<td>{{ instance.asset.id }}</td>
-      			<td>{{ instance.asset.identifier }}</td>
-      			<td class="renderBool">{{ instance.conformity }}</td>
-      		</tr>
-	      </tbody>
-	    </table>
-	</div>
-</div>
-
-{% endif %}
 
 {# <div class="row">
-	<div class="col-md-12">
-	    <h3>Audits</h3>
-	    <table class="table">
-	      <thead><tr><th>Datetime</th><th>Actor</th><th>Action</th><th>Data</th></tr></thead>
-	      <tbody id="audit-table">
-	      	{% for audit in asset.assetAudits %}
-	      		<tr>
-	      			<td>{{ audit.datetime }}</td>
-	      			<td>{{ audit.actor }}</td>
-	      			<td>{{ audit.action }}</td>
-	      			<td>{{ audit.data }}</td>
-	      		</tr>
-	      	{% endfor %}
-	      </tbody>
-	    </table>
-	</div>
+  <div class="col-md-12">
+    <h3>Audits</h3>
+    {% include 'components/audits.html.twig' with { 'audits': instance.instanceAudits } %}
+  </div>
 </div> #}
 
 {% endblock %}
@@ -118,8 +71,8 @@
 
 $(document).ready(function () {
   $('.renderBool').each(function() {
-  	let val = $(this).html();
-  	$(this).html(renderBool(val === '1'));
+    let val = $(this).html();
+    $(this).html(renderBool(val === '1'));
   });
   
 });

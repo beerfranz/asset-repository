@@ -14,21 +14,27 @@ Caddy (web server) => PHP => Database (ex: Postgres)
 
 ## Definitions
 
-* Asset: it can be what you want: a server, a container, a Kubernetes pod, etc...  eq: Catalog
-  * owner: the owner of the asset (ISO 27001 requirement)
-  * type (defined bellow)
-  * attributes: a free field
-  * audits (defined bellow)
-* Asset type: define a category (server, container, pod, etc...)  => Template ?
-* Asset audits: track modifications on assets (create, update, remove)
+* modules:
+  * Asset/Catalog/Governance ?: it can be what you want: a server, a container, a Kubernetes pod, etc...  eq: Catalog
+    * owner: the owner of the asset (ISO 27001 requirement)
+    * type (defined bellow)
+    * attributes: a free field
+    * audits (defined bellow)
+  * Asset type: define a category (server, container, pod, etc...)  => Template ?
+  * Asset audits: track modifications on assets (create, update, remove)
 
-* Instance: something that is or was running. eq: Inventory
-  * optionaly (prefered) link to an asset
-  * STATE:
-    * Servers: TODO
-    * Pod: TODO
-    * Container: TODO
-    * systemd: TODO
+  * Instance/Inventory: something that is or was running. eq: Inventory
+    * optionaly (prefered) link to an asset
+    * STATE:
+      * Servers: TODO
+      * Pod: TODO
+      * Container: TODO
+      * systemd: TODO
+
+  * Architecture: define environments, asset definition, and generate assets from it. It's a template engine to configure the governance
+
+  * Quality management: create test plans
+  * Operation management: list operations
 
 TO DO:
 * Change review plan with proof (provided by automatisation ?)
