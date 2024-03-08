@@ -6,13 +6,41 @@
         <tr><td>Version</td><td>{{ version }}</td></tr>
       {% endif %}
       {% for attribute, value in attributes %}
+        {% if value is not iterable %}
         <tr>
           <td>{{ attribute }}</td>
           <td>{{ value }}</td>
         </tr>
+        {% endif %}
       {% endfor %}
     </tbody>
   </table>
+
+  {% for category, category_attributes in attributes %}
+    {% if category_attributes is iterable %}
+      <table class="table">
+        <thead>
+          <tr><th colspan="2">{{ category }}</th></tr>
+          <tr><th>Attribute</th><th>Value</th></tr>
+        </thead>
+        <tbody id="attributes-table">
+          {% for attribute, value in category_attributes %}
+            {% if value is not iterable %}
+            <tr>
+              <td>{{ attribute }}</td>
+              <td>{{ value }}</td>
+            </tr>
+            {% else %}
+              <tr>
+                <td>{{ attribute }}</td>
+                <td>{{ value | json_encode }}</td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  {% endfor %}
 {% else %}
   No attributes
 {% endif %}
