@@ -174,3 +174,11 @@ function renderConformity(data, conformityDetail) {
   tooltip = conformityDetail === undefined ? '' : 'data-toggle="tooltip" title="' + conformityDetail['assetData'] + '"';
   return '<span class="' + classes + '" ' + tooltip + '>' + data + '</span>';
 }
+
+function renderFriendlyName(data) {
+  if (data.friendlyName === undefined || data.friendlyName.length === 0) {
+    return '';
+  } else {
+    return ' (' + data.friendlyName + ')';
+  }
+}

@@ -30,47 +30,9 @@
     {% endblock %}
   </head>
   <body>
+  
+    {% include 'components/navbar.html.twig' %}
 
-    <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Asset Manager</a>
-        </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <ul class="nav navbar-nav">
-            {% if is_granted('ROLE_ASSET_ADMIN') %}
-            <li class="dropdown {{ navbar.asset_definitions|default('') }} {{ navbar.environment_definitions|default('') }} {{ navbar.map|default('') }}">
-              <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Architecture <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu">
-                <li class="{{ navbar.asset_definitions|default('') }}"><a href="/ui/asset_definitions">Asset Definitions</a></li>
-                <li class="{{ navbar.environment_definitions|default('') }}"><a href="/ui/environment_definitions">Environment Definitions</a></li>
-                <li class="{{ navbar.map|default('') }}"><a href="/ui/map">Map</a></li>
-              </ul>
-            </li>
-            {% endif %}
-            {% if is_granted('ROLE_ASSET_ADMIN') %}
-            <li class="{{ navbar.environments|default('') }}"><a href="/ui/environments">Environments</a></li>
-            <li class="{{ navbar.assets|default('') }}"><a href="/ui/assets">Assets</a></li>
-            <li class="{{ navbar.instances|default('') }}"><a href="/ui/instances">Instances</a></li>
-            <li class="{{ navbar.versions|default('') }}"><a href="/ui/versions">Versions</a></li>
-            <li class="{{ navbar.sources|default('') }}"><a href="/ui/sources">Sources</a></li>
-            <li class="{{ navbar.kinds|default('') }}"><a href="/ui/kinds">Kinds</a></li>
-            <li class="{{ navbar.audits|default('') }}"><a href="/ui/audits">Audits</a></li>
-            {% endif %}
-          </ul>
-      </div>
-    </nav>
     <div class="container-fluid">
       {% block body %}{% endblock %}
 

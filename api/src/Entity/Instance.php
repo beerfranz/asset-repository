@@ -18,8 +18,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: InstanceRepository::class)]
 #[ApiFilter(OrderFilter::class, properties: ['id', 'identifier', 'version'])]
-#[ApiFilter(AutocompleteFilter::class, properties: [ 'identifier'])]
-#[ApiFilter(GroupFilter::class, arguments: ['parameterName' => 'groups', 'overrideDefaultGroups' => true, 'whitelist' => ['Instance:identifier']])]
+#[ApiFilter(AutocompleteFilter::class, properties: [ 'identifier', 'kind.identifier'])]
+#[ApiFilter(GroupFilter::class, arguments: ['parameterName' => 'groups', 'overrideDefaultGroups' => true, 'whitelist' => ['Instance:identifier', 'Kind:identifier']])]
 #[ApiResource(
     normalizationContext: ['groups' => ['Instance:read']],
     denormalizationContext: ['groups' => ['Instance:write']],
@@ -55,6 +55,14 @@ class Instance
     #[ORM\ManyToOne(inversedBy: 'instances', cascade: ['persist'])]
     #[Groups(['Instance:read', 'Instance:write'])]
     private ?Source $source = null;
+
+    #[ORM\ManyToOne(inversedBy: 'instances')]
+    #[Groups(['Instance:read', 'Instance:write', 'Kind:read'])]
+    private ?Kind $kind = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['Instance:read', 'Instance:write'])]
+    private ?string $friendlyName = null;
 
     public function getId(): ?int
     {
@@ -139,6 +147,30 @@ class Instance
     public function setSource(?Source $source): self
     {
         $this->source = $source;
+
+        return $this;
+    }
+
+    public function getKind(): ?Kind
+    {
+        return $this->kind;
+    }
+
+    public function setKind(?Kind $kind): static
+    {
+        $this->kind = $kind;
+
+        return $this;
+    }
+
+    public function getFriendlyName(): ?string
+    {
+        return $this->friendlyName;
+    }
+
+    public function setFriendlyName(?string $friendlyName): static
+    {
+        $this->friendlyName = $friendlyName;
 
         return $this;
     }

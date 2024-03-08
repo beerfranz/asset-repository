@@ -9,21 +9,33 @@ data:
       version: 1.0.1-branch-1
       asset:
         identifier: front-integration-main
+      kind: app
     - identifier: front-integration-test1
       version: 1.0.1-branch-2
       asset:
         identifier: front-integration-main
+      kind: app
     - identifier: front-preprod-main-bad-version
       version: 0.1.0
       asset:
         identifier: front-preprod-main
+      kind: app
     - identifier: front-prod-main-0
       version: 1.0.0
       asset:
         identifier: front-prod-main
+      kind: app
     - identifier: front-prod-main-1
       version: 1.0.0
       asset:
         identifier: front-prod-main
+      kind: app
+    - identifier: instance-without-kind
+      version: 1.0.0
+      asset:
+        identifier: front-prod-main
+    - identifier: instance-without-asset
+      version: 1.0.0
+      kind: server
     # - identifier: orphaned-instance-1
     #   version: 1.0.0

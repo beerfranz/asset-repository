@@ -118,6 +118,14 @@ final class InstanceState extends CommonState implements ProcessorInterface, Pro
             $instance->setAsset($asset);
         }
 
+        if (isset($data['kind']))
+        {
+            $this->setKindByIdentifier($instance, $data['kind']);
+        }
+        if (isset($data['friendlyName'])) {
+            $instance->setFriendlyName($data['friendlyName']);
+        }
+
         $this->entityManager->persist($instance);
         $this->entityManager->flush();
 

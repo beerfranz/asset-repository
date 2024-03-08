@@ -38,16 +38,20 @@ class Kind
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['Kind:read', 'Kind:write', 'Asset:read', 'Kind:identifier'])]
+    #[Groups(['Kind:read', 'Kind:write', 'Asset:read', 'Kind:identifier', 'Instance:read'])]
     private ?string $identifier = null;
 
     #[ORM\OneToMany(mappedBy: 'kind', targetEntity: Asset::class)]
     #[Groups(['Kind:read'])]
     private Collection $assets;
 
+    #[ORM\OneToMany(mappedBy: 'kind', targetEntity: Instance::class)]
+    private Collection $instances;
+
     public function __construct()
     {
         $this->assets = new ArrayCollection();
+        $this->instances = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -91,6 +95,36 @@ class Kind
             // set the owning side to null (unless already changed)
             if ($asset->getKind() === $this) {
                 $asset->setKind(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Instance>
+     */
+    public function getInstances(): Collection
+    {
+        return $this->instances;
+    }
+
+    public function addInstance(Instance $instance): static
+    {
+        if (!$this->instances->contains($instance)) {
+            $this->instances->add($instance);
+            $instance->setKind($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInstance(Instance $instance): static
+    {
+        if ($this->instances->removeElement($instance)) {
+            // set the owning side to null (unless already changed)
+            if ($instance->getKind() === $this) {
+                $instance->setKind(null);
             }
         }
 
