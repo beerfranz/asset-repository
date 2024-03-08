@@ -236,6 +236,13 @@ class AssetDefinition
         return $this;
     }
 
+    public function addLabel(string $key, string $value): self
+    {
+        $this->labels[$key] = $value;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, AssetDefinitionRelation>
      */

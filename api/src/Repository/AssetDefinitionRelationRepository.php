@@ -60,6 +60,22 @@ class AssetDefinitionRelationRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findRelationByIdsNotIn(array $ids, array $additionalConditions = []): array
+    {
+        $query = $this->createQueryBuilder('a')
+           ->andWhere('a.id not in (:ids)')
+           ->setParameter('ids', $ids)
+           ->orderBy('a.id', 'ASC')
+        ;
+
+        foreach ($additionalConditions as $key => $value)
+        {
+            $query->andWhere('a.' . $key . ' = :' . $key)->setParameter($key, $value);
+        }
+
+        return $query->getQuery()->getResult();
+    }
+
 //    /**
 //     * @return AssetDefinitionRelation[] Returns an array of AssetDefinitionRelation objects
 //     */

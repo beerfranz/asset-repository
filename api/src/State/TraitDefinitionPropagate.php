@@ -8,20 +8,72 @@ use App\Entity\Environment;
 use App\Entity\EnvironmentDefinition;
 use App\Entity\Kind;
 use App\Entity\Source;
+use App\Entity\Relation;
+use App\Entity\AssetDefinitionRelation;
 
 trait TraitDefinitionPropagate {
     public function updateAssets(AssetDefinition $assetDefinition) {
         $assetRepo = $this->entityManager->getRepository(Asset::class);
-        $kindRepo = $this->entityManager->getRepository(Kind::class);
-        $environmentRepo = $this->entityManager->getRepository(Environment::class);
         $sourceRepo = $this->entityManager->getRepository(Source::class);
-
-        $envs = [];
+        $relationRepo = $this->entityManager->getRepository(Relation::class);
 
         $environmentDefinition = $assetDefinition->getEnvironmentDefinition();
 
+        $identifiers = [];
+        $relationIds = [];
+
+        $sourceIdentifier = $assetDefinition->getSource()->getName() . '-' . $assetDefinition->getIdentifier();
+
+        $source = $this->getSource($assetDefinition, $sourceRepo);
+
+        $envs = $this->getEnvs($environmentDefinition);
+
+        if ($envs === null) {
+            $identifiers[] = $this->processOneAsset($source, $assetDefinition, null, $assetRepo, $relationRepo)->getIdentifier();
+        } else {
+            foreach($envs as $environment)
+            {
+                $identifiers[] = $this->processOneAsset($source, $assetDefinition, $environment, $assetRepo, $relationRepo)->getIdentifier();
+            }
+        }
+        
+        $assetRepo->deleteBySourceAndidentifiersNotIn($source, $identifiers);
+        $relationRepo->deleteBySourceAndIdsNotIn($source, $relationIds);
+
+    }
+
+    public function getAssetIdentifier(AssetDefinition $assetDefinition, ?string $environmentIdentifier)
+    {
+        if ($environmentIdentifier === null)
+            return $assetDefinition->getIdentifier();
+
+        return $assetDefinition->getIdentifier() . '-' . $environmentIdentifier;
+    }
+
+    public function getSource(AssetDefinition $assetDefinition, $sourceRepo): Source
+    {
+        $sourceIdentifier = $assetDefinition->getSource()->getName() . '-' . $assetDefinition->getIdentifier();
+
+        $source = $sourceRepo->findOneByName($sourceIdentifier);
+        if (null === $source) {
+            $source = new Source();
+            $source->setName($sourceIdentifier);
+
+            $this->entityManager->persist($source);
+            $this->entityManager->flush();
+        }
+
+        return $source;
+    }
+
+    public function getEnvs(?EnvironmentDefinition $environmentDefinition): ?Array
+    {
+        $envs = [];
+
         if ($environmentDefinition === null)
-            return true;
+            return null;
+
+        $environmentRepo = $this->entityManager->getRepository(Environment::class);
 
         foreach($environmentDefinition->getAttributes() as $envIdentifier => $value)
         {
@@ -54,70 +106,103 @@ trait TraitDefinitionPropagate {
             }
         }
 
-        $identifiers = [];
+        return $envs;
+    }
 
-        $sourceIdentifier = $assetDefinition->getSource()->getName() . '-' . $assetDefinition->getIdentifier();
+    public function processOneRelation(Asset $asset, AssetDefinitionRelation $relationDefinition, AssetDefinition $assetDefinition, $environmentIdentifier, $assetRepo, $relationRepo): ?Relation
+    {
+        $assetDefinitionFrom = $relationDefinition->getAssetDefinitionFrom();
 
-        $source = $sourceRepo->findOneByName($sourceIdentifier);
-        if (null === $source) {
-            $source = new Source();
-            $source->setName($sourceIdentifier);
-
-            $this->entityManager->persist($source);
-            $this->entityManager->flush();
-        }
-        
-        foreach($envs as $environment)
+        // create relation only if environmentDefinition is the same
+        if ($assetDefinition->getEnvironmentDefinition() === $assetDefinitionFrom->getEnvironmentDefinition())
         {
-            $environmentIdentifier = $environment->getIdentifier();
 
-            $assetIdentifier = $assetDefinition->getIdentifier() . '-' . $environmentIdentifier;
+            $assetToIdentifier = $this->getAssetIdentifier($assetDefinitionFrom, $environmentIdentifier);
+            $assetTo = $assetRepo->findOneByIdentifier($assetToIdentifier);
 
-            $identifiers[] = $assetIdentifier;
+            if ($assetTo === null)
+                return null;
 
-            $asset = $assetRepo->findOneByIdentifier($assetIdentifier);
+            $relation = $relationRepo->findByUniq($asset, $assetTo, $relationDefinition->getName());
 
-            if ($asset === null)
+            if ($relation === null)
             {
-                $asset = new Asset();
-                $asset->setIdentifier($assetIdentifier);
+                $relation = new Relation();
+                $relation->setFromAsset($asset);
+                $relation->setToAsset($assetTo);
+                $relation->setKind($relationDefinition->getName());
             }
 
-            // labels
-            $labels = $assetDefinition->getLabels();
+            $relation->setSource($asset->getSource());
 
-            if (isset($labels['kind'])) {
-                $kindIdentifier = $labels['kind'];
-                $kind = $kindRepo->findOneByIdentifier($kindIdentifier);
-
-                if ($kind === null) {
-                    $kind = new Kind();
-                    $kind->setIdentifier($kindIdentifier);
-                }
-
-                $asset->setKind($kind);
-                unset($labels['kind']);
-            }
-
-            $labels = array_merge($asset->getLabels(), $labels);
-            $labels['environment'] = $environment->getName();
-            $asset->setLabels($labels);
-
-            // Owner
-            $asset->setOwner($assetDefinition->getOwner());
-            // Source
-            $asset->setSource($source);
-            // AssetDefinition
-            $asset->setAssetDefinition($assetDefinition);
-            // Environment
-            $asset->setEnvironment($environment);
-
-            $this->entityManager->persist($asset);
+            $this->entityManager->persist($relation);
             $this->entityManager->flush();
+
+            return $relation;
+        }
+        return null;
+    }
+
+    public function processOneAsset(Source $source, AssetDefinition $assetDefinition, ?Environment $environment, $assetRepo, $relationRepo): Asset
+    {
+        $kindRepo = $this->entityManager->getRepository(Kind::class);
+
+        if ($environment !== null)
+            $environmentIdentifier = $environment->getIdentifier();
+        else
+            $environmentIdentifier = null;
+
+        $assetIdentifier = $this->getAssetIdentifier($assetDefinition, $environmentIdentifier);
+        
+        $asset = $assetRepo->findOneByIdentifier($assetIdentifier);
+
+        if ($asset === null)
+        {
+            $asset = new Asset();
+            $asset->setIdentifier($assetIdentifier);
         }
 
-        $assetRepo->deleteBySourceAndidentifiersNotIn($source, $identifiers);
+        // labels
+        $labels = $assetDefinition->getLabels();
 
+        if (isset($labels['kind'])) {
+            $kindIdentifier = $labels['kind'];
+            $kind = $kindRepo->findOneByIdentifier($kindIdentifier);
+
+            if ($kind === null) {
+                $kind = new Kind();
+                $kind->setIdentifier($kindIdentifier);
+            }
+
+            $asset->setKind($kind);
+        }
+
+        $labels = array_merge($asset->getLabels(), $labels);
+        if ($environment !== null)
+            $labels['environment'] = $environment->getName();
+        $labels['kind'] = $kind->getIdentifier();
+        $asset->setLabels($labels);
+
+        // Owner
+        $asset->setOwner($assetDefinition->getOwner());
+        // Source
+        $asset->setSource($source);
+        // AssetDefinition
+        $asset->setAssetDefinition($assetDefinition);
+        // Environment
+        $asset->setEnvironment($environment);
+
+        $this->entityManager->persist($asset);
+        $this->entityManager->flush();
+
+        foreach ($assetDefinition->getRelationsTo() as $relationDefinition)
+        {
+            $relation = $this->processOneRelation($asset, $relationDefinition, $assetDefinition, $environmentIdentifier, $assetRepo, $relationRepo);
+            if ($relation !== null)
+                $relationIds[] = $relation->getId();
+        }
+
+        return $asset;
     }
 
 }

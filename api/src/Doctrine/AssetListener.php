@@ -94,6 +94,9 @@ class AssetListener
             $diffs[$name] = $this->serializer->normalize($value, null, ['groups' => 'Asset:read']);
         }
 
+        // if ($diffs === [])
+        //     return true;
+
         $user = $this->security->getUser();
         $email = $user->getEmail();
 
