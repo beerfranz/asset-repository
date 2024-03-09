@@ -39,14 +39,16 @@ class InstanceReconciliation
     $candidateAssets = [];
     foreach($this->getAssetRules() as $asset) {
       $notThisAsset = 0;
-      foreach($asset['rules'] as $rule) {
+      foreach($asset['rules'] as $ruleName => $rule) {
+        $sanitizedRule = $this->sanitizeRule($rule);
         try {
-          if (! eval("return $rule;"))
+          if (! eval("return $sanitizedRule;"))
             $notThisAsset++;
         } catch(\Error $e) {
+          $notThisAsset++;
+          $this->logger->error('Failed to interpret reconcilation rule ' . $ruleName . ' of asset ' . $asset['id'] . '. Sanitized rule: ' . $sanitizedRule);
           continue;
         }
-        
       }
 
       if ($notThisAsset === 0)
@@ -56,6 +58,11 @@ class InstanceReconciliation
     if (count($candidateAssets) === 1) {
       $asset = $this->assetRepo->find($candidateAssets[0]);
       $instance->setAsset($asset);
+      $this->entityManager->persist($instance);
+      $this->entityManager->flush();
+      $this->entityManager->clear();
+    } elseif (count($candidateAssets) === 0) {
+      $instance->setAsset(null);
       $this->entityManager->persist($instance);
       $this->entityManager->flush();
       $this->entityManager->clear();
@@ -70,5 +77,21 @@ class InstanceReconciliation
 
   protected function getInstances() {
     return $this->instanceRepo->findAll();
+  }
+
+  protected function sanitizeRule($rule): string
+  {
+    $instanceMapping = $this->getInstanceQueryLanguageMapping();
+
+    $sanitizedRule = str_replace(array_keys($instanceMapping), array_values($instanceMapping), $rule);
+    return $sanitizedRule;
+  }
+
+  protected function getInstanceQueryLanguageMapping(): Array
+  {
+    return [
+      'friendlyName' => '$instance->getFriendlyName()',
+      'kind' => '$instance->getKindIdentifier()',
+    ];
   }
 }

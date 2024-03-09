@@ -190,4 +190,13 @@ class Instance
 
         return $this;
     }
+
+    public function getKindIdentifier(): ?string
+    {
+        try {
+            return $this->getKind()->getIdentifier();
+        } catch(\Error $e) {
+            return null;
+        }
+    }
 }
