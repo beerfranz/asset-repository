@@ -6,10 +6,16 @@
 
 <div class="row">
   <div class="col-md-12">
-      <h2>{{ instance.kind.name | default('') }} {{ instance.identifier }} {{ instance.friendlyName | default('') }}</h2>
+      <h2>
+        {{ instance.kind.name | default('') }} {{ instance.identifier }} {{ instance.friendlyName | default('') }}
+        {% if not instance.getConformity %}
+          <span class="glyphicon glyphicon-exclamation-sign text-danger" data-toogle="tooltip" title="Not conform"></span>
+        {% endif %}
+      </h2>
   </div>
 </div>
 
+{% set conformityDetails = instance.getConformityDetails %}
 <div class="row">
   <div class="col-md-12">
       <h3>Attributes</h3>
@@ -18,7 +24,7 @@
 
 <div class="row">
   <div class="col-md-12">
-    {% include 'components/attributes.html.twig' with { 'attributes': instance.attributes } %}
+    {% include 'components/attributes.html.twig' with { 'attributes': instance.attributes, 'assetAttributes': instance.asset.attributes | default([]) } %}
   </div>
 </div>
 
@@ -39,20 +45,7 @@
 <div class="row">
   <div class="col-md-12 table-responsive">
     <h3>Asset</h3>
-    {% if instance.asset %}
-      <table class="table-striped table table-bordered table-hover table-condensed">
-        <thead><tr class="bg-info"><th>ID</th><th>Identifier</th><th>Conformity</th></tr></thead>
-        <tbody id="asset-table">
-          <tr>
-            <td>{{ instance.asset.id }}</td>
-            <td>{{ instance.asset.identifier }}</td>
-            <td class="renderBool">{{ instance.conformity }}</td>
-          </tr>
-        </tbody>
-      </table>
-    {% else %}
-      No asset
-    {% endif %}
+    {% include 'components/asset.html.twig' with { 'asset': instance.asset } %}
   </div>
 </div>
 

@@ -114,8 +114,18 @@ abstract class CommonState {
 
     protected function setAttributes($object, $input)
     {
-    	if (isset($input['attributes']))
-            $object->setAttributes($input['attributes']);
+    	if (isset($input['attributes'])) {
+            // Attributes must be grouped
+            $attributes = [];
+            foreach ($input['attributes'] as $key => $value) {
+                if (is_iterable($value)) {
+                    $attributes[$key] = $value;
+                } else {
+                    $attributes['uncategorized'][$key] = $value;
+                }
+            }
+            $object->setAttributes($attributes);
+        }
 
         return $object;
     }

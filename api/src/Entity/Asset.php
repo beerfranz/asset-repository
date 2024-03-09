@@ -23,6 +23,7 @@ use App\Validator\IsValidOwner;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -121,6 +122,18 @@ class Asset
 
     #[ORM\OneToMany(mappedBy: 'toAsset', targetEntity: Relation::class)]
     private Collection $toRelations;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['Asset:read', 'Asset:write'])]
+    private ?string $description = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['Asset:read', 'Asset:write'])]
+    private ?array $links = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['Asset:read', 'Asset:write'])]
+    private ?array $rules = null;
 
     public function __construct()
     {
@@ -438,6 +451,42 @@ class Asset
                 $toRelation->setToAsset(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getLinks(): ?array
+    {
+        return $this->links;
+    }
+
+    public function setLinks(?array $links): static
+    {
+        $this->links = $links;
+
+        return $this;
+    }
+
+    public function getRules(): ?array
+    {
+        return $this->rules;
+    }
+
+    public function setRules(?array $rules): static
+    {
+        $this->rules = $rules;
 
         return $this;
     }

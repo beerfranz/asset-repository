@@ -163,6 +163,18 @@ final class AssetState extends CommonState implements ProcessorInterface, Provid
         if (isset($data['version']))
             $asset = $this->setVersion($asset, $data['version']);
 
+        // Description
+        if (isset($data['description']))
+            $asset->setDescription($data['description']);
+
+        // Links
+        if (isset($data['links']))
+            $asset->setLinks($data['links']);
+
+        // Rules
+        if (isset($data['rules']))
+            $asset->setRules($data['rules']);
+
         $this->entityManager->persist($asset);
         $this->entityManager->flush();
         $this->entityManager->clear();

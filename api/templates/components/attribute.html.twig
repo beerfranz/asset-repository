@@ -1,0 +1,28 @@
+{% if value is not iterable %}
+  <tr>
+    {% if conformityDetails['error']['attributes'][category][attribute] is defined %}
+      {% set _state = 'error' %}
+      {% set _tooltip = conformityDetails['error']['attributes'][category][attribute]['expected'] %}
+    {% elseif conformityDetails['validated']['attributes'][category][attribute] is defined %}
+      {% set _state = 'validated' %}
+      {% set _tooltip = conformityDetails['validated']['attributes'][category][attribute]['expected'] %}
+    {% else %}
+      {% set _state = 'not_verified' %}
+    {% endif %}
+    <td>{{ attribute }}</td>
+    <td class="{% if _state == 'error' %}bg-danger{% elseif _state == 'validated' %}bg-success{% endif %}">
+      {{ value }}
+      {% if _state == 'error' %}
+        <span class="glyphicon glyphicon-exclamation-sign text-danger" data-toogle="tooltip" title="{{ _tooltip }}"></span>
+      {% elseif _state == 'validated' %}
+        <span class="glyphicon glyphicon-ok-sign text-success" data-toogle="tooltip" title="{{ _tooltip }}"></span>
+      {% endif %}
+
+    </td>
+  </tr>
+{% elseif value is iterable and stringifyIterable is defined %}
+  <tr>
+    <td>{{ attribute }}</td>
+    <td>{{ value | json_encode }}</td>
+  </tr>
+{% endif %}

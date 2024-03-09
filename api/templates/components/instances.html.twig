@@ -6,7 +6,7 @@
         {% for instance in instances %}
           <tr>
             <td>{{ instance.id }}</td>
-            <td>{{ instance.identifier }}</td>
+            <td><a href="/ui/instances/{{ instance.identifier }}">{{ instance.identifier }}</a></td>
             <td>{{ instance.version }}</td>
             <td class="renderBool">{{ instance.conformity }}</td>
           </tr>

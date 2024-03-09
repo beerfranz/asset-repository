@@ -120,17 +120,33 @@ class Instance
     #[Groups(['Instance:read'])]
     public function getConformity(): bool
     {
-        $this->conformity = [];
-        if ($this->asset !== null) {
-            $assetVersion = $this->asset->getVersion() === null ? null : $this->asset->getVersion()->getName();
-        } else {
-            $assetVersion = null;
-        }
-        
-        if ($assetVersion !== $this->version)
-            $this->conformity['version'] = [ 'assetData' => $assetVersion ];
+        $this->conformity = [ 'error' => [], 'validated' => []];
 
-        return count($this->conformity) === 0 ? true : false;
+        // Conformity v1: only check version
+        // if ($this->asset !== null) {
+        //     $assetVersion = $this->asset->getVersion() === null ? null : $this->asset->getVersion()->getName();
+        // } else {
+        //     $assetVersion = null;
+        // }
+        
+        // if ($assetVersion !== $this->version)
+        //     $this->conformity['version'] = [ 'assetData' => $assetVersion ];
+
+        // Conformity v2: check all attributes
+        if ($this->asset !== null) {
+            foreach ($this->asset->getAttributes() as $category => $attributes) {
+                foreach ($attributes as $attribute => $value) {
+                    if (isset($this->attributes[$category][$attribute]) && $this->attributes[$category][$attribute] === $value)
+                        $this->conformity['validated']['attributes'][$category][$attribute] = [ 'expected' => $value ];
+                    else
+                        $this->conformity['error']['attributes'][$category][$attribute] = [ 'expected' => $value ];
+                }
+            }
+        } else {
+            return false;
+        }
+
+        return count($this->conformity['error']) === 0 ? true : false;
     }
 
     #[Groups(['Instance:read'])]

@@ -85,4 +85,15 @@ class AssetRepository extends ServiceEntityRepository implements RogerRepository
         return $query->getResult();
     }
 
+    public function findRules(): Array
+    {
+        return $this->createQueryBuilder('a')
+           ->select('a.rules')
+           ->addSelect('a.id')
+           ->andWhere('a.rules IS NOT NULL')
+           ->getQuery()
+           ->getResult()
+        ;
+    }
+
 }

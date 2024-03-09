@@ -10,12 +10,36 @@
       {% if asset.parent %}
         Parent: {{ asset.parent.identifier }}
       {% endif %}
+
+      {% if asset.description | length > 0 %}
+        <div class="panel panel-info">
+          <p id="asset-description"></p>
+        </div>
+      {% endif %}
+      
+      {% if asset.links | length > 0 %}
+        <h3>Links</h3>
+        <ul>
+          {% for link in asset.links %}
+            <li><a href="{{ link.link }}">{{ link.name }}</a></li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      {% if asset.rules | length > 0 %}
+        <h3>Instance reconciliation rules</h3>
+        <ul>
+          {% for name, rule in asset.rules %}
+            <li>{{ name }}: <code>{{ rule }}</code></li>
+          {% endfor %}
+        </ul>
+      {% endif %}
   </div>
 </div>
 
 <div class="row">
   <div class="col-md-12">
-    <h3>Attributes</h3>
+    <h3>Expected attributes</h3>
     {% include 'components/version-current.html.twig' with { 'version': asset.version } %}
     {% include 'components/attributes.html.twig' with { 'attributes': asset.attributes } %}
   </div>
@@ -53,6 +77,8 @@
 
 {% block js %}
 
+<script src="/lib/showdown.min.js"></script>
+
 <script>
 
 $(document).ready(function () {
@@ -60,7 +86,13 @@ $(document).ready(function () {
     let val = $(this).html();
     $(this).html(renderBool(val === '1'));
   });
+
+  var converter = new showdown.Converter({headerLevelStart: 3});
+  $('#asset-description').html(converter.makeHtml(`{{ asset.description }}`));
+
 });
+
+
 
 </script>
 

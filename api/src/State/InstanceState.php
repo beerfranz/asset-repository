@@ -7,6 +7,7 @@ use App\Entity\Instance;
 use App\Entity\Source;
 use App\ApiResource\Instance as InstanceDto;
 use App\ApiResource\InstanceBatchDto;
+use App\Service\InstanceReconciliation;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\Metadata\Put;
@@ -26,17 +27,20 @@ final class InstanceState extends CommonState implements ProcessorInterface, Pro
     protected $instanceRepo;
     protected $assetRepo;
     protected $sourceRepo;
+    protected $serviceInstanceReconciliation;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         RequestStack $request,
         LoggerInterface $logger,
         Security $security,
+        InstanceReconciliation $serviceInstanceReconciliation,
     ) {
         parent::__construct($entityManager, $request, $logger, $security);
         $this->instanceRepo = $entityManager->getRepository(Instance::class);
         $this->assetRepo = $entityManager->getRepository(Asset::class);
         $this->sourceRepo = $entityManager->getRepository(Source::class);
+        $this->serviceInstanceReconciliation = $serviceInstanceReconciliation;
     }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
@@ -128,6 +132,8 @@ final class InstanceState extends CommonState implements ProcessorInterface, Pro
 
         $this->entityManager->persist($instance);
         $this->entityManager->flush();
+
+        $instance = $this->serviceInstanceReconciliation->reconcileInstance($instance);
 
         return $instance;
     }
