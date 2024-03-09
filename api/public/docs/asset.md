@@ -12,8 +12,8 @@ An instance is linked to an asset if:
 * only one asset is matched
 
 Rules matchers:
-* equality: `foo == 'bar'`
-* in: `in_array(foo, ['value1', 'value2'])`
+* equal: `foo == 'bar'`
+* in: `in_array(foo, ["value1", "value2"])`
 * lower than: `foo < 10`, `foo <= 10`
 * greater than: `foo > 10`, `foo >= 10`
 * between: `foo > 1 && foo < 10`
@@ -21,3 +21,11 @@ Rules matchers:
 Instance properties that can be used:
 * friendlyName: `friendlyName`
 * kind identifier: `kind`
+
+## Attributes constaints
+
+Attributes defines constraints on instances attributes.
+
+Constraints:
+* equal: `desiredValue`
+* one of: `in ["value1", "value2"]`

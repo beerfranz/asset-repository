@@ -135,11 +135,23 @@ class Instance
         // Conformity v2: check all attributes
         if ($this->asset !== null) {
             foreach ($this->asset->getAttributes() as $category => $attributes) {
-                foreach ($attributes as $attribute => $value) {
-                    if (isset($this->attributes[$category][$attribute]) && $this->attributes[$category][$attribute] === $value)
-                        $this->conformity['validated']['attributes'][$category][$attribute] = [ 'expected' => $value ];
+                foreach ($attributes as $attribute => $constraint) {
+                    if (isset($this->attributes[$category][$attribute])) {
+                        $attributeValue = $this->attributes[$category][$attribute];
+                        preg_match('/^([^ ]*)(.*)$/', $constraint, $matches);
+                        
+                        if ($matches[1] == 'in' && isset($matches[2]))
+                            $check = in_array($attributeValue, json_decode($matches[2]));
+                        else
+                            $check = $attributeValue === $matches[0];
+
+                        if ($check)
+                            $this->conformity['validated']['attributes'][$category][$attribute] = [ 'expected' => $constraint ];
+                        else
+                            $this->conformity['error']['attributes'][$category][$attribute] = [ 'expected' => $constraint ];
+                    } 
                     else
-                        $this->conformity['error']['attributes'][$category][$attribute] = [ 'expected' => $value ];
+                        $this->conformity['error']['attributes'][$category][$attribute] = [ 'expected' => $constraint ];
                 }
             }
         } else {

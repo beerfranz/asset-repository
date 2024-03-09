@@ -30,7 +30,7 @@ data:
         ec2:
           region: eu-west-3
           InstanceType: t3.micro
-          KeyName: my-ssh
+          KeyName: in ["my-ssh", "test-ssh"]
           architecture: arm64
           missingForInstance: baaad
         notPresentInInstance:
