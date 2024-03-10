@@ -5,10 +5,10 @@
       <tbody id="audit-table">
         {% for audit in audits %}
           <tr>
-            <td>{{ audit.datetime }}</td>
+            <td>{{ audit.datetime | date("Y-m-d H:i:s") }}</td>
             <td>{{ audit.actor }}</td>
             <td>{{ audit.action }}</td>
-            <td>{{ audit.data }}</td>
+            <td>{{ audit.data | json_encode }}</td>
           </tr>
         {% endfor %}
       </tbody>
