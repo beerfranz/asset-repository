@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\AssetRepository;
 use App\Repository\AssetDefinitionRepository;
+use App\Repository\AssetAuditRepository;
 use App\Repository\InstanceRepository;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -35,11 +36,12 @@ class IndexController extends AbstractController
   }
 
   #[Route('/ui/assets/{identifier}', name: 'getAsset', methods: ['GET'])]
-  public function getAsset(string $identifier, AssetRepository $repo, Request $request): Response
+  public function getAsset(string $identifier, AssetRepository $repo, Request $request, AssetAuditRepository $auditRepo): Response
   {
     $asset = $repo->findOneByIdentifier($identifier);
+    $assetAudits = $auditRepo->findBy([ 'subject' => $identifier ], [ 'datetime' => 'DESC' ]);
 
-    return $this->render('asset.html.twig', [ 'asset' => $asset ]);
+    return $this->render('asset.html.twig', [ 'asset' => $asset, 'assetAudits' => $assetAudits ]);
   }
 
   #[Route('/ui/instances/{identifier}', name: 'getInstance', methods: ['GET'])]
