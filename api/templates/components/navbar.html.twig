@@ -15,6 +15,7 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
+            <li class="{{ navbar.dashboard|default('') }}"><a href="/ui/dashboard">Dashboard</a></li>
             {% if is_granted('ROLE_ASSET_ADMIN') %}
             <li class="dropdown {{ navbar.asset_definitions|default('') }} {{ navbar.environment_definitions|default('') }} {{ navbar.map|default('') }}">
               <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

@@ -110,4 +110,18 @@ class IndexController extends AbstractController
   {
     return $this->render('map.html.twig', [ 'navbar' => [ 'map' => 'active' ] ]);
   }
+
+  #[Route('/ui/dashboard', name: 'getDashboard', methods: ['GET'])]
+  public function getDashboard(Request $request, AssetRepository $assetRepo, InstanceRepository $instanceRepo): Response
+  {
+    $countAssets = $assetRepo->countAssets();
+    $countInstances = $instanceRepo->countInstances();
+    $countInstancesValidated = $instanceRepo->countInstancesValidated();
+
+    return $this->render('dashboard.html.twig', [ 'navbar' => [ 'dashboard' => 'active' ], 'stats' => [
+      'countAssets' => $countAssets,
+      'countInstances' => $countInstances,
+      'countInstancesValidated' => $countInstancesValidated,
+    ] ]);
+  }
 }

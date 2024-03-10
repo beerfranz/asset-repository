@@ -96,4 +96,13 @@ class AssetRepository extends ServiceEntityRepository implements RogerRepository
         ;
     }
 
+    public function countAssets(): Int
+    {
+        return $this->createQueryBuilder('a')
+           ->select('count(a.id)')
+           ->getQuery()
+           ->getSingleScalarResult()
+        ;
+    }
+
 }
