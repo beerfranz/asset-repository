@@ -7,6 +7,7 @@ use App\Entity\Source;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\ORM\Query\ResultSetMapping;
 
 /**
  * @extends ServiceEntityRepository<Asset>
@@ -103,6 +104,16 @@ class AssetRepository extends ServiceEntityRepository implements RogerRepository
            ->getQuery()
            ->getSingleScalarResult()
         ;
+    }
+
+    public function countAssetsReconcilied(): Int
+    {
+        $rsm = new ResultSetMapping();
+        $rsm->addScalarResult('total', 'total');
+        $result = $this->getEntityManager()->createNativeQuery("SELECT COUNT(asset_id) as total FROM instance WHERE asset_id is not null;", $rsm)
+           ->getResult()
+        ;
+        return $result[0]['total'];
     }
 
 }

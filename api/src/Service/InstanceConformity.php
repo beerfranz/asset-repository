@@ -34,15 +34,21 @@ class InstanceConformity
     $asset = $instance->getAsset();
 
     if ($asset === null) {
+      $instance->setIsConform(null);
+      $instance->setConformities(null);
       return $instance;
     }
 
-    $conformities = [ 'errors' => [], 'validated' => [], 'date' => date('Y-m-d H:i:s')];
+    $countTotal = 0;
+    $countError = 0;
+
+    $conformities = [ 'errors' => [], 'validated' => [], 'date' => date('Y-m-d H:i:s'), 'statistics' => []];
 
     $instanceAttributes = $instance->getAttributes();
 
     foreach ($asset->getAttributes() as $category => $attributes) {
       foreach ($attributes as $attribute => $constraint) {
+        $countTotal++;
         if (isset($instanceAttributes[$category][$attribute])) {
           $attributeValue = $instanceAttributes[$category][$attribute];
 
@@ -61,6 +67,7 @@ class InstanceConformity
               'isConform' => false,
               'reason' => 'Not in constraint: ' . $constraint,
             ];
+            $countError++;
           }
 
         } else {
@@ -70,15 +77,19 @@ class InstanceConformity
             'isConform' => false,
             'reason' => 'Not defined',
           ];
+          $countError++;
         }
       }
     }
 
+    $conformities['statistics']['errors'] = $countError;
+    $conformities['statistics']['total'] = $countTotal;
+
     $instance->setConformities($conformities);
 
-    if (count($conformities['errors']) > 0)
+    if ($countError > 0)
       $instance->setIsConform(false);
-    elseif (count($conformities['validated']) > 0)
+    elseif ($countTotal > 0)
       $instance->setIsConform(true);
     else
       $instance->setIsConform(null);
