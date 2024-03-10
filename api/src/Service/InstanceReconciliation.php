@@ -34,7 +34,7 @@ class InstanceReconciliation
     }
   }
 
-  public function reconcileInstance($instance): Instance
+  public function reconcileInstance(Instance $instance): Instance
   {
     $candidateAssets = [];
     foreach($this->getAssetRules() as $asset) {
@@ -58,14 +58,8 @@ class InstanceReconciliation
     if (count($candidateAssets) === 1) {
       $asset = $this->assetRepo->find($candidateAssets[0]);
       $instance->setAsset($asset);
-      $this->entityManager->persist($instance);
-      $this->entityManager->flush();
-      $this->entityManager->clear();
     } elseif (count($candidateAssets) === 0) {
       $instance->setAsset(null);
-      $this->entityManager->persist($instance);
-      $this->entityManager->flush();
-      $this->entityManager->clear();
     }
 
     return $instance;

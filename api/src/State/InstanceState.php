@@ -8,6 +8,7 @@ use App\Entity\Source;
 use App\ApiResource\Instance as InstanceDto;
 use App\ApiResource\InstanceBatchDto;
 use App\Service\InstanceReconciliation;
+use App\Service\InstanceConformity;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\Metadata\Put;
@@ -28,6 +29,7 @@ final class InstanceState extends CommonState implements ProcessorInterface, Pro
     protected $assetRepo;
     protected $sourceRepo;
     protected $serviceInstanceReconciliation;
+    protected $serviceInstanceConformity;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -35,12 +37,14 @@ final class InstanceState extends CommonState implements ProcessorInterface, Pro
         LoggerInterface $logger,
         Security $security,
         InstanceReconciliation $serviceInstanceReconciliation,
+        InstanceConformity $serviceInstanceConformity,
     ) {
         parent::__construct($entityManager, $request, $logger, $security);
         $this->instanceRepo = $entityManager->getRepository(Instance::class);
         $this->assetRepo = $entityManager->getRepository(Asset::class);
         $this->sourceRepo = $entityManager->getRepository(Source::class);
         $this->serviceInstanceReconciliation = $serviceInstanceReconciliation;
+        $this->serviceInstanceConformity = $serviceInstanceConformity;
     }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
@@ -130,10 +134,11 @@ final class InstanceState extends CommonState implements ProcessorInterface, Pro
             $instance->setFriendlyName($data['friendlyName']);
         }
 
+        $instance = $this->serviceInstanceReconciliation->reconcileInstance($instance);
+        $instance = $this->serviceInstanceConformity->checkInstance($instance);
+
         $this->entityManager->persist($instance);
         $this->entityManager->flush();
-
-        $instance = $this->serviceInstanceReconciliation->reconcileInstance($instance);
 
         return $instance;
     }

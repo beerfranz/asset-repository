@@ -14,6 +14,7 @@ An instance is linked to an asset if:
 Rules matchers:
 * equal: `foo == 'bar'`
 * in: `in_array(foo, ["value1", "value2"])`
+* regexp: `preg_match('/^DevServer-[0-9]*$/', foo)`
 * lower than: `foo < 10`, `foo <= 10`
 * greater than: `foo > 10`, `foo >= 10`
 * between: `foo > 1 && foo < 10`

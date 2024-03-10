@@ -8,23 +8,20 @@
   <div class="col-md-12">
       <h2>
         {{ instance.kind.name | default('') }} {{ instance.identifier }} {{ instance.friendlyName | default('') }}
-        {% if not instance.getConformity %}
+        {% if instance.isConform is same as(false) %}
           <span class="glyphicon glyphicon-exclamation-sign text-danger" data-toogle="tooltip" title="Not conform"></span>
         {% endif %}
       </h2>
   </div>
 </div>
 
-{% set conformityDetails = instance.getConformityDetails %}
 <div class="row">
   <div class="col-md-12">
-      <h3>Attributes</h3>
+    <h3>Attributes</h3>
+    {% include 'components/attributes.html.twig' with { 'attributes': instance.attributes, 'conformities': instance.conformities } %}
   </div>
-</div>
-
-<div class="row">
   <div class="col-md-12">
-    {% include 'components/attributes.html.twig' with { 'attributes': instance.attributes, 'assetAttributes': instance.asset.attributes | default([]) } %}
+    Checked: {{ instance.conformities.date }}
   </div>
 </div>
 
@@ -46,6 +43,7 @@
   <div class="col-md-12 table-responsive">
     <h3>Asset</h3>
     {% include 'components/asset.html.twig' with { 'asset': instance.asset } %}
+
   </div>
 </div>
 

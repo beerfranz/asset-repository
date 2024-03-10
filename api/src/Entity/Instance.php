@@ -50,8 +50,6 @@ class Instance
     #[Groups(['Instance:read', 'Instance:write'])]
     private ?Asset $asset = null;
 
-    private array $conformity = [];
-
     #[ORM\ManyToOne(inversedBy: 'instances', cascade: ['persist'])]
     #[Groups(['Instance:read', 'Instance:write'])]
     private ?Source $source = null;
@@ -63,6 +61,14 @@ class Instance
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['Instance:read', 'Instance:write'])]
     private ?string $friendlyName = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['Instance:read'])]
+    private ?bool $isConform = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['Instance:read'])]
+    private ?array $conformities = null;
 
     public function getId(): ?int
     {
@@ -117,56 +123,6 @@ class Instance
         return $this;
     }
 
-    #[Groups(['Instance:read'])]
-    public function getConformity(): bool
-    {
-        $this->conformity = [ 'error' => [], 'validated' => []];
-
-        // Conformity v1: only check version
-        // if ($this->asset !== null) {
-        //     $assetVersion = $this->asset->getVersion() === null ? null : $this->asset->getVersion()->getName();
-        // } else {
-        //     $assetVersion = null;
-        // }
-        
-        // if ($assetVersion !== $this->version)
-        //     $this->conformity['version'] = [ 'assetData' => $assetVersion ];
-
-        // Conformity v2: check all attributes
-        if ($this->asset !== null) {
-            foreach ($this->asset->getAttributes() as $category => $attributes) {
-                foreach ($attributes as $attribute => $constraint) {
-                    if (isset($this->attributes[$category][$attribute])) {
-                        $attributeValue = $this->attributes[$category][$attribute];
-                        preg_match('/^([^ ]*)(.*)$/', $constraint, $matches);
-                        
-                        if ($matches[1] == 'in' && isset($matches[2]))
-                            $check = in_array($attributeValue, json_decode($matches[2]));
-                        else
-                            $check = $attributeValue === $matches[0];
-
-                        if ($check)
-                            $this->conformity['validated']['attributes'][$category][$attribute] = [ 'expected' => $constraint ];
-                        else
-                            $this->conformity['error']['attributes'][$category][$attribute] = [ 'expected' => $constraint ];
-                    } 
-                    else
-                        $this->conformity['error']['attributes'][$category][$attribute] = [ 'expected' => $constraint ];
-                }
-            }
-        } else {
-            return false;
-        }
-
-        return count($this->conformity['error']) === 0 ? true : false;
-    }
-
-    #[Groups(['Instance:read'])]
-    public function getConformityDetails(): array
-    {
-        return $this->conformity;
-    }
-
     public function getSource(): ?Source
     {
         return $this->source;
@@ -210,5 +166,34 @@ class Instance
         } catch(\Error $e) {
             return null;
         }
+    }
+
+    public function isIsConform(): ?bool
+    {
+        return $this->isConform;
+    }
+
+    public function setIsConform(?bool $isConform): static
+    {
+        $this->isConform = $isConform;
+
+        return $this;
+    }
+
+    public function getConformities(): ?array
+    {
+        return $this->conformities;
+    }
+
+    public function setConformities(?array $conformities): static
+    {
+        $this->conformities = $conformities;
+
+        return $this;
+    }
+
+    public function getConformitiesByChecks(): ?array
+    {
+        return array_merge_recursive($this->conformities['errors'], $this->conformities['validated']);
     }
 }

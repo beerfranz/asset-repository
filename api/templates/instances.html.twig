@@ -38,9 +38,9 @@ $(document).ready(function () {
 		{ data: 'id', title: 'ID' },
 		{ data: 'identifier', title: 'Identifier', render: function(data, type, row, meta){ return '<a href="/ui/instances/' + data + '">' + data + renderFriendlyName(row) + '</a>'} },	
 		{ data: 'kind.identifier', title: 'Kind', orderable: false, defaultContent: '' },
-		{ data: 'version', title: 'Version', render: function(data, type, row, meta) { return renderConformity(data, row.conformityDetails['version']); } },
+		// { data: 'version', title: 'Version', render: function(data, type, row, meta) { return renderConformity(data, row.conformityDetails['version']); } },
 		{ data: 'asset.identifier', title: 'Asset', 'orderable': false, render: function(data, type, row, meta){ return renderAsset(data); } },
-		{ data: 'conformity', title: 'Conformity', 'orderable': false, render: function(data, type, row, meta) { return renderBool(data); } },
+		{ data: 'isConform', title: 'Conformity', 'orderable': false, render: function(data, type, row, meta) { return renderBool(data); } },
 		{ data: 'source.name', title: 'Source', defaultContent: '', 'orderable': false },
   ];
 

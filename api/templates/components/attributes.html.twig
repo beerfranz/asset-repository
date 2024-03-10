@@ -11,8 +11,8 @@
             {% for attribute, value in category_attributes %}
               {% include 'components/attribute.html.twig' with { 'stringifyIterable': true } %}
             {% endfor %}
-            {% if conformityDetails is defined and conformityDetails['error']['attributes'][category] is defined %}
-              {% for attribute, value in conformityDetails['error']['attributes'][category] %}
+            {% if conformities is defined and conformities['errors']['attributes'][category] is defined %}
+              {% for attribute, value in conformities['errors']['attributes'][category] %}
                 {% if attribute not in category_attributes|keys %}
                   <tr>
                     <td class=>{{ attribute }}</td>
@@ -30,8 +30,8 @@
   {% endfor %}
 {% endif %}
 
-{% if conformityDetails is defined and conformityDetails['error']['attributes'] is defined %}
-  {% for category, category_attributes in conformityDetails['error']['attributes'] %}
+{% if conformities is defined and conformities['errors']['attributes'] is defined %}
+  {% for category, category_attributes in conformities['errors']['attributes'] %}
     {% if category not in attributes|keys %}
       <div class="col-md-4 table-responsive">
         <table class="table-striped table table-bordered table-hover table-condensed">
