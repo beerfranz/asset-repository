@@ -25,11 +25,14 @@ Caddy (web server) => PHP => Database (ex: Postgres)
 
   * Instance/Inventory: something that is or was running. eq: Inventory
     * optionaly (prefered) link to an asset
-    * STATE:
+    * dedicated views:
       * Servers: TODO
       * Pod: TODO
       * Container: TODO
       * systemd: TODO
+    * link to monitoring: TODO
+  * Dashboard/Statistics: number of checks
+  * Control plan: Define controls, frequency, generate reports, validation flow
 
   * Architecture: define environments, asset definition, and generate assets from it. It's a template engine to configure the governance
 

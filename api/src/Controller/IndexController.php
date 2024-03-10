@@ -115,13 +115,21 @@ class IndexController extends AbstractController
   public function getDashboard(Request $request, AssetRepository $assetRepo, InstanceRepository $instanceRepo): Response
   {
     $countAssets = $assetRepo->countAssets();
+    $countAssetsReconcilied = $assetRepo->countAssetsReconcilied();
     $countInstances = $instanceRepo->countInstances();
     $countInstancesValidated = $instanceRepo->countInstancesValidated();
+    $countInstancesTotalChecks = $instanceRepo->countInstancesTotalChecks();
+    $countInstancesTotalErrors = $instanceRepo->countInstancesTotalErrors();
+    $countInstancesReconcilied = $instanceRepo->countInstancesReconcilied();
 
     return $this->render('dashboard.html.twig', [ 'navbar' => [ 'dashboard' => 'active' ], 'stats' => [
       'countAssets' => $countAssets,
+      'countAssetsReconcilied' => $countAssetsReconcilied,
       'countInstances' => $countInstances,
       'countInstancesValidated' => $countInstancesValidated,
+      'countInstancesTotalChecks' => $countInstancesTotalChecks,
+      'countInstancesTotalErrors' => $countInstancesTotalErrors,
+      'countInstancesReconcilied' => $countInstancesReconcilied,
     ] ]);
   }
 }

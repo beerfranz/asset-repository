@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Instance;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Query\ResultSetMapping;
 
 /**
  * @extends ServiceEntityRepository<Instance>
@@ -74,6 +75,36 @@ class InstanceRepository extends ServiceEntityRepository implements RogerReposit
            ->getQuery()
            ->getSingleScalarResult()
         ;
+    }
+
+    public function countInstancesReconcilied(): Int
+    {
+        $rsm = new ResultSetMapping();
+        $rsm->addScalarResult('total', 'total');
+        $result = $this->getEntityManager()->createNativeQuery("SELECT COUNT(id) as total FROM instance WHERE asset_id is not null;", $rsm)
+           ->getResult()
+        ;
+        return $result[0]['total'];
+    }
+
+    public function countInstancesTotalChecks(): int
+    {
+        $rsm = new ResultSetMapping();
+        $rsm->addScalarResult('total', 'total');
+        $result = $this->getEntityManager()->createNativeQuery("SELECT SUM(cast(conformities->'statistics'->>'total' as integer)) as total FROM instance WHERE asset_id is not null;", $rsm)
+           ->getResult()
+        ;
+        return $result[0]['total'];
+    }
+
+    public function countInstancesTotalErrors(): int
+    {
+        $rsm = new ResultSetMapping();
+        $rsm->addScalarResult('total', 'total');
+        $result = $this->getEntityManager()->createNativeQuery("SELECT SUM(cast(conformities->'statistics'->>'errors' as integer)) as total FROM instance WHERE asset_id is not null;", $rsm)
+           ->getResult()
+        ;
+        return $result[0]['total'];
     }
 
 }
