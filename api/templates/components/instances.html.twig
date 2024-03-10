@@ -1,0 +1,18 @@
+{% if instances | length > 0 %}
+  <div class="col-md-12 table-responsive">
+    <table class="table-striped table table-bordered table-hover table-condensed">
+      <thead><tr class="bg-info"><th>ID</th><th>Identifier</th><th>Conformity</th></tr></thead>
+      <tbody id="instances-table">
+        {% for instance in instances %}
+          <tr>
+            <td>{{ instance.id }}</td>
+            <td><a href="/ui/instances/{{ instance.identifier }}">{{ instance.identifier }}</a></td>
+            <td class="renderBool">{{ instance.isConform }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <p class="text-muted">No instance</p>
+{% endif %}

@@ -56,5 +56,24 @@ class InstanceRepository extends ServiceEntityRepository implements RogerReposit
 
         return $query->getQuery()->getResult();
     }
+    
+    public function countInstances(): Int
+    {
+        return $this->createQueryBuilder('i')
+           ->select('count(i.id)')
+           ->getQuery()
+           ->getSingleScalarResult()
+        ;
+    }
+
+    public function countInstancesValidated(): Int
+    {
+        return $this->createQueryBuilder('i')
+           ->select('count(i.id)')
+           ->andWhere('i.isConform = true')
+           ->getQuery()
+           ->getSingleScalarResult()
+        ;
+    }
 
 }

@@ -23,6 +23,30 @@ data:
     - identifier: front-prod-main
       version: 1.0.0
       <<: *_app
+    - identifier: DevServer
+      kind: 
+        identifier: server
+      attributes:
+        ec2:
+          region: eu-west-3
+          InstanceType: t3.micro
+          KeyName: in ["my-ssh", "test-ssh"]
+          architecture: arm64
+          missingForInstance: baaad
+        notPresentInInstance:
+          foo: bar
+      description: |
+        # The dev server
+        Used by:
+        * developers
+        * qa
+      links:
+        - name: google
+          link: https://google.com
+      rules:
+        friendlyName: preg_match('/^DevServer-[0-9]*$/', friendlyName)
+        kind: kind == 'server'
+
     # - identifier: orphaned-app
     #   version: 1.0.0
     #   <<: *_app

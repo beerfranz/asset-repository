@@ -1,0 +1,11 @@
+<div class="col-md-4 table-responsive">
+  {% if version | length > 0 %}
+    <table class="table-striped table table-bordered table-hover table-condensed">
+      <tbody id="version-table">
+        <tr>
+          <tr><td>Version</td><td>{{ version.name }}</td></tr>
+        </tr>
+      </tbody>
+    </table>
+  {% endif %}
+</div>

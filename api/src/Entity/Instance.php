@@ -50,8 +50,6 @@ class Instance
     #[Groups(['Instance:read', 'Instance:write'])]
     private ?Asset $asset = null;
 
-    private array $conformity = [];
-
     #[ORM\ManyToOne(inversedBy: 'instances', cascade: ['persist'])]
     #[Groups(['Instance:read', 'Instance:write'])]
     private ?Source $source = null;
@@ -63,6 +61,14 @@ class Instance
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['Instance:read', 'Instance:write'])]
     private ?string $friendlyName = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['Instance:read'])]
+    private ?bool $isConform = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['Instance:read'])]
+    private ?array $conformities = null;
 
     public function getId(): ?int
     {
@@ -117,28 +123,6 @@ class Instance
         return $this;
     }
 
-    #[Groups(['Instance:read'])]
-    public function getConformity(): bool
-    {
-        $this->conformity = [];
-        if ($this->asset !== null) {
-            $assetVersion = $this->asset->getVersion() === null ? null : $this->asset->getVersion()->getName();
-        } else {
-            $assetVersion = null;
-        }
-        
-        if ($assetVersion !== $this->version)
-            $this->conformity['version'] = [ 'assetData' => $assetVersion ];
-
-        return count($this->conformity) === 0 ? true : false;
-    }
-
-    #[Groups(['Instance:read'])]
-    public function getConformityDetails(): array
-    {
-        return $this->conformity;
-    }
-
     public function getSource(): ?Source
     {
         return $this->source;
@@ -173,5 +157,43 @@ class Instance
         $this->friendlyName = $friendlyName;
 
         return $this;
+    }
+
+    public function getKindIdentifier(): ?string
+    {
+        try {
+            return $this->getKind()->getIdentifier();
+        } catch(\Error $e) {
+            return null;
+        }
+    }
+
+    public function isIsConform(): ?bool
+    {
+        return $this->isConform;
+    }
+
+    public function setIsConform(?bool $isConform): static
+    {
+        $this->isConform = $isConform;
+
+        return $this;
+    }
+
+    public function getConformities(): ?array
+    {
+        return $this->conformities;
+    }
+
+    public function setConformities(?array $conformities): static
+    {
+        $this->conformities = $conformities;
+
+        return $this;
+    }
+
+    public function getConformitiesByChecks(): ?array
+    {
+        return array_merge_recursive($this->conformities['errors'], $this->conformities['validated']);
     }
 }

@@ -1,0 +1,30 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+
+<div class="panel panel-default">
+  <div class="panel-heading">Assets</div>
+  <div class="panel-body">
+    <ul>
+      <li>Assets: {{ stats.countAssets }}
+    </li>
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">Instances</div>
+  <div class="panel-body">
+    <ul>
+      <li>Instances: {{ stats.countInstances }}
+      <li>Validated: {{ stats.countInstancesValidated }}
+    </ul> 
+  </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}

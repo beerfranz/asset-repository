@@ -37,5 +37,16 @@ data:
     - identifier: instance-without-asset
       version: 1.0.0
       kind: server
+    - identifier: i-123435623
+      kind: server
+      friendlyName: DevServer-1
+      version: fake
+      attributes:
+        ec2:
+          region: eu-west-3
+          InstanceType: t3.micro
+          KeyName: my-ssh
+          architecture: x86_64
+          ipAddress: 172.17.12.43
     # - identifier: orphaned-instance-1
     #   version: 1.0.0
