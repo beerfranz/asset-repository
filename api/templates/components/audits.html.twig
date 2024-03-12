@@ -8,7 +8,7 @@
             <td>{{ audit.datetime | date("Y-m-d H:i:s") }}</td>
             <td>{{ audit.actor }}</td>
             <td>{{ audit.action }}</td>
-            <td>{{ audit.data | json_encode }}</td>
+            <td>{% include 'components/audit-data.html.twig' with { 'data': audit.data } %}</td>
           </tr>
         {% endfor %}
       </tbody>

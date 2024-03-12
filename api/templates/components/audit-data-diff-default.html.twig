@@ -1,0 +1,18 @@
+{% if old_value is not null and new_value is not null %}
+  {% if old_value != new_value %}
+    <li>{{ property }}:
+      <ul>
+        {% if old_value is not null %}
+          <li class="text-danger">{{ old_value | json_encode }}</li>
+        {% endif %}
+        {% if new_value is not null %}
+          <li class="text-success">{{ new_value | json_encode }}</li>
+        {% endif %}
+      </ul>
+    </li>
+  {% endif %}
+{% elseif old_value is not null %}
+  <li class="text-success">{{ property }}: {{ old_value | json_encode }}</li>
+{% elseif new_value is not null %}
+  <li class="text-success">{{ property }}: {{ new_value | json_encode }}</li>
+{% endif %}

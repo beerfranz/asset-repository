@@ -19,6 +19,7 @@ Caddy (web server) => PHP => Database (ex: Postgres)
     * owner: the owner of the asset (ISO 27001 requirement)
     * type (defined bellow)
     * attributes: a free field
+      * question: attributes[category][attributeName] have properties: constraint (check instances), propagate (instance inherite)
     * audits (defined bellow)
   * Asset type: define a category (server, container, pod, etc...)  => Template ?
   * Asset audits: track modifications on assets (create, update, remove)
