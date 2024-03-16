@@ -1,0 +1,79 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Risk manager{% endblock %}
+
+{% block body %}
+
+<div class="row">
+  <div class="col-md-12">
+      <h2>{{ riskManager.identifier }}</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <h3>Values</h3>
+    {{ riskManager.values | yaml_encode }}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <h3>Aggregator</h3>
+    {{ riskManager.valuesAggregator }}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <h3>Triggers</h3>
+    {{ riskManager.triggers | yaml_encode }}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <h3>Risks</h3>
+    <table class="table-striped table table-bordered table-hover table-condensed">
+      <thead>
+        <tr>
+          <th>Asset</th><th>ID</th><th>Description</th>
+          {% for valueIdentifier, attributes in riskManager.values %}
+            <th>{{ valueIdentifier }}</th>
+          {% endfor %}
+          <th>Risk</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for risk in risks %}
+          <tr>
+            <td>{{ risk.asset.identifier }}</td>
+            <td>{{ risk.identifier }}</td>
+            <td>{{ risk.description }}</td>
+            {% for valueIdentifier, attributes in riskManager.values %}
+              <td>{{ risk.values[valueIdentifier]|default('-') }}</td>
+            {% endfor %}
+            <td class="text-{{ aggregatedRisk.initialRisk.trigger }}">{{ aggregatedRisk.initialRisk.value }}</td>
+          </tr>
+          {% for mitigationId, mitigation in risk.mitigations %}
+            <tr>
+              <td></td>
+              <td>{{ risk.identifier }}-{{ mitigationId }}</td>
+              <td>{{ mitigation.description }}</td>
+              {% for valueIdentifier, attributes in riskManager.values %}
+                <td>{{ mitigation.effects[valueIdentifier]|default('-') }}</td>
+              {% endfor %}
+              <td class="text-{{ aggregatedRisk.mitigatedRisk.trigger }}">{{ aggregatedRisk.mitigatedRisk.value }}</td>
+            </tr>
+          {% endfor %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}

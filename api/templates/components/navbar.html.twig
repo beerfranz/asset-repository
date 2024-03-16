@@ -30,7 +30,15 @@
             {% endif %}
             {% if is_granted('ROLE_ASSET_ADMIN') %}
             <li class="{{ navbar.environments|default('') }}"><a href="/ui/environments">Environments</a></li>
-            <li class="{{ navbar.assets|default('') }}"><a href="/ui/assets">Assets</a></li>
+            <li class="dropdown {{ navbar.assets|default('') }} {{ navbar.riskManagers|default('') }}">
+              <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Governance <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                <li class="{{ navbar.assets|default('') }}"><a href="/ui/assets">Assets</a></li>
+                <li class="{{ navbar.riskManagers|default('') }}"><a href="/ui/risk-managers">Risk managers</a></li>    
+              </ul>
+            </li>
             <li class="{{ navbar.instances|default('') }}"><a href="/ui/instances">Instances</a></li>
             <li class="{{ navbar.versions|default('') }}"><a href="/ui/versions">Versions</a></li>
             <li class="{{ navbar.sources|default('') }}"><a href="/ui/sources">Sources</a></li>

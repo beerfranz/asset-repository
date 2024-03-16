@@ -135,6 +135,9 @@ class Asset
     #[Groups(['Asset:read', 'Asset:write'])]
     private ?array $rules = null;
 
+    #[ORM\OneToMany(mappedBy: 'asset', targetEntity: Risk::class)]
+    private Collection $risks;
+
     public function __construct()
     {
         $this->assetAudits = new ArrayCollection();
@@ -142,6 +145,7 @@ class Asset
         $this->children = new ArrayCollection();
         $this->fromRelations = new ArrayCollection();
         $this->toRelations = new ArrayCollection();
+        $this->risks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -487,6 +491,36 @@ class Asset
     public function setRules(?array $rules): static
     {
         $this->rules = $rules;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Risk>
+     */
+    public function getRisks(): Collection
+    {
+        return $this->risks;
+    }
+
+    public function addRisk(Risk $risk): static
+    {
+        if (!$this->risks->contains($risk)) {
+            $this->risks->add($risk);
+            $risk->setAsset($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRisk(Risk $risk): static
+    {
+        if ($this->risks->removeElement($risk)) {
+            // set the owning side to null (unless already changed)
+            if ($risk->getAsset() === $this) {
+                $risk->setAsset(null);
+            }
+        }
 
         return $this;
     }

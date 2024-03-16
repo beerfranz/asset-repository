@@ -6,6 +6,10 @@ use App\Repository\AssetRepository;
 use App\Repository\AssetDefinitionRepository;
 use App\Repository\AssetAuditRepository;
 use App\Repository\InstanceRepository;
+use App\Repository\RiskManagerRepository;
+use App\Repository\RiskRepository;
+
+use App\Service\RiskService;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -111,6 +115,24 @@ class IndexController extends AbstractController
   public function getMap(Request $request): Response
   {
     return $this->render('map.html.twig', [ 'navbar' => [ 'map' => 'active' ] ]);
+  }
+
+  #[Route('/ui/risk-managers', name: 'getRiskManagers', methods: ['GET'])]
+  public function getRiskManagers(Request $request): Response
+  {
+    return $this->render('risk-managers.html.twig', [ 'navbar' => [ 'riskManagers' => 'active' ] ]);
+  }
+
+  #[Route('/ui/risk-managers/{identifier}', name: 'getRiskManager', methods: ['GET'])]
+  public function getRiskManager(string $identifier, RiskManagerRepository $repo, RiskRepository $riskRepo, RiskService $riskService, Request $request): Response
+  {
+    $riskManager = $repo->findOneByIdentifier($identifier);
+
+    $risks = $riskRepo->findBy([ 'riskManager' => $riskManager]);
+
+    $aggregatedRisk = $riskService->getAggregatedRisk($riskManager, $risks);
+
+    return $this->render('risk-manager.html.twig', [ 'riskManager' => $riskManager, 'risks' => $risks, 'aggregatedRisk' => $aggregatedRisk ]);
   }
 
   #[Route('/ui/dashboard', name: 'getDashboard', methods: ['GET'])]
