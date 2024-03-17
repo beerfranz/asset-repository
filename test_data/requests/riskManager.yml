@@ -1,0 +1,17 @@
+# configure a risk manager
+# error duplicate identifier, need to fix it
+request:
+  method: PUT
+  path: /risk_managers/iso27001
+
+data:
+  values:
+    disponibility: {}
+    integrity: {}
+    confidentiality: {}
+    proof: {}
+  valuesAggregator: max(disponibility, integrity, confidentiality, proof)
+  triggers:
+    danger: aggregator > 8
+    warning: aggregator > 6
+    info: aggregator <=2

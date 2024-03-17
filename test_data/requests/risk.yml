@@ -1,0 +1,19 @@
+# link a risk manager to an asset
+request:
+  method: PUT
+  path: /risks/R-02
+
+data:
+  asset: https://localhost/assets/34
+  riskManager: https://localhost/entity/risk_managers/5
+  description: server is down
+  values:
+    disponibility: 10
+    integrity: 3
+    confidentiality: 0
+    proof: 2
+  mitigations:
+    mit1:
+      description: add HA
+      effects:
+        disponibility: 0 # or -10 ? : absolute values or relative values ?
