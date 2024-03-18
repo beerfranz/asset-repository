@@ -50,6 +50,7 @@ class Risk
     private ?array $mitigations = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['Risks:read', 'Risks:write'])]
     private ?string $description = null;
 
     private ?string $initialRisk = null;

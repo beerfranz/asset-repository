@@ -53,7 +53,7 @@
             {% for valueIdentifier, attributes in riskManager.values %}
               <td>{{ risk.values[valueIdentifier]|default('-') }}</td>
             {% endfor %}
-            <td class="text-{{ aggregatedRisk.initialRisk.trigger }}">{{ aggregatedRisk.initialRisk.value }}</td>
+            <td class="text-{{ risk.values['aggregatedRisk'].trigger|default('') }}">{{ risk.values['aggregatedRisk'].value|default('') }}</td>
           </tr>
           {% for mitigationId, mitigation in risk.mitigations %}
             <tr>
@@ -63,7 +63,7 @@
               {% for valueIdentifier, attributes in riskManager.values %}
                 <td>{{ mitigation.effects[valueIdentifier]|default('-') }}</td>
               {% endfor %}
-              <td class="text-{{ aggregatedRisk.mitigatedRisk.trigger }}">{{ aggregatedRisk.mitigatedRisk.value }}</td>
+              <td class="text-{{ mitigation['aggregatedRisk'].trigger|default('') }}">{{ mitigation['aggregatedRisk'].value|default('') }}</td>
             </tr>
           {% endfor %}
         {% endfor %}
@@ -72,8 +72,32 @@
   </div>
 </div>
 
+<div class="row">
+  <div class="col-md-12">
+    <h3>Risks</h3>
+    <table id="risks" class="table-striped table table-bordered table-hover table-condensed"></table>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block js %}
+
+<script>
+
+$(document).ready(function () {
+  var dataTableOpts = commonDataTableOpts();
+  dataTableOpts.ajax.url = '/risks';
+  dataTableOpts.columns = [ 
+    { data: 'asset', title: 'Asset' },
+    { data: 'identifier', title: 'ID' },
+    { data: 'description', title: 'Description' },
+  ];
+
+  rogerInit('risks', dataTableOpts);
+
+});
+
+</script>
 
 {% endblock %}

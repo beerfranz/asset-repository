@@ -4,6 +4,10 @@ namespace App\State;
 
 use App\ApiResource\Risk as RiskDto;
 use App\Entity\Risk;
+use App\Entity\RiskManager;
+use App\Entity\Asset;
+
+use App\Service\RiskService;
 
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;
@@ -23,15 +27,22 @@ use Psr\Log\LoggerInterface;
 final class RiskState extends CommonState implements ProcessorInterface, ProviderInterface
 {
     protected $riskRepo;
+    protected $assetRepo;
+    protected $riskManagerRepo;
+    protected $riskService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         RequestStack $request,
         LoggerInterface $logger,
         Security $security,
+        RiskService $riskService,
     ) {
         parent::__construct($entityManager, $request, $logger, $security);
         $this->riskRepo = $entityManager->getRepository(Risk::class);
+        $this->riskManagerRepo = $entityManager->getRepository(RiskManager::class);
+        $this->assetRepo = $entityManager->getRepository(Asset::class);
+        $this->riskService = $riskService;
     }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
@@ -85,14 +96,56 @@ final class RiskState extends CommonState implements ProcessorInterface, Provide
             $risk->setIdentifier($identifier);
         }
 
-        // if (isset($data['values']))
-        //     $risk->setValues($values);
+        if (isset($data['asset'])) {
+            if (isset($data['asset']['identifier'])) {
+                $asset = $this->assetRepo->findOneByIdentifier($data['asset']['identifier']);
+                if ($asset !== null) {
+                    $risk->setAsset($asset);
+                }
+            }
+        }
 
-        // if (isset($data['valuesAggregator']))
-        //     $risk->setValuesAggregator($data['valuesAggregator']);
+        if (isset($data['riskManager'])) {
+            if (isset($data['riskManager']['identifier'])) {
+                $riskManager = $this->riskManagerRepo->findOneByIdentifier($data['riskManager']['identifier']);
+                if ($riskManager !== null) {
+                    $risk->setRiskManager($riskManager);
+                }
+            }
+        }
 
-        // if (isset($data['triggers']))
-        //     $risk->setTriggers($data['triggers']);
+        if (isset($data['description']))
+            $risk->setDescription($data['description']);
+
+        if (isset($data['values'])) {
+            // Update values aggregator
+            $aggregatedRisk = $this->riskService->aggregateRisk(
+                $risk->getRiskManager()->getValuesAggregator(),
+                $data['values'],
+                $risk->getRiskManager()->getTriggers()
+            );
+
+            $data['values']['aggregatedRisk'] = $aggregatedRisk;
+
+            $risk->setValues($data['values']);
+        }
+
+        if (isset($data['mitigations'])) {
+            $values = $risk->getValues();
+
+            // Update mitigations aggregators
+            foreach($data['mitigations'] as $mitigationId => $mitigation) {
+                $values = array_merge($values, $mitigation['effects']);
+                $aggregatedRisk = $this->riskService->aggregateRisk(
+                    $risk->getRiskManager()->getValuesAggregator(),
+                    $values,
+                    $risk->getRiskManager()->getTriggers()
+                );
+                $data['mitigations'][$mitigationId]['aggregatedRisk'] = $aggregatedRisk;
+            }
+
+            $risk->setMitigations($data['mitigations']);
+        }
 
         $this->entityManager->persist($risk);
         $this->entityManager->flush();

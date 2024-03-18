@@ -53,6 +53,9 @@ class Risk
     public $riskManager;
 
     #[Groups(['Risks:read', 'Risk:read', 'Risk:write'])]
+    public $description;
+
+    #[Groups(['Risks:read', 'Risk:read', 'Risk:write'])]
     public $values;
 
     #[Groups(['Risks:read', 'Risk:read', 'Risk:write'])]

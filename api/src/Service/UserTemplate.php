@@ -2,10 +2,7 @@
 
 namespace App\Service;
 
-// use App\Entity\Asset;
-// use App\Entity\Instance;
-
-// use Doctrine\ORM\EntityManagerInterface;
+use App\Type\UserTemplateType;
 
 use Twig\Sandbox\SecurityPolicy;
 use Twig\Extension\SandboxExtension;
@@ -25,7 +22,7 @@ class UserTemplate
     $this->logger = $logger;
   }
 
-  public function template(string $userInput, array $templateVariables = [])
+  public function template(string $userInput, array $templateVariables = []): UserTemplateType
   {
     // Content of user input
     $userLoader = new ArrayLoader([
@@ -42,10 +39,10 @@ class UserTemplate
     $twig->addExtension($this->getTwigSandbox());
     try {
       $output = $twig->render('sandbox.html.twig', $templateVariables);
-      return $output;
+      return new UserTemplateType($output);
     } catch(\Exception $e) {
       $this->logger->warning('Invalid user template: ' . $userInput . '. ' . $e->getMessage());
-      return $e->getMessage();
+      return new UserTemplateType(null, $e->getMessage());
     }
   }
 

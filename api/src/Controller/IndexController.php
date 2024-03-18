@@ -9,8 +9,6 @@ use App\Repository\InstanceRepository;
 use App\Repository\RiskManagerRepository;
 use App\Repository\RiskRepository;
 
-use App\Service\RiskService;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -124,15 +122,13 @@ class IndexController extends AbstractController
   }
 
   #[Route('/ui/risk-managers/{identifier}', name: 'getRiskManager', methods: ['GET'])]
-  public function getRiskManager(string $identifier, RiskManagerRepository $repo, RiskRepository $riskRepo, RiskService $riskService, Request $request): Response
+  public function getRiskManager(string $identifier, RiskManagerRepository $repo, RiskRepository $riskRepo, Request $request): Response
   {
     $riskManager = $repo->findOneByIdentifier($identifier);
 
     $risks = $riskRepo->findBy([ 'riskManager' => $riskManager]);
 
-    $aggregatedRisk = $riskService->getAggregatedRisk($riskManager, $risks);
-
-    return $this->render('risk-manager.html.twig', [ 'riskManager' => $riskManager, 'risks' => $risks, 'aggregatedRisk' => $aggregatedRisk ]);
+    return $this->render('risk-manager.html.twig', [ 'riskManager' => $riskManager, 'risks' => $risks ]);
   }
 
   #[Route('/ui/dashboard', name: 'getDashboard', methods: ['GET'])]
