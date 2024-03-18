@@ -85,15 +85,45 @@
 
 <script>
 
+var riskManagerValues = [];
+{% for valueId, value in riskManager.values %}
+  riskManagerValues.push('{{ valueId }}');
+{% endfor %}
+
+
 $(document).ready(function () {
   var dataTableOpts = commonDataTableOpts();
   dataTableOpts.ajax.url = '/risks';
   dataTableOpts.columns = [ 
     { data: 'asset', title: 'Asset' },
-    { data: 'identifier', title: 'ID' },
-    { data: 'description', title: 'Description' },
+    { data: 'identifier', title: 'ID', orderable: false },
+    { data: 'description', title: 'Description', orderable: false, render: function(data, type, row, meta){ return renderNullableString(data, '-'); } },
   ];
 
+  riskManagerValues.forEach((element) => {
+    dataTableOpts.columns.push({ data: `values.${element}`, title: element, orderable: false, render: function(data, type, row, meta){ return renderNullableString(data) } });
+  });
+
+  dataTableOpts.columns.push({ data: 'values.aggregatedRisk.value', title: 'Risk', orderable: false, render: function(data, type, row, meta){ return renderNullableString(data); }});
+  dataTableOpts.rowCallback = function(row, data, displayNum, displayIndex, dataIndex) {
+    var mitigationNodes = Array();
+    var rowObj = $('#risks').DataTable().row(dataIndex);
+    for (const [ mitigationId, mitigation ] of Object.entries(data.mitigations)) {
+      var node = $(document.createElement('tr'));
+      node.append(`<td></td><td>${mitigationId}</td><td>${mitigation.description}</td>`);
+      riskManagerValues.forEach((element) => {
+        node.append(`<td>${renderNullableString(mitigation.effects[element], '-')}</td>`);
+      });
+      console.log(mitigation.aggregatedRisk);
+      if (mitigation.aggregatedRisk !== undefined )
+        node.append(`<td>${renderNullableString(mitigation.aggregatedRisk.value, '-')}</td>`);
+
+      mitigationNodes.push(node);
+    };
+
+    rowObj.child(mitigationNodes).show();
+    
+  };
   rogerInit('risks', dataTableOpts);
 
 });

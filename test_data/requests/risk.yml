@@ -17,3 +17,7 @@ data:
       description: add HA
       effects:
         disponibility: 0 # or -10 ? : absolute values or relative values ?
+    mit2:
+      description: use relational database with integrity checks
+      effects:
+        integrity: 2

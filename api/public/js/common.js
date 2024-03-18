@@ -182,3 +182,10 @@ function renderFriendlyName(data) {
     return ' (' + data.friendlyName + ')';
   }
 }
+
+function renderNullableString(data, fallbackContent = '') {
+  if (data === undefined)
+    return fallbackContent;
+  else
+    return data;
+}
