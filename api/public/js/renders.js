@@ -78,3 +78,25 @@ function renderNullableString(data, fallbackContent = '') {
   else
     return data;
 }
+
+function renderWithStyles(data, styles) {
+  return `<span class="${styles}">${data}</span>`;
+}
+
+function renderRisk(risk) {
+  if (risk === undefined)
+    return '-';
+
+  var value = '-';
+  var styles = '';
+
+  if (risk.value !== undefined) {
+    value = risk.value;
+  }
+
+  if (risk.trigger !== undefined) {
+    styles = `text-${risk.trigger}`;
+  }
+
+  return renderWithStyles(value, styles);
+}
