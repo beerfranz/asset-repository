@@ -6,12 +6,47 @@ request:
 
 data:
   values:
-    disponibility: {}
-    integrity: {}
+    value:
+      description: Identification et valorisation des actifs
+      triggers:
+        info:
+          trigger: value == 1
+          description: |
+            Actif remplaçable avec un coût d'achat faible (- de 3000€)
+            Pas de coût de maintenance ou maintenance faible (- de 1000€)
+            Ne nécessite pas ou peu de connaissances
+            L'entreprise peut s'en passer sans aucun impact
+            Ne contient pas de données indispensable à l'activité de l'entreprise
+        warning:
+          trigger: value == 2
+          description: |
+            Actif remplaçable avec un coût d'achat moyen (entre 3000€ et 15000€)
+        danger:
+          trigger: value == 3
+          description: |
+            Actif remplaçable avec un coût d'achat élevé (supérieur à 15000€)
+    disponibility:
+      triggers:
+        info:
+          trigger: disponibility == 1
+          description: Indisponibilité tolérable jusqu'à 48h
+        warning:
+          trigger: disponibility == 2
+          description: Indisponibilité tolérable jusqu'à moins de 24h
+        danger:
+          trigger: disponibility == 3
+          description: Indisponibilité tolérable jusqu'à moins de 1h
+    integrity:
+      triggers:
+        info:
+          trigger: integrity == 1
+        warning:
+          trigger: integrity == 2
+        danger:
+          trigger: integrity == 3
     confidentiality: {}
-    proof: {}
-  valuesAggregator: max(disponibility, integrity, confidentiality, proof)
+  valuesAggregator: value * max(disponibility, integrity, confidentiality)
   triggers:
-    danger: aggregator > 8
-    warning: aggregator > 6
-    info: aggregator <=2
+    danger: aggregator >= 9
+    warning: aggregator >= 4
+    info: aggregator < 4

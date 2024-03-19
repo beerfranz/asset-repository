@@ -13,21 +13,45 @@
 <div class="row">
   <div class="col-md-12">
     <h3>Values</h3>
-    {{ riskManager.values | yaml_encode }}
+    <table class="table-striped table table-bordered table-hover table-condensed">
+      <thead>
+        <tr>
+          <th>Identifier</th><th>Description</th><th>Triggers</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for valueIdentifier, value in riskManager.values %}
+          <tr><th>{{ valueIdentifier }}</th><td>{{ value.description|default('') }}</td>
+          <td><ul>
+            {% for triggerIdentifier, trigger in value.triggers|default([]) %}
+              <li>{{ triggerIdentifier }}
+                <ul>
+                  <li><code>{{ trigger.trigger | default('') }}</code></li>
+                  <li>{{ trigger.description|default('') }}</li>
+                </ul>
+              </li>
+            {% endfor %}
+          </ul></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
 
 <div class="row">
   <div class="col-md-12">
     <h3>Aggregator</h3>
-    {{ riskManager.valuesAggregator }}
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-12">
-    <h3>Triggers</h3>
-    {{ riskManager.triggers | yaml_encode }}
+    <ul>
+      <li>Operation: <code>{{ riskManager.valuesAggregator }}</code></li>
+      <li>Triggers
+        <ul>
+          {% for triggerIdentifier, trigger in riskManager.triggers|default([]) %}
+            <li>{{ triggerIdentifier }}: <code>{{ trigger }}</code></li>
+          {% endfor %}
+        </ul>
+      </li>
+    </ul>
   </div>
 </div>
 

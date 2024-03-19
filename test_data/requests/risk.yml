@@ -8,16 +8,16 @@ data:
   riskManager: https://localhost/entity/risk_managers/5
   description: server is down
   values:
-    disponibility: 10
+    disponibility: 3
     integrity: 3
-    confidentiality: 0
-    proof: 2
+    confidentiality: 1
+    value: 3
   mitigations:
     mit1:
       description: add HA
       effects:
-        disponibility: 0 # or -10 ? : absolute values or relative values ?
+        disponibility: 1 # or -10 ? : absolute values or relative values ?
     mit2:
       description: use relational database with integrity checks
       effects:
-        integrity: 2
+        integrity: 1
