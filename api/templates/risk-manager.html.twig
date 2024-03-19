@@ -34,47 +34,6 @@
 <div class="row">
   <div class="col-md-12">
     <h3>Risks</h3>
-    <table class="table-striped table table-bordered table-hover table-condensed">
-      <thead>
-        <tr>
-          <th>Asset</th><th>ID</th><th>Description</th>
-          {% for valueIdentifier, attributes in riskManager.values %}
-            <th>{{ valueIdentifier }}</th>
-          {% endfor %}
-          <th>Risk</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for risk in risks %}
-          <tr>
-            <td>{{ risk.asset.identifier }}</td>
-            <td>{{ risk.identifier }}</td>
-            <td>{{ risk.description }}</td>
-            {% for valueIdentifier, attributes in riskManager.values %}
-              <td>{{ risk.values[valueIdentifier]|default('-') }}</td>
-            {% endfor %}
-            <td class="text-{{ risk.values['aggregatedRisk'].trigger|default('') }}">{{ risk.values['aggregatedRisk'].value|default('') }}</td>
-          </tr>
-          {% for mitigationId, mitigation in risk.mitigations %}
-            <tr>
-              <td></td>
-              <td>{{ risk.identifier }}-{{ mitigationId }}</td>
-              <td>{{ mitigation.description }}</td>
-              {% for valueIdentifier, attributes in riskManager.values %}
-                <td>{{ mitigation.effects[valueIdentifier]|default('-') }}</td>
-              {% endfor %}
-              <td class="text-{{ mitigation['aggregatedRisk'].trigger|default('') }}">{{ mitigation['aggregatedRisk'].value|default('') }}</td>
-            </tr>
-          {% endfor %}
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-12">
-    <h3>Risks</h3>
     <table id="risks" class="table-striped table table-bordered table-hover table-condensed"></table>
   </div>
 </div>
@@ -104,19 +63,19 @@ $(document).ready(function () {
     dataTableOpts.columns.push({ data: `values.${element}`, title: element, orderable: false, render: function(data, type, row, meta){ return renderNullableString(data) } });
   });
 
-  dataTableOpts.columns.push({ data: 'values.aggregatedRisk.value', title: 'Risk', orderable: false, render: function(data, type, row, meta){ return renderNullableString(data); }});
+
+  dataTableOpts.columns.push({ data: 'values.aggregatedRisk.value', title: 'Risk', orderable: false, render: function(data, type, row, meta){ return renderRisk(row.values.aggregatedRisk); }});
   dataTableOpts.rowCallback = function(row, data, displayNum, displayIndex, dataIndex) {
     var mitigationNodes = Array();
     var rowObj = $('#risks').DataTable().row(dataIndex);
     for (const [ mitigationId, mitigation ] of Object.entries(data.mitigations)) {
       var node = $(document.createElement('tr'));
+      node.addClass('bg-secondary');
       node.append(`<td></td><td>${mitigationId}</td><td>${mitigation.description}</td>`);
       riskManagerValues.forEach((element) => {
         node.append(`<td>${renderNullableString(mitigation.effects[element], '-')}</td>`);
       });
-      console.log(mitigation.aggregatedRisk);
-      if (mitigation.aggregatedRisk !== undefined )
-        node.append(`<td>${renderNullableString(mitigation.aggregatedRisk.value, '-')}</td>`);
+      node.append(`<td>${renderRisk(mitigation.aggregatedRisk)}</td>`);
 
       mitigationNodes.push(node);
     };
