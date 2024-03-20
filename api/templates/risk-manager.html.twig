@@ -27,7 +27,7 @@
               <li>{{ triggerIdentifier }}
                 <ul>
                   <li><code>{{ trigger.trigger | default('') }}</code></li>
-                  <li>{{ trigger.description|default('') }}</li>
+                  <li>{{ trigger.description|default('no description') }}</li>
                 </ul>
               </li>
             {% endfor %}
