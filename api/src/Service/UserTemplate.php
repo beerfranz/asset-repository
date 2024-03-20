@@ -46,6 +46,11 @@ class UserTemplate
     }
   }
 
+  public function test(string $userInput, array $templateVariables = []): UserTemplateType
+  {
+    return $this->template('{{ ' . $userInput . ' ? "true" : "false" }}', $templateVariables);
+  }
+
   protected function getTwigSandbox(): SandboxExtension
   {
     return new SandboxExtension($this->getTwigPolicy());

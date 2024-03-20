@@ -5,6 +5,8 @@ namespace App\Service;
 use App\Entity\Asset;
 use App\Entity\Instance;
 
+use App\Service\UserTemplate;
+
 use Doctrine\ORM\EntityManagerInterface;
 
 use Psr\Log\LoggerInterface;
@@ -15,13 +17,16 @@ class InstanceReconciliation
   protected $entityManager;
   protected $assetRepo;
   protected $instanceRepo;
+  protected $userTemplateService;
 
   public function __construct(
     EntityManagerInterface $entityManager,
     LoggerInterface $logger,
+    UserTemplate $userTemplateService,
   ) {
     $this->entityManager = $entityManager;
     $this->logger = $logger;
+    $this->userTemplateService = $userTemplateService;
 
     $this->assetRepo = $entityManager->getRepository(Asset::class);
     $this->instanceRepo = $entityManager->getRepository(Instance::class);
@@ -40,15 +45,19 @@ class InstanceReconciliation
     foreach($this->getAssetRules() as $asset) {
       $notThisAsset = 0;
       foreach($asset['rules'] as $ruleName => $rule) {
-        $sanitizedRule = $this->sanitizeRule($rule);
-        try {
-          if (! eval("return $sanitizedRule;"))
+        $userTemplate = $this->userTemplateService->test($rule, $this->getInstanceAttributes($instance));
+        // $sanitizedRule = $this->sanitizeRule($rule);
+
+        if (! $userTemplate->getBoolResult()) {
+        // try {
+        //   if (! eval("return $sanitizedRule;"))
             $notThisAsset++;
-        } catch(\Error $e) {
-          $notThisAsset++;
-          $this->logger->error('Failed to interpret reconcilation rule ' . $ruleName . ' of asset ' . $asset['id'] . '. Sanitized rule: ' . $sanitizedRule);
-          continue;
-        }
+        } 
+        // catch(\Error $e) {
+        //   $notThisAsset++;
+        //   $this->logger->error('Failed to interpret reconcilation rule ' . $ruleName . ' of asset ' . $asset['id'] . '. Sanitized rule: ' . $sanitizedRule);
+        //   continue;
+        // }
       }
 
       if ($notThisAsset === 0)
@@ -79,6 +88,14 @@ class InstanceReconciliation
 
     $sanitizedRule = str_replace(array_keys($instanceMapping), array_values($instanceMapping), $rule);
     return $sanitizedRule;
+  }
+
+  protected function getInstanceAttributes($instance): Array
+  {
+    return [
+      'friendlyName' => $instance->getFriendlyName(),
+      'kind' => $instance->getKindIdentifier(),
+    ];
   }
 
   protected function getInstanceQueryLanguageMapping(): Array

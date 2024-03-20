@@ -44,7 +44,7 @@ data:
         - name: google
           link: https://google.com
       rules:
-        friendlyName: preg_match('/^DevServer-[0-9]*$/', friendlyName)
+        friendlyName: friendlyName matches '/^DevServer-[0-9]*$/'
         kind: kind == 'server'
 
     # - identifier: orphaned-app

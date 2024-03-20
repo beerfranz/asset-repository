@@ -45,4 +45,16 @@ class UserTemplateType {
   {
     return $this->error === null ? false : true;
   }
+
+  public function getBoolResult(): bool
+  {
+    $test = $this->getResult();
+    if ($test === 'true')
+      return true;
+    elseif ($test === 'false')
+      return false;
+    else {
+      throw new \Exception($this->getError());
+    }
+  }
 }

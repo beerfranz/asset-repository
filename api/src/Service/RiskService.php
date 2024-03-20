@@ -41,9 +41,8 @@ class RiskService
 
     foreach($triggersToTest as $triggerToTest) {
       if (isset($triggers[$triggerToTest])) {
-        $userTemplate = $this->userTemplate->template('{{ ' . $triggers[$triggerToTest] . ' ? "true" : "false" }}', [ 'aggregator' => $riskValue ]);
-        $test = $userTemplate->getResult();
-        if ($test === 'true') {
+        $userTemplate = $this->userTemplate->test($triggers[$triggerToTest], [ 'aggregator' => $riskValue ]);
+        if ($userTemplate->getBoolResult()) {
           $trigger = $triggerToTest;
           break;
         }
