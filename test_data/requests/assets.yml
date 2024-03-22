@@ -30,9 +30,13 @@ data:
         ec2:
           region: eu-west-3
           InstanceType: t3.micro
-          KeyName: in ["my-ssh", "test-ssh"]
+          KeyName:
+            condition: value in ["my-ssh", "test-ssh"]
           architecture: arm64
           missingForInstance: baaad
+          propagateThis:
+            value: propagate
+            propagateToInstances: true
         notPresentInInstance:
           foo: bar
       description: |
