@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Type\AssetAttributeType;
+
 use App\Filter\AutocompleteFilter;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -184,7 +186,23 @@ class Asset
 
     public function setAttributes(?array $attributes): self
     {
-        $this->attributes = $attributes;
+        if ($attributes === null)
+            $this->attributes = $attributes;
+        elseif (is_array($attributes)) {
+            $this->attributes = [];
+            foreach($attributes as $namespace => $namespaced_vars) {
+                $this->attributes[$namespace] = [];
+                if (is_array($namespaced_vars)) {
+                    foreach($namespaced_vars as $attributeIdentifier => $attributeProperties) {
+                        $attributeObject = new AssetAttributeType($attributeProperties);
+                        $this->attributes[$namespace][$attributeIdentifier] = $attributeObject->serialize();
+                    }
+                }
+            }
+        } else {
+            // fallback if attributes are not well formated
+            $this->attributes = $attributes;
+        }
 
         return $this;
     }
