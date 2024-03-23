@@ -152,4 +152,16 @@ class IndexController extends AbstractController
       'countInstancesReconcilied' => $countInstancesReconcilied,
     ] ]);
   }
+
+  #[Route('/ui/tasks', name: 'getTasks', methods: ['GET'])]
+  public function getTasks(Request $request): Response
+  {
+    return $this->render('tasks.html.twig', [ 'navbar' => [ 'tasks' => 'active' ] ]);
+  }
+
+  #[Route('/ui/task-templates', name: 'getTaskTemplates', methods: ['GET'])]
+  public function getTaskTemplates(Request $request): Response
+  {
+    return $this->render('task-templates.html.twig', [ 'navbar' => [ 'task_templates' => 'active' ] ]);
+  }
 }
