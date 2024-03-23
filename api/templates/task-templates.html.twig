@@ -31,17 +31,18 @@
 
 <script>
 
-// $(document).ready(function () {
-// 	var dataTableOpts = commonDataTableOpts();
-// 	dataTableOpts.ajax.url = '/entity/risk_managers';
-// 	dataTableOpts.columns = [ 
-// 		{ data: 'id', title: 'ID' },
-// 		{ data: 'identifier', title: 'Identifier', render: function(data, type, row, meta){ return '<a href="/ui/risk-managers/' + data + '">' + data + renderFriendlyName(row) + '</a>'} },
-//   ];
+$(document).ready(function () {
+	var dataTableOpts = commonDataTableOpts();
+	dataTableOpts.ajax.url = '/task_templates';
+	dataTableOpts.columns = [ 
+		{ data: 'identifier', title: 'Identifier' },
+    { data: 'generateTaskAutomatically', title: 'Task generation', render: function(data, type, row, meta){ return renderNullableString(data, '-'); } },
+    { data: 'title', title: 'Title', render: function(data, type, row, meta){ return renderNullableString(data, '-'); } },
+  ];
 
-// 	rogerInit('task-templates', dataTableOpts);
+	rogerInit('task-templates', dataTableOpts);
 
-// });
+});
 
 </script>
 
