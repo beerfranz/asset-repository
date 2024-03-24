@@ -164,4 +164,10 @@ class IndexController extends AbstractController
   {
     return $this->render('task-templates.html.twig', [ 'navbar' => [ 'task_templates' => 'active' ] ]);
   }
+
+  #[Route('/ui/indicators', name: 'getIndicators', methods: ['GET'])]
+  public function getIndicators(Request $request): Response
+  {
+    return $this->render('indicators.html.twig', [ 'navbar' => [ 'indicators' => 'active' ] ]);
+  }
 }
