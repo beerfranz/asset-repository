@@ -35,15 +35,16 @@ final class Version20240324211404 extends AbstractMigration
         $this->addSql('CREATE SEQUENCE task_event_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE task (id INT NOT NULL, title VARCHAR(255) NOT NULL, description TEXT DEFAULT NULL, is_done BOOLEAN NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, assigned_to VARCHAR(255) DEFAULT NULL, owner VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('COMMENT ON COLUMN task.created_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_527EDB25772E836A ON task (identifier)');
         $this->addSql('CREATE TABLE task_event (id INT NOT NULL, task_id INT NOT NULL, datetime TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, author VARCHAR(255) NOT NULL, description TEXT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_FC0A11878DB60186 ON task_event (task_id)');
         $this->addSql('COMMENT ON COLUMN task_event.datetime IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE task_event ADD CONSTRAINT FK_FC0A11878DB60186 FOREIGN KEY (task_id) REFERENCES task (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('CREATE SEQUENCE task_template_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE task_template (id INT NOT NULL, identifier VARCHAR(255) NOT NULL, title VARCHAR(255) DEFAULT NULL, description TEXT DEFAULT NULL, generate_task_automatically VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE task_template (id INT NOT NULL, identifier VARCHAR(255) NOT NULL, title VARCHAR(255) DEFAULT NULL, description TEXT DEFAULT NULL, generate_task_automatically VARCHAR(255) DEFAULT NULL, frequency JSON DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE SEQUENCE indicator_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE indicator_value_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE indicator (id INT NOT NULL, identifier VARCHAR(255) NOT NULL, namespace VARCHAR(255) NOT NULL, description TEXT DEFAULT NULL, target_value INT DEFAULT NULL, triggers JSON DEFAULT NULL, frequency VARCHAR(255) DEFAULT NULL, is_activated BOOLEAN NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE indicator (id INT NOT NULL, identifier VARCHAR(255) NOT NULL, namespace VARCHAR(255) NOT NULL, description TEXT DEFAULT NULL, target_value INT DEFAULT NULL, triggers JSON DEFAULT NULL, is_activated BOOLEAN NOT NULL, frequency JSON DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_D1349DB3772E836A ON indicator (identifier)');
         $this->addSql('CREATE TABLE indicator_value (id INT NOT NULL, indicator_id INT NOT NULL, datetime TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, is_validated BOOLEAN NOT NULL, validator VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_D18506234402854A ON indicator_value (indicator_id)');
@@ -72,6 +73,7 @@ final class Version20240324211404 extends AbstractMigration
         $this->addSql('DROP TABLE task_template');
         $this->addSql('DROP SEQUENCE task_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE task_event_id_seq CASCADE');
+        $this->addSql('DROP INDEX UNIQ_527EDB25772E836A');
         $this->addSql('DROP TABLE task');
         $this->addSql('DROP TABLE task_event');
         $this->addSql('DROP SEQUENCE risk_id_seq CASCADE');
