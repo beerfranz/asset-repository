@@ -29,14 +29,26 @@ use Doctrine\Common\Collections\Collection;
     denormalizationContext: ['groups' => ['IndicatorValue:write']],
 )]
 #[GetCollection(
+    uriTemplate: '/indicators/{indicatorIdentifier}/values',
+    uriVariables: [ 'indicatorIdentifier'] ,
     security: "is_granted('ASSET_READ')",
     normalizationContext: ['groups' => ['IndicatorValues:read']],
 )]
-#[Get(security: "is_granted('ASSET_READ')",)]
-##[Post(security: "is_granted('ASSET_WRITE')")]
-#[Post(uriTemplate: '/indicators/{indicatorIdentifier}/values', uriVariables: [ 'indicatorIdentifier'] ,
-    security: "is_granted('ASSET_WRITE')")]
-#[Put(uriTemplate: '/indicators/{indicatorIdentifier}/values/{identifier}', uriVariables: [ 'indicatorIdentifier', 'identifier' ], security: "is_granted('ASSET_WRITE')")]
+#[Get(
+    uriTemplate: '/indicators/{indicatorIdentifier}/values/{identifier}',
+    uriVariables: [ 'indicatorIdentifier', 'identifier'],
+    security: "is_granted('ASSET_READ')"
+)]
+#[Post(
+    uriTemplate: '/indicators/{indicatorIdentifier}/values', 
+    uriVariables: [ 'indicatorIdentifier'] ,
+    security: "is_granted('ASSET_WRITE')"
+)]
+#[Put(
+    uriTemplate: '/indicators/{indicatorIdentifier}/values/{identifier}',
+    uriVariables: [ 'indicatorIdentifier', 'identifier' ],
+    security: "is_granted('ASSET_WRITE')"
+)]
 class IndicatorValue
 {
     #[Groups(['IndicatorValues:read', 'IndicatorValue:read', 'IndicatorValue:write'])]
@@ -46,7 +58,7 @@ class IndicatorValue
     #[Groups(['IndicatorValues:read', 'IndicatorValue:read', 'IndicatorValue:write'])]
     public \DateTimeImmutable $datetime;
 
-    #[Groups(['IndicatorValues:read', 'IndicatorValue:read', 'IndicatorValue:write'])]
+    #[Groups(['IndicatorValues:read', 'IndicatorValue:read'])]
     public Indicator $indicator;
 
     #[Groups(['IndicatorValues:read', 'IndicatorValue:read', 'IndicatorValue:write'])]
@@ -58,20 +70,32 @@ class IndicatorValue
     #[Groups(['IndicatorValues:read', 'IndicatorValue:read', 'IndicatorValue:write'])]
     public $validator;
 
+    public function __construct(){
+        $this->indicator = new Indicator();
+    }
+
     public function populateFromIndicatorValueEntity(IndicatorValueEntity $indicatorValue): self
     {
         $this->identifier = $indicatorValue->getIdentifier();
-        // $this->datetime = $indicatorValue->getDatetime();
-        // $this->indicator = $indicatorValue->getIndicator();
+        $this->datetime = $indicatorValue->getDatetime();
         $this->value = $indicatorValue->getValue();
-        // $this->isValidated = $indicatorValue->isIsValidated();
-        // $this->validator = $indicatorValue->getValidator();
+        $this->isValidated = $indicatorValue->isIsValidated();
+        $this->validator = $indicatorValue->getValidator();
 
+        $indicator = new Indicator();
+
+        $indicator->populateFromIndicatorEntity($indicatorValue->getIndicator());
+        $this->indicator = $indicator;
         return $this;
     }
 
     #[ApiProperty(identifier: false)]
     public function getId() {
         return $this->identifier;
+    }
+
+    public function getIndicatorIdentifier() {
+        // var_dump($this); exit;
+        return $this->indicator->identifier;
     }
 }

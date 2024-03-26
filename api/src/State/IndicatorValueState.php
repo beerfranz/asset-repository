@@ -94,6 +94,10 @@ final class IndicatorValueState extends CommonState implements ProcessorInterfac
             $indicatorValue = $this->processOneIndicatorValue((array) $data, $indicatorEntity);
 
             $data->id = $indicatorValue->getId();
+
+            $indicatorValueApi = new IndicatorValueApi();
+            $indicatorValueApi->populateFromIndicatorValueEntity($indicatorValue);
+            return $indicatorValueApi;
         }
     }
 

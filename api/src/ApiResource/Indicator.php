@@ -4,6 +4,7 @@ namespace App\ApiResource;
 
 use App\State\IndicatorState;
 use App\Entity\Indicator as IndicatorEntity;
+use App\Entity\Frequency;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
@@ -39,7 +40,7 @@ use Doctrine\Common\Collections\Collection;
 #[Put(security: "is_granted('ASSET_WRITE')")]
 class Indicator
 {
-    #[Groups(['Indicators:read', 'Indicator:read', 'Indicator:write'])]
+    #[Groups(['Indicators:read', 'Indicator:read', 'Indicator:write', 'IndicatorValues:read', 'IndicatorValue:read'])]
     #[ApiProperty(identifier: true)]
     public $identifier;
 
@@ -56,7 +57,10 @@ class Indicator
     public $triggers;
 
     #[Groups(['Indicators:read', 'Indicator:read', 'Indicator:write'])]
-    public $frequency;
+    #[ApiProperty(
+        openapiContext: [ "type" => "object" ]
+    )]
+    public ?array $frequency = [];
 
     #[Groups(['Indicators:read', 'Indicator:read', 'Indicator:write'])]
     public $isActivated;
@@ -85,6 +89,7 @@ class Indicator
     }
 
     #[ApiProperty(identifier: false)]
+    #[Groups(['Indicators:read', 'Indicator:read', 'Indicator:write', 'IndicatorValues:read'])]
     public function getId() {
         return $this->identifier;
     }

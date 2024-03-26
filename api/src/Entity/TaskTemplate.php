@@ -32,6 +32,9 @@ class TaskTemplate
     #[ORM\OneToMany(mappedBy: 'taskTemplate', targetEntity: Task::class)]
     private Collection $tasks;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $frequency = null;
+
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
@@ -116,6 +119,18 @@ class TaskTemplate
                 $task->setTaskTemplate(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getFrequency(): ?array
+    {
+        return $this->frequency;
+    }
+
+    public function setFrequency(?array $frequency): static
+    {
+        $this->frequency = $frequency;
 
         return $this;
     }

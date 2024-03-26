@@ -23,6 +23,16 @@ class IndicatorRepository extends ServiceEntityRepository implements RogerReposi
         parent::__construct($registry, Indicator::class);
     }
 
+    public function getFrequencyToUpdate(): array
+    {
+        $qb = $this->createQueryBuilder('i');
+
+        return $qb
+                    ->where($qb->expr()->isNotNull("i.frequency"))
+                    ->getQuery()
+                    ->getResult();
+    }
+
 //    /**
 //     * @return Indicator[] Returns an array of Indicator objects
 //     */

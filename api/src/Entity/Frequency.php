@@ -1,17 +1,22 @@
 <?php
 
+namespace App\Entity;
+
+use App\Entity\RogerEntity;
+
+use ApiPlatform\Metadata\ApiResource;
+
 class Frequency extends RogerEntity {
+
+  protected string $description;
+
+  protected ?string $crontab = null;
 
   protected \DateTimeImmutable $startsAt;
 
   protected ?\DateTimeImmutable $endsAt;
 
-  // mmmh... finally, this is a crontab config
-  protected $repeatYear;
-  protected $repeatMonth;
-  protected $repeatDay;
-  protected $repeatHour;
-  protected $repeatDayOfTheWeek;
+  protected \DateTimeImmutable $nextIterationAt;
 
   public function __construct(array $data = []) {
 
@@ -20,5 +25,4 @@ class Frequency extends RogerEntity {
 
     $this->hydrator($data);
   }
-  
 }

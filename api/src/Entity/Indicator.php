@@ -32,8 +32,8 @@ class Indicator
     #[ORM\Column(nullable: true)]
     private ?array $triggers = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $frequency = null;
+    #[ORM\Column(nullable: true)]
+    private ?array $frequency = null;
 
     #[ORM\Column]
     private ?bool $isActivated = true;
@@ -111,12 +111,12 @@ class Indicator
         return $this;
     }
 
-    public function getFrequency(): ?string
+    public function getFrequency(): ?array
     {
         return $this->frequency;
     }
 
-    public function setFrequency(?string $frequency): static
+    public function setFrequency(?array $frequency): static
     {
         $this->frequency = $frequency;
 

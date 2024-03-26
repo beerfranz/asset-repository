@@ -10,4 +10,6 @@ data:
   triggers:
     danger: value < 60
     warning: value < 70
-  frequency: monthly
+  frequency: 
+    description: monthly
+    crontab: 0 * * * *

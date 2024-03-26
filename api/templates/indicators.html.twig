@@ -38,7 +38,7 @@ $(document).ready(function () {
 		{ data: 'identifier', title: 'Identifier' },
     { data: 'namespace', title: 'Namespace' },
     { data: 'description', title: 'Description' },
-    { data: 'frequency', title: 'Collect frequency' },
+    { data: 'frequency', title: 'Collect frequency', render: function(data, type, row, meta) { return renderFrequency(data); } },
     { data: 'valuesSample', title: 'Values', render: function(data, type, row, meta){ return renderIndicatorValues(data); } }
   ];
 

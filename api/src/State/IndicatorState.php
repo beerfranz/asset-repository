@@ -5,6 +5,7 @@ namespace App\State;
 use App\ApiResource\Indicator as IndicatorApi;
 use App\Entity\Indicator;
 use App\Entity\IndicatorValue;
+use App\Service\FrequencyService;
 
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;
@@ -33,6 +34,7 @@ final class IndicatorState extends CommonState implements ProcessorInterface, Pr
         Security $security,
     ) {
         parent::__construct($entityManager, $request, $logger, $security);
+        $this->frequencyService = $frequencyService;
         $this->indicatorRepo = $entityManager->getRepository(Indicator::class);
         $this->indicatorValueRepo = $entityManager->getRepository(IndicatorValue::class);
     }

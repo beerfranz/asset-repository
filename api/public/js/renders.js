@@ -115,3 +115,10 @@ function renderIndicatorValues(values) {
 
   return result;
 }
+
+function renderFrequency(frequency) {
+  if (frequency === undefined)
+    return '-';
+
+  return frequency.description + ': ' + frequency.nextIterationDate;
+}
