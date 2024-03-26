@@ -100,3 +100,18 @@ function renderRisk(risk) {
 
   return renderWithStyles(value, styles);
 }
+
+function renderIndicatorValues(values) {
+  if (values === undefined)
+    return '-';
+
+  var result = '';
+
+  Object.keys(values).forEach(function(key) {
+    value = values[key];
+
+    result += value.identifier + ': ' + value.value + '\n';
+  });
+
+  return result;
+}

@@ -29,6 +29,9 @@ class IndicatorValue
     #[ORM\Column]
     private ?int $value = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $identifier = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -90,6 +93,43 @@ class IndicatorValue
     public function setValue(int $value): static
     {
         $this->value = $value;
+
+        return $this;
+    }
+
+    public function generateIdentifier(): string
+    {
+        $frequency = $this->getFrequency();
+        $dateTime = $this->getDatetime();
+
+        if ($frequency === 'monthly') {
+            return $dateTime->format('Y-m');
+        } elseif ($frequency === 'quarterly') {
+            return $dateTime->format('Y-m');
+        }
+    }
+
+    public function identifierIsValid($identifier): bool
+    {
+        $frequency = $this->getFrequency();
+
+        if ($frequency === 'monthly') {
+            // Identifier format must be YYYY-MM
+            if (preg_match($identifier, '/^[0-9]{4}-[0-1][0-9]$/') === 1)
+                return true;
+            else
+                return false;
+        }
+    }
+
+    public function getIdentifier(): ?string
+    {
+        return $this->identifier;
+    }
+
+    public function setIdentifier(string $identifier): static
+    {
+        $this->identifier = $identifier;
 
         return $this;
     }

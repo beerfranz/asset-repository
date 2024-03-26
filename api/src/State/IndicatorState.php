@@ -4,7 +4,7 @@ namespace App\State;
 
 use App\ApiResource\Indicator as IndicatorApi;
 use App\Entity\Indicator;
-
+use App\Entity\IndicatorValue;
 
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;
@@ -24,6 +24,7 @@ use Psr\Log\LoggerInterface;
 final class IndicatorState extends CommonState implements ProcessorInterface, ProviderInterface
 {
     protected $indicatorRepo;
+    protected $indicatorValueRepo;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -33,6 +34,7 @@ final class IndicatorState extends CommonState implements ProcessorInterface, Pr
     ) {
         parent::__construct($entityManager, $request, $logger, $security);
         $this->indicatorRepo = $entityManager->getRepository(Indicator::class);
+        $this->indicatorValueRepo = $entityManager->getRepository(IndicatorValue::class);
     }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
@@ -44,7 +46,12 @@ final class IndicatorState extends CommonState implements ProcessorInterface, Pr
             $output = [];
             foreach($indicatorEntities as $indicatorEntity) {
                 $indicatorApi = new IndicatorApi();
-                $output[] = $indicatorApi->populateFromIndicatorEntity($indicatorEntity);
+                $indicatorApi->populateFromIndicatorEntity($indicatorEntity);
+
+                $valuesSample = $this->indicatorValueRepo->findIndicatorSample($indicatorEntity);
+                $indicatorApi->setValuesSample($valuesSample);
+
+                $output[] = $indicatorApi;
             }
 
             return $output;

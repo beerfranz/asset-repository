@@ -32,16 +32,16 @@ use Doctrine\Common\Collections\Collection;
     security: "is_granted('ASSET_READ')",
     normalizationContext: ['groups' => ['IndicatorValues:read']],
 )]
-#[Get(
-    security: "is_granted('ASSET_READ')",
-)]
-#[Post(security: "is_granted('ASSET_WRITE')")]
-#[Put(security: "is_granted('ASSET_WRITE')")]
+#[Get(security: "is_granted('ASSET_READ')",)]
+##[Post(security: "is_granted('ASSET_WRITE')")]
+#[Post(uriTemplate: '/indicators/{indicatorIdentifier}/values', uriVariables: [ 'indicatorIdentifier'] ,
+    security: "is_granted('ASSET_WRITE')")]
+#[Put(uriTemplate: '/indicators/{indicatorIdentifier}/values/{identifier}', uriVariables: [ 'indicatorIdentifier', 'identifier' ], security: "is_granted('ASSET_WRITE')")]
 class IndicatorValue
 {
-    #[Groups(['IndicatorValues:read', 'IndicatorValue:read'])]
+    #[Groups(['IndicatorValues:read', 'IndicatorValue:read', 'IndicatorValue:write'])]
     #[ApiProperty(identifier: true)]
-    public $id;
+    public $identifier;
 
     #[Groups(['IndicatorValues:read', 'IndicatorValue:read', 'IndicatorValue:write'])]
     public \DateTimeImmutable $datetime;
@@ -60,17 +60,18 @@ class IndicatorValue
 
     public function populateFromIndicatorValueEntity(IndicatorValueEntity $indicatorValue): self
     {
-        $this->id = $indicatorValue->getId();
-        $this->datetime = $indicatorValue->getDatetime();
-        $this->indicator = $indicatorValue->getIndicator();
+        $this->identifier = $indicatorValue->getIdentifier();
+        // $this->datetime = $indicatorValue->getDatetime();
+        // $this->indicator = $indicatorValue->getIndicator();
         $this->value = $indicatorValue->getValue();
-        $this->isValidated = $indicatorValue->isIsValidated();
-        $this->validator = $indicatorValue->getValidator();
+        // $this->isValidated = $indicatorValue->isIsValidated();
+        // $this->validator = $indicatorValue->getValidator();
 
         return $this;
     }
 
-    // public function getId() {
-    //     return $this->id;
-    // }
+    #[ApiProperty(identifier: false)]
+    public function getId() {
+        return $this->identifier;
+    }
 }

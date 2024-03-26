@@ -39,6 +39,7 @@ $(document).ready(function () {
     { data: 'namespace', title: 'Namespace' },
     { data: 'description', title: 'Description' },
     { data: 'frequency', title: 'Collect frequency' },
+    { data: 'valuesSample', title: 'Values', render: function(data, type, row, meta){ return renderIndicatorValues(data); } }
   ];
 
 	rogerInit('indicators', dataTableOpts);

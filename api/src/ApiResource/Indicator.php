@@ -61,6 +61,9 @@ class Indicator
     #[Groups(['Indicators:read', 'Indicator:read', 'Indicator:write'])]
     public $isActivated;
 
+    #[Groups(['Indicators:read', 'Indicator:read'])]
+    public $valuesSample = [];
+
     public function populateFromIndicatorEntity(IndicatorEntity $indicator): self
     {
         $this->identifier = $indicator->getIdentifier();
@@ -72,6 +75,13 @@ class Indicator
         $this->isActivated = $indicator->isIsActivated();
 
         return $this;
+    }
+
+    public function setValuesSample($samples)
+    {
+        foreach($samples as $sample) {
+            $this->valuesSample[] = [ 'identifier' => $sample->getIdentifier(), 'value' => $sample->getValue() ];
+        }
     }
 
     #[ApiProperty(identifier: false)]

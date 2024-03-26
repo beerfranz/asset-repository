@@ -50,8 +50,15 @@ final class TaskState extends CommonState implements ProcessorInterface, Provide
             return $output;
         }
 
-        $taskEntity = $this->taskRepo->find($uriVariables['id']);
         $taskApi = new TaskApi();
+
+        $taskEntity = $this->taskRepo->findOneByIdentifier($uriVariables['identifier']);
+        if ($taskEntity === null) {
+            $taskApi->identifier = $uriVariables['identifier'];
+            return $taskApi;
+        }
+
+        
         return $taskApi->populateFromTaskEntity($taskEntity);
     }
     
@@ -65,8 +72,8 @@ final class TaskState extends CommonState implements ProcessorInterface, Provide
         if ($operation instanceof Delete) {
             $this->delete($data);
         } else {
-            if (isset($uriVariables['id']))
-                $data->id = $uriVariables['id'];
+            if (isset($uriVariables['identifier']))
+                $data->identifier = $uriVariables['identifier'];
 
             // if (isset($uriVariables['identifier']))
             //     $data->identifier = $uriVariables['identifier'];
@@ -81,15 +88,16 @@ final class TaskState extends CommonState implements ProcessorInterface, Provide
     {
         $task = null;
 
-        if (isset($data['id'])) {
-            $id = $data['id'];
+        if (isset($data['identifier'])) {
+            $id = $data['identifier'];
 
-            $task = $this->taskRepo->find($data['id']);
+            $task = $this->taskRepo->findOneByIdentifier($data['identifier']);
         }
         
         if ($task === null)
         {
             $task = new Task();
+            $task->setIdentifier($data['identifier']);
             $task->setCreatedAt(new \DateTimeImmutable());
         }
 

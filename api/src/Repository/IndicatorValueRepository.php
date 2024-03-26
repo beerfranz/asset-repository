@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\IndicatorValue;
+use App\Entity\Indicator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -21,6 +22,30 @@ class IndicatorValueRepository extends ServiceEntityRepository implements RogerR
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, IndicatorValue::class);
+    }
+
+    public function findOneByIndicatorAndIdentifier(Indicator $indicator, $valueIdentifier)
+    {
+        return $this->createQueryBuilder('s')
+           ->andWhere('s.identifier = :valueIdentifier')
+           ->setParameter('valueIdentifier', $valueIdentifier)
+           ->andWhere('s.indicator = :indicator')
+           ->setParameter('indicator', $indicator)
+           ->getQuery()
+           ->getOneOrNullResult()
+        ;
+    }
+
+    public function findIndicatorSample(Indicator $indicator): array
+    {
+        return $this->createQueryBuilder('s')
+           ->andWhere('s.indicator = :indicator')
+           ->setParameter('indicator', $indicator)
+           ->setMaxResults(3)
+           ->addOrderBy('s.identifier', 'DESC')
+           ->getQuery()
+           ->getResult()
+        ;
     }
 
 //    /**

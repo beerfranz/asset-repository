@@ -41,7 +41,7 @@ class Task
 {
     #[Groups(['Tasks:read', 'Task:read'])]
     #[ApiProperty(identifier: true)]
-    public $id;
+    public $identifier;
 
     #[Groups(['Tasks:read', 'Task:read', 'Task:write'])]
     public $title;
@@ -58,23 +58,28 @@ class Task
     #[Groups(['Tasks:read', 'Task:read', 'Task:write'])]
     public $assignedTo;
 
+    #[Groups(['Tasks:read', 'Task:read', 'Task:write'])]
+    public $taskTemplate;
+
     #[Groups(['Task:read'])]
     public $events;
 
     public function populateFromTaskEntity(TaskEntity $task): self
     {
-        $this->id = $task->getId();
+        $this->identifier = $task->getIdentifier();
         $this->title = $task->getTitle();
         $this->description = $task->getDescription();
         $this->createdAt = $task->getCreatedAt();
         $this->isDone = $task->isIsDone();
         $this->assignedTo = $task->getAssignedTo();
+        $this->taskTemplate = $task->getTaskTemplate();
         $this->events = $task->getTaskEvents();
 
         return $this;
     }
 
-    // public function getId() {
-    //     return $this->id;
-    // }
+    #[ApiProperty(identifier: false)]
+    public function getId() {
+        return $this->identifier;
+    }
 }
