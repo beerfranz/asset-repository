@@ -1,7 +1,7 @@
 # link a risk manager to an asset
 request:
   method: PUT
-  path: /tasks/2
+  path: /tasks/t-1
 
 data:
   title: Task number 1
