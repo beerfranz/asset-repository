@@ -6,6 +6,7 @@ use App\Entity\Frequency;
 use App\Entity\Indicator;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Scheduler\Trigger\CronExpressionTrigger;
 
 use Psr\Log\LoggerInterface;
 
@@ -25,14 +26,21 @@ class FrequencyService
     $this->indicatorRepo = $entityManager->getRepository(Indicator::class);
   }
 
-  public function test()
+  public function setNextIteration()
   {
     foreach ($this->indicatorRepo->getFrequencyToUpdate() as $indicator) {
-      $cronExpression = new CronExpressionTrigger($indicator['crontab']);
+      $frequency = $indicator->getFrequency();
+      $cronExpression = CronExpressionTrigger::fromSpec($frequency['crontab']);
 
       $nextRun = $cronExpression->getNextRunDate(new \DateTimeImmutable);
 
+      $frequency['nextIterationDate'] = $nextRun;
       
+      $indicator->setFrequency($frequency);
+      
+      $this->entityManager->persist($indicator);
+      $this->entityManager->flush();
+      $this->entityManager->clear();
     }
   }
 

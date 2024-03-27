@@ -120,5 +120,5 @@ function renderFrequency(frequency) {
   if (frequency === undefined)
     return '-';
 
-  return frequency.description + ': ' + frequency.nextIterationDate;
+  return frequency.description + ': ' + new Date(frequency.nextIterationDate.date).toISOString();
 }
