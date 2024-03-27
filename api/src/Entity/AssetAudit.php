@@ -137,4 +137,24 @@ class AssetAudit
 
         return $this;
     }
+
+    #[Groups(['AssetAudit:read'])]
+    public function getResume(): string
+    {
+        $data = $this->getData();
+
+        $resume = '';
+
+        if ($this->getAction() === 'update') {
+            $diffs = [];
+            foreach($data['diff'] as $key => $value){
+                $diffs[] = $key;
+            }
+
+            $resume = 'updated ' . implode(', ', $diffs);
+        }
+        
+
+        return $resume;
+    }
 }

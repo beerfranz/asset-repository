@@ -5,6 +5,8 @@ namespace App\Service;
 use App\Entity\Asset;
 use App\Entity\Instance;
 
+use App\Service\UserTemplate;
+
 use Doctrine\ORM\EntityManagerInterface;
 
 use Psr\Log\LoggerInterface;
@@ -16,13 +18,16 @@ class InstanceConformity
   protected $entityManager;
   protected $assetRepo;
   protected $instanceRepo;
+  protected $userTemplateService;
 
   public function __construct(
     EntityManagerInterface $entityManager,
     LoggerInterface $logger,
+    UserTemplate $userTemplateService,
   ) {
     $this->entityManager = $entityManager;
     $this->logger = $logger;
+    $this->userTemplateService = $userTemplateService;
 
     $this->assetRepo = $entityManager->getRepository(Asset::class);
     $this->instanceRepo = $entityManager->getRepository(Instance::class);
@@ -49,12 +54,15 @@ class InstanceConformity
     foreach ($asset->getAttributes() as $category => $attributes) {
       foreach ($attributes as $attribute => $constraint) {
         $countTotal++;
+        if (isset($constraint['@type']) && $constraint['@type'] == 'AssetAttributeType') {
+          $constraint = $constraint['condition'];
+        }
         if (isset($instanceAttributes[$category][$attribute])) {
           $attributeValue = $instanceAttributes[$category][$attribute];
 
-          $check = $this->checkWithQueryLanguage($constraint, $attributeValue);
-
-          if ($check) {
+          $check = $this->userTemplateService->test($constraint, array_merge(['value' => $attributeValue ], $this->getInstanceAttributes($instance)));
+          
+          if ($check->getBoolResult()) {
             $conformities['validated']['attributes'][$category][$attribute] = [
               'constraint' => $constraint,
               'value' => $attributeValue,
@@ -107,5 +115,13 @@ class InstanceConformity
       $check = $attributeValue === $matches[0];
 
     return $check;
+  }
+
+  protected function getInstanceAttributes($instance): Array
+  {
+    return [
+      'friendlyName' => $instance->getFriendlyName(),
+      'kind' => $instance->getKindIdentifier(),
+    ];
   }
 }

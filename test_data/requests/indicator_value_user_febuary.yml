@@ -1,0 +1,6 @@
+request:
+  method: PUT
+  path: /indicators/active-users/values/2024-02
+
+data:
+  value: 55

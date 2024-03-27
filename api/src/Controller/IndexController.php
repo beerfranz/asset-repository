@@ -6,6 +6,8 @@ use App\Repository\AssetRepository;
 use App\Repository\AssetDefinitionRepository;
 use App\Repository\AssetAuditRepository;
 use App\Repository\InstanceRepository;
+use App\Repository\RiskManagerRepository;
+use App\Repository\RiskRepository;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -113,6 +115,22 @@ class IndexController extends AbstractController
     return $this->render('map.html.twig', [ 'navbar' => [ 'map' => 'active' ] ]);
   }
 
+  #[Route('/ui/risk-managers', name: 'getRiskManagers', methods: ['GET'])]
+  public function getRiskManagers(Request $request): Response
+  {
+    return $this->render('risk-managers.html.twig', [ 'navbar' => [ 'riskManagers' => 'active' ] ]);
+  }
+
+  #[Route('/ui/risk-managers/{identifier}', name: 'getRiskManager', methods: ['GET'])]
+  public function getRiskManager(string $identifier, RiskManagerRepository $repo, RiskRepository $riskRepo, Request $request): Response
+  {
+    $riskManager = $repo->findOneByIdentifier($identifier);
+
+    $risks = $riskRepo->findBy([ 'riskManager' => $riskManager]);
+
+    return $this->render('risk-manager.html.twig', [ 'riskManager' => $riskManager, 'risks' => $risks ]);
+  }
+
   #[Route('/ui/dashboard', name: 'getDashboard', methods: ['GET'])]
   public function getDashboard(Request $request, AssetRepository $assetRepo, InstanceRepository $instanceRepo): Response
   {
@@ -133,5 +151,23 @@ class IndexController extends AbstractController
       'countInstancesTotalErrors' => $countInstancesTotalErrors,
       'countInstancesReconcilied' => $countInstancesReconcilied,
     ] ]);
+  }
+
+  #[Route('/ui/tasks', name: 'getTasks', methods: ['GET'])]
+  public function getTasks(Request $request): Response
+  {
+    return $this->render('tasks.html.twig', [ 'navbar' => [ 'tasks' => 'active' ] ]);
+  }
+
+  #[Route('/ui/task-templates', name: 'getTaskTemplates', methods: ['GET'])]
+  public function getTaskTemplates(Request $request): Response
+  {
+    return $this->render('task-templates.html.twig', [ 'navbar' => [ 'task_templates' => 'active' ] ]);
+  }
+
+  #[Route('/ui/indicators', name: 'getIndicators', methods: ['GET'])]
+  public function getIndicators(Request $request): Response
+  {
+    return $this->render('indicators.html.twig', [ 'navbar' => [ 'indicators' => 'active' ] ]);
   }
 }

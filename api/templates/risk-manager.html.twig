@@ -1,0 +1,116 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Risk manager{% endblock %}
+
+{% block body %}
+
+<div class="row">
+  <div class="col-md-12">
+      <h2>{{ riskManager.identifier }}</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <h3>Values</h3>
+    <table class="table-striped table table-bordered table-hover table-condensed">
+      <thead>
+        <tr>
+          <th>Identifier</th><th>Description</th><th>Triggers</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for valueIdentifier, value in riskManager.values %}
+          <tr><th>{{ valueIdentifier }}</th><td>{{ value.description|default('') }}</td>
+          <td><ul>
+            {% for triggerIdentifier, trigger in value.triggers|default([]) %}
+              <li>{{ triggerIdentifier }}
+                <ul>
+                  <li><code>{{ trigger.trigger | default('') }}</code></li>
+                  <li>{{ trigger.description|default('no description') }}</li>
+                </ul>
+              </li>
+            {% endfor %}
+          </ul></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <h3>Aggregator</h3>
+    <ul>
+      <li>Operation: <code>{{ riskManager.valuesAggregator }}</code></li>
+      <li>Triggers
+        <ul>
+          {% for triggerIdentifier, trigger in riskManager.triggers|default([]) %}
+            <li>{{ triggerIdentifier }}: <code>{{ trigger }}</code></li>
+          {% endfor %}
+        </ul>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <h3>Risks</h3>
+    <table id="risks" class="table-striped table table-bordered table-hover table-condensed"></table>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+var riskManagerValues = [];
+{% for valueId, value in riskManager.values %}
+  riskManagerValues.push('{{ valueId }}');
+{% endfor %}
+
+
+$(document).ready(function () {
+  var dataTableOpts = commonDataTableOpts();
+  dataTableOpts.ajax.url = '/risks';
+  dataTableOpts.columns = [ 
+    { data: 'asset', title: 'Asset' },
+    { data: 'identifier', title: 'ID', orderable: false },
+    { data: 'description', title: 'Description', orderable: false, render: function(data, type, row, meta){ return renderNullableString(data, '-'); } },
+  ];
+
+  riskManagerValues.forEach((element) => {
+    dataTableOpts.columns.push({ data: `values.${element}`, title: element, orderable: false, render: function(data, type, row, meta){ return renderNullableString(data) } });
+  });
+
+
+  dataTableOpts.columns.push({ data: 'values.aggregatedRisk.value', title: 'Risk', orderable: false, render: function(data, type, row, meta){ return renderRisk(row.values.aggregatedRisk); }});
+  dataTableOpts.rowCallback = function(row, data, displayNum, displayIndex, dataIndex) {
+    var mitigationNodes = Array();
+    var rowObj = $('#risks').DataTable().row(dataIndex);
+    for (const [ mitigationId, mitigation ] of Object.entries(data.mitigations)) {
+      var node = $(document.createElement('tr'));
+      node.addClass('bg-secondary');
+      node.append(`<td></td><td>${mitigationId}</td><td>${mitigation.description}</td>`);
+      riskManagerValues.forEach((element) => {
+        node.append(`<td>${renderNullableString(mitigation.effects[element], '-')}</td>`);
+      });
+      node.append(`<td>${renderRisk(mitigation.aggregatedRisk)}</td>`);
+
+      mitigationNodes.push(node);
+    };
+
+    rowObj.child(mitigationNodes).show();
+    
+  };
+  rogerInit('risks', dataTableOpts);
+
+});
+
+</script>
+
+{% endblock %}

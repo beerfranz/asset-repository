@@ -1,0 +1,32 @@
+{% if data.diff is defined %}
+<ul>
+{% for property, contents in data.diff %}
+  {% if property == 'attributes' %}
+    {% for category, useless in (contents[0]|default([]))|merge(contents[1]|default([])) %}
+      {% for attribute, value in (contents[0][category]|default([]))|merge(contents[1][category]|default([])) %}
+        {% set old_value = contents[0][category][attribute] | default(null) %}
+        {% set new_value = contents[1][category][attribute] | default(null) %}
+        {% include 'components/audit-data-diff-default.html.twig' with { 'property': "#{property}.#{category}.#{attribute}" } %}
+      {% endfor %}
+    {% endfor %}
+  {% elseif property in [ 'rules' ] %}
+    {% for sub_property, useless in (contents[0]|default([]))|merge(contents[1]|default([])) %}
+      {% set old_value = contents[0][sub_property] | default(null) %}
+      {% set new_value = contents[1][sub_property] | default(null) %}
+      {% include 'components/audit-data-diff-default.html.twig' with { 'property': "#{property}.#{sub_property}" } %}
+    {% endfor %}
+  {% else %}
+    {% include 'components/audit-data-diff-default.html.twig' with { 'old_value': contents[0], 'new_value': contents[1] } %}
+  {% endif  %}
+  
+{% endfor %}
+</ul>
+{% elseif audit.action == 'create' %}
+  <ul>
+    {% for property, value in data %}
+      {% include 'components/audit-data-diff-default.html.twig' with { 'old_value': null, 'new_value': value } %}
+    {% endfor %}
+  </ul>
+{% elseif data is defined %}
+  {{ data | json_encode }}
+{% endif %}

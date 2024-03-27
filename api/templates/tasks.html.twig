@@ -1,0 +1,48 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Tasks{% endblock %}
+
+{% block body %}
+
+
+{# <div class="row">
+  <div class="col-md-12">
+    <form id="instances-filters" class="dataTableFilters form-inline">
+      <div class="form-group">
+        <label class="form-label" for="filter-identifier">Identifier</label>
+        <input class="form-control autocomplete" name="identifier" type="text" id="filter-identifier" placeholder="identifier" 
+          autocomplete-source="/entity/instances" autocomplete-group="Instance:identifier" autocomplete-name="identifier" />
+
+        {% include 'components/filter-kind.html.twig' %}
+      </div>
+    </form>
+  </div>
+</div> #}
+
+<div class="row">
+  <div class="col-md-12">
+		<table class="table" id="tasks"></table>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+$(document).ready(function () {
+	var dataTableOpts = commonDataTableOpts();
+	dataTableOpts.ajax.url = '/tasks';
+	dataTableOpts.columns = [ 
+		{ data: 'id', title: 'ID' },
+		{ data: 'title', title: 'Title', render: function(data, type, row, meta){ return '<a href="/ui/tasks/' + row.id + '">' + data + '</a>'} },
+  ];
+
+	rogerInit('tasks', dataTableOpts);
+
+});
+
+</script>
+
+{% endblock %}

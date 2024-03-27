@@ -11,13 +11,25 @@
     {% endif %}
     <td>{{ attribute }}</td>
     <td class="{% if _state == 'error' %}bg-danger{% elseif _state == 'validated' %}bg-success{% endif %}">
-      {{ value }}
+      {{ value }}  
       {% if _state == 'error' %}
         <span class="glyphicon glyphicon-exclamation-sign text-danger" data-toogle="tooltip" title="{{ _tooltip }}"></span>
       {% elseif _state == 'validated' %}
         <span class="glyphicon glyphicon-ok-sign text-success" data-toogle="tooltip" title="{{ _tooltip }}"></span>
       {% endif %}
-
+    </td>
+  </tr>
+{% elseif value['@type'] is defined and value['@type'] == 'AssetAttributeType' %}
+  <tr>
+    <td>{{ attribute }}</td>
+    <td>
+      {{ value['value'] }}
+      {% if value['condition'] is defined and value['condition'] != null %}
+        <span class="glyphicon glyphicon-eye-open text-info" data-toogle="tooltip" title="Verify instances: {{ value['condition'] }}"></span>
+      {% endif %}
+      {% if value['propagateToInstances'] is defined and value['propagateToInstances'] == true %}
+        <span class="glyphicon glyphicon-share text-info" data-toogle="tooltip" title="Propagate to instances"></span>
+      {% endif %}
     </td>
   </tr>
 {% elseif value is iterable and stringifyIterable is defined %}
