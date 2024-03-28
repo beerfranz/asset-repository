@@ -120,5 +120,15 @@ function renderFrequency(frequency) {
   if (frequency === undefined)
     return '-';
 
-  return frequency.description + ': ' + new Date(frequency.nextIterationDate.date).toISOString();
+  var output;
+
+  if (frequency.description === undefined)
+    output = '-'
+  else
+    output = frequency.description;
+
+  if (frequency.nextIterationAt !== undefined)
+    output = '<span data-toggle="tooltip" title="Next iteration: ' + new Date(frequency.nextIterationAt.date).toISOString() + '">' + output + '</span>';
+
+  return output;
 }

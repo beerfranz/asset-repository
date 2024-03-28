@@ -6,4 +6,6 @@ data:
   title: Template test data
   description: |
     A long description
-  generateTaskAutomatically: "# * * * *" # hourly
+  frequency: 
+    description: monthly
+    crontab: '0 0 1 * *'

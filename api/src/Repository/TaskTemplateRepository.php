@@ -23,6 +23,16 @@ class TaskTemplateRepository extends ServiceEntityRepository implements RogerRep
         parent::__construct($registry, TaskTemplate::class);
     }
 
+    public function getFrequencyToUpdate(): array
+    {
+        $qb = $this->createQueryBuilder('t');
+
+        return $qb
+                    ->where($qb->expr()->isNotNull("t.frequency"))
+                    ->getQuery()
+                    ->getResult();
+    }
+
 //    /**
 //     * @return TaskTemplate[] Returns an array of TaskTemplate objects
 //     */

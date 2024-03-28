@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Entity\RogerEntity;
 
+use Symfony\Component\Scheduler\Trigger\CronExpressionTrigger;
+
 use ApiPlatform\Metadata\ApiResource;
 
 class Frequency extends RogerEntity {
@@ -24,5 +26,12 @@ class Frequency extends RogerEntity {
       $data['startsAt'] = new \DateTimeImmutable();
 
     $this->hydrator($data);
+  }
+
+  public function calculateNextIteration()
+  {
+    $cronExpression = CronExpressionTrigger::fromSpec($this->crontab);
+
+    $this->nextIterationAt = $cronExpression->getNextRunDate(new \DateTimeImmutable);
   }
 }

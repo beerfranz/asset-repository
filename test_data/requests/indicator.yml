@@ -12,4 +12,4 @@ data:
     warning: value < 70
   frequency: 
     description: monthly
-    crontab: 0 * * * *
+    crontab: '0 0 1 * *'

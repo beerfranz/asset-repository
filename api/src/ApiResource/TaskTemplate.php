@@ -50,14 +50,17 @@ class TaskTemplate
     public $description;
 
     #[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
-    public $generateTaskAutomatically;
+    #[ApiProperty(
+        openapiContext: [ "type" => "object" ]
+    )]
+    public ?array $frequency = [];
 
     public function populateFromTaskTemplateEntity(TaskTemplateEntity $taskTemplate): self
     {
         $this->identifier = $taskTemplate->getIdentifier();
         $this->title = $taskTemplate->getTitle();
         $this->description = $taskTemplate->getDescription();
-        $this->generateTaskAutomatically = $taskTemplate->getGenerateTaskAutomatically();
+        $this->frequency = $taskTemplate->getFrequency();
 
         return $this;
     }

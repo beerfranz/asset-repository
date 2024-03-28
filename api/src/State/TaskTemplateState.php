@@ -99,8 +99,8 @@ final class TaskTemplateState extends CommonState implements ProcessorInterface,
         if (isset($data['description']))
             $taskTemplate->setDescription($data['description']);
 
-        if (isset($data['generateTaskAutomatically']))
-            $taskTemplate->setGenerateTaskAutomatically($data['generateTaskAutomatically']);
+        if (isset($data['frequency']))
+            $taskTemplate->setFrequency($data['frequency']);
 
         $this->entityManager->persist($taskTemplate);
         $this->entityManager->flush();

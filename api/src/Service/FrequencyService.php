@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Frequency;
 use App\Entity\Indicator;
+use App\Entity\TaskTemplate;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Scheduler\Trigger\CronExpressionTrigger;
@@ -15,6 +16,7 @@ class FrequencyService
   protected $logger;
   protected $entityManager;
   protected $indicatorRepo;
+  protected $taskTemplateRepo;
 
   public function __construct(
     EntityManagerInterface $entityManager,
@@ -24,24 +26,30 @@ class FrequencyService
     $this->logger = $logger;
 
     $this->indicatorRepo = $entityManager->getRepository(Indicator::class);
+    $this->taskTemplateRepo = $entityManager->getRepository(TaskTemplate::class);
   }
 
   public function setNextIteration()
   {
     foreach ($this->indicatorRepo->getFrequencyToUpdate() as $indicator) {
-      $frequency = $indicator->getFrequency();
-      $cronExpression = CronExpressionTrigger::fromSpec($frequency['crontab']);
-
-      $nextRun = $cronExpression->getNextRunDate(new \DateTimeImmutable);
-
-      $frequency['nextIterationDate'] = $nextRun;
-      
-      $indicator->setFrequency($frequency);
-      
-      $this->entityManager->persist($indicator);
-      $this->entityManager->flush();
-      $this->entityManager->clear();
+      $this->calculateNextIteration($indicator);
     }
+
+    foreach ($this->taskTemplateRepo->getFrequencyToUpdate() as $taskTemplate) {
+      $this->calculateNextIteration($taskTemplate);
+    }
+  }
+
+  public function calculateNextIteration($entity) {
+    $frequency = new Frequency($entity->getFrequency());
+      
+    $frequency->calculateNextIteration();
+    
+    $entity->setFrequency($frequency->jsonSerialize());
+    
+    $this->entityManager->persist($entity);
+    $this->entityManager->flush();
+    $this->entityManager->clear();
   }
 
 }
