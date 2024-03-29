@@ -32,6 +32,9 @@ class IndicatorValue
     #[ORM\Column(length: 255)]
     private ?string $identifier = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $trigger = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -130,6 +133,18 @@ class IndicatorValue
     public function setIdentifier(string $identifier): static
     {
         $this->identifier = $identifier;
+
+        return $this;
+    }
+
+    public function getTrigger(): ?array
+    {
+        return $this->trigger;
+    }
+
+    public function setTrigger(?array $trigger): static
+    {
+        $this->trigger = $trigger;
 
         return $this;
     }
