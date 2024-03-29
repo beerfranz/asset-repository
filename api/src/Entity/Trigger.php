@@ -1,7 +1,11 @@
 <?php
 
-class Trigger {
+namespace App\Entity;
 
-  protected $printLevel = "danger";
+class Trigger extends RogerEntity {
+
+  protected ?string $printLevel = null;
+
+  protected array $rules = [];
   
 }

@@ -105,13 +105,22 @@ function renderIndicatorValues(values) {
   if (values === undefined)
     return '-';
 
-  var result = '';
+  var result = '<table class="table-striped table table-bordered table-hover table-condensed">';
+
+  result += '<tr>';
+  Object.keys(values).forEach(function(key) {
+    value = values[key];
+    result += '<th>' + value.identifier + '</th>';
+  });
+  result += '</tr><tr>';
 
   Object.keys(values).forEach(function(key) {
     value = values[key];
 
-    result += value.identifier + ': ' + value.value + '\n';
+    result += '<td class="bg-' + value.level + '">' + value.value + '</td>';
   });
+
+  result += '</tr></table>';
 
   return result;
 }

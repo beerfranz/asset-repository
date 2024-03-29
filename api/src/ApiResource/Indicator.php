@@ -84,7 +84,8 @@ class Indicator
     public function setValuesSample($samples)
     {
         foreach($samples as $sample) {
-            $this->valuesSample[] = [ 'identifier' => $sample->getIdentifier(), 'value' => $sample->getValue() ];
+            $trigger = $sample->getTrigger();
+            $this->valuesSample[] = [ 'identifier' => $sample->getIdentifier(), 'value' => $sample->getValue(), 'level' => $trigger['printLevel'] ];
         }
     }
 

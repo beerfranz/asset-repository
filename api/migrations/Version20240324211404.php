@@ -46,7 +46,7 @@ final class Version20240324211404 extends AbstractMigration
         $this->addSql('CREATE SEQUENCE indicator_value_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE indicator (id INT NOT NULL, identifier VARCHAR(255) NOT NULL, namespace VARCHAR(255) NOT NULL, description TEXT DEFAULT NULL, target_value INT DEFAULT NULL, triggers JSON DEFAULT NULL, is_activated BOOLEAN NOT NULL, frequency JSON DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_D1349DB3772E836A ON indicator (identifier)');
-        $this->addSql('CREATE TABLE indicator_value (id INT NOT NULL, indicator_id INT NOT NULL, datetime TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, is_validated BOOLEAN NOT NULL, validator VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE indicator_value (id INT NOT NULL, indicator_id INT NOT NULL, datetime TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, is_validated BOOLEAN NOT NULL, validator VARCHAR(255) DEFAULT NULL, trigger JSON DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_D18506234402854A ON indicator_value (indicator_id)');
         $this->addSql('COMMENT ON COLUMN indicator_value.datetime IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE indicator_value ADD CONSTRAINT FK_D18506234402854A FOREIGN KEY (indicator_id) REFERENCES indicator (id) NOT DEFERRABLE INITIALLY IMMEDIATE');

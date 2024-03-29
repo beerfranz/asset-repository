@@ -5,7 +5,7 @@ namespace App\State;
 use App\ApiResource\IndicatorValue as IndicatorValueApi;
 use App\Entity\Indicator;
 use App\Entity\IndicatorValue;
-
+use App\Service\TriggerService;
 
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;
@@ -32,8 +32,10 @@ final class IndicatorValueState extends CommonState implements ProcessorInterfac
         RequestStack $request,
         LoggerInterface $logger,
         Security $security,
+        TriggerService $triggerService,
     ) {
         parent::__construct($entityManager, $request, $logger, $security);
+        $this->triggerService = $triggerService;
         $this->indicatorValueRepo = $entityManager->getRepository(IndicatorValue::class);
         $this->indicatorRepo = $entityManager->getRepository(Indicator::class);
     }
@@ -125,6 +127,9 @@ final class IndicatorValueState extends CommonState implements ProcessorInterfac
 
         if (isset($date['isValidated']))
             $indicatorValue->setIsValidated($data['isValidated']);
+
+        $trigger = $this->triggerService->calculateTrigger($indicator->getTriggers(), $indicatorValue->getValue());
+        $indicatorValue->setTrigger($trigger);
 
         $this->entityManager->persist($indicatorValue);
         $this->entityManager->flush();
