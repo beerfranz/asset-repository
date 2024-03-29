@@ -37,7 +37,7 @@ use Doctrine\Common\Collections\Collection;
 )]
 #[Post(security: "is_granted('ASSET_WRITE')")]
 #[Put(security: "is_granted('ASSET_WRITE')")]
-class TaskTemplate
+class TaskTemplate extends RogerApiResource
 {
     #[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
     #[ApiProperty(identifier: true)]
@@ -63,10 +63,5 @@ class TaskTemplate
         $this->frequency = $taskTemplate->getFrequency();
 
         return $this;
-    }
-
-    #[ApiProperty(identifier: false)]
-    public function getId() {
-        return $this->identifier;
     }
 }

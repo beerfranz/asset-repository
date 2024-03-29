@@ -30,11 +30,17 @@ abstract class RogerEntity implements JsonSerializable {
     }
     
     if (property_exists($this, $name)) {
-      $this->$name = $value;
+      try {
+        $this->$name = $value;
+      } catch (\Exception $e) {
+        return $this;
+      }
+
       return $this;
     }
-        
-    throw new \Exception('The property ' . $name . ' not exists, or no method ' . $methodName());
+
+    return $this;
+    // throw new \Exception('The property ' . $name . ' not exists, or no method ' . $methodName());
   }
   
   public function __get($name) {
