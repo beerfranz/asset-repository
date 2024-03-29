@@ -4,6 +4,9 @@ namespace App\Entity;
 
 use JsonSerializable;
 
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
+
 abstract class RogerEntity implements JsonSerializable {
   
   public function __construct(array $data = []) {
@@ -19,6 +22,14 @@ abstract class RogerEntity implements JsonSerializable {
     return $this;
   }
   
+  protected function getSerializer(): Serializer
+  {
+    $normalizers = [new ObjectNormalizer()];
+    $serializer = new Serializer($normalizers, []);
+
+    return $serializer;
+  }
+
   public function __set($name, $value)
   {
 
@@ -66,6 +77,11 @@ abstract class RogerEntity implements JsonSerializable {
       $result[$name] = $this->__get($name);
     }
     return $result;
+  }
+
+  public function toArray(): array
+  {
+    return $this->getSerializer()->normalize($this, 'array');
   }
 
 }

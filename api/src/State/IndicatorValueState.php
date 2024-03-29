@@ -129,7 +129,7 @@ final class IndicatorValueState extends CommonState implements ProcessorInterfac
             $indicatorValue->setIsValidated($data['isValidated']);
 
         $trigger = $this->triggerService->calculateTrigger($indicator->getTriggers(), $indicatorValue->getValue());
-        $indicatorValue->setTrigger($trigger);
+        $indicatorValue->setTrigger($trigger->toArray());
 
         $this->entityManager->persist($indicatorValue);
         $this->entityManager->flush();
