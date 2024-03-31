@@ -8,6 +8,7 @@ use App\Repository\AssetAuditRepository;
 use App\Repository\InstanceRepository;
 use App\Repository\RiskManagerRepository;
 use App\Repository\RiskRepository;
+use App\Repository\IndicatorRepository;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -169,5 +170,13 @@ class IndexController extends AbstractController
   public function getIndicators(Request $request): Response
   {
     return $this->render('indicators.html.twig', [ 'navbar' => [ 'indicators' => 'active' ] ]);
+  }
+
+  #[Route('/ui/indicators/{identifier}', name: 'getIndicator', methods: ['GET'])]
+  public function getIndicator(string $identifier, IndicatorRepository $repo, Request $request): Response
+  {
+    $indicator = $repo->findOneByIdentifier($identifier);
+
+    return $this->render('indicator.html.twig', [ 'indicator' => $indicator ]);
   }
 }
