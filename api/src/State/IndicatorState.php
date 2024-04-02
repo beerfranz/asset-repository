@@ -42,6 +42,7 @@ final class IndicatorState extends CommonState implements ProcessorInterface, Pr
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
+
         if ($operation instanceof CollectionOperationInterface)
         {
             $indicatorEntities = $this->getCollection($this->indicatorRepo, $context);
@@ -49,12 +50,10 @@ final class IndicatorState extends CommonState implements ProcessorInterface, Pr
             $output = [];
             foreach($indicatorEntities as $indicatorEntity) {
                 $indicatorApi = new IndicatorApi();
-                $indicatorApi->populateFromIndicatorEntity($indicatorEntity);
-
                 $valuesSample = $this->indicatorValueRepo->findIndicatorSample($indicatorEntity);
                 $indicatorApi->setValuesSample($valuesSample);
-
-                $output[] = $indicatorApi;
+                
+                $output[] = $indicatorApi->fromEntityToApi($indicatorEntity);
             }
 
             return $output;
@@ -65,7 +64,10 @@ final class IndicatorState extends CommonState implements ProcessorInterface, Pr
 
         if ($indicatorEntity === null)
             return $indicatorApi;
-        return $indicatorApi->populateFromIndicatorEntity($indicatorEntity);
+
+        $indicatorApi->fromEntityToApi($indicatorEntity);
+
+        return $indicatorApi->fromEntityToApi($indicatorEntity);
     }
     
     /**
@@ -81,7 +83,7 @@ final class IndicatorState extends CommonState implements ProcessorInterface, Pr
             if (isset($uriVariables['identifier']))
                 $data->identifier = $uriVariables['identifier'];
 
-            $indicator = $this->processOneIndicator((array) $data);
+            $indicator = $this->processOneIndicator($data);
 
             $data->id = $indicator->getId();
         }
@@ -91,32 +93,18 @@ final class IndicatorState extends CommonState implements ProcessorInterface, Pr
     {
         $indicator = null;
 
-        if (isset($data['identifier'])) {
-            $identifier = $data['identifier'];
+        $identifier = $data->__get('identifier');
 
-            $indicator = $this->indicatorRepo->findOneByIdentifier($data['identifier']);
+        if ($identifier !== null) {
+            $indicator = $this->getEntity($identifier);
         }
         
         if ($indicator === null)
         {
             $indicator = new Indicator();
-            $indicator->setIdentifier($data['identifier']);
         }
 
-        if (isset($data['namespace']))
-            $indicator->setNamespace($data['namespace']);
-
-        if (isset($data['description']))
-            $indicator->setDescription($data['description']);
-
-        if (isset($data['isActivated']))
-            $indicator->setIsActivated($data['isActivated']);
-
-        if (isset($data['triggers']))
-            $indicator->setTriggers($data['triggers']);
-
-        if (isset($data['frequency']))
-            $indicator->setFrequency($data['frequency']);
+        $indicator = $data->fromApiToEntity($indicator);
 
         $indicator = $this->frequencyService->calculateNextIteration($indicator);
 
@@ -131,5 +119,10 @@ final class IndicatorState extends CommonState implements ProcessorInterface, Pr
         $this->entityManager->remove($indicator);
         $this->entityManager->flush();
         $this->entityManager->clear();
+    }
+
+    protected function getEntity($identifier)
+    {
+        return $this->indicatorRepo->findOneByIdentifier($identifier);
     }
 }

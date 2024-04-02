@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: IndicatorRepository::class)]
 #[ORM\UniqueConstraint(columns:["identifier"])]
-class Indicator
+class Indicator extends RogerEntity
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -29,10 +29,10 @@ class Indicator
     #[ORM\Column(nullable: true)]
     private ?int $targetValue = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable: true, type: 'json_document')]
     private ?array $triggers = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable: true, type: 'json_document')]
     private ?array $frequency = null;
 
     #[ORM\Column]
@@ -128,8 +128,11 @@ class Indicator
         return $this->isActivated;
     }
 
-    public function setIsActivated(bool $isActivated): static
+    public function setIsActivated(?bool $isActivated): static
     {
+        if ($isActivated === null)
+            $isActivated = true;
+        
         $this->isActivated = $isActivated;
 
         return $this;

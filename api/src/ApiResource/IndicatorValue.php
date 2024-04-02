@@ -84,7 +84,7 @@ class IndicatorValue
 
         $indicator = new Indicator();
 
-        $indicator->populateFromIndicatorEntity($indicatorValue->getIndicator());
+        $indicator->fromEntityToApi($indicatorValue->getIndicator());
         $this->indicator = $indicator;
         return $this;
     }

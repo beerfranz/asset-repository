@@ -38,7 +38,7 @@ use Doctrine\Common\Collections\Collection;
 )]
 #[Post(security: "is_granted('ASSET_WRITE')")]
 #[Put(security: "is_granted('ASSET_WRITE')")]
-class Indicator
+class Indicator extends RogerApiResource
 {
     #[Groups(['Indicators:read', 'Indicator:read', 'Indicator:write', 'IndicatorValues:read', 'IndicatorValue:read'])]
     #[ApiProperty(identifier: true)]
@@ -68,30 +68,11 @@ class Indicator
     #[Groups(['Indicators:read', 'Indicator:read'])]
     public $valuesSample = [];
 
-    public function populateFromIndicatorEntity(IndicatorEntity $indicator): self
-    {
-        $this->identifier = $indicator->getIdentifier();
-        $this->namespace = $indicator->getNamespace();
-        $this->description = $indicator->getDescription();
-        $this->targetValue = $indicator->getTargetValue();
-        $this->triggers = $indicator->getTriggers();
-        $this->frequency = $indicator->getFrequency();
-        $this->isActivated = $indicator->isIsActivated();
-
-        return $this;
-    }
-
     public function setValuesSample($samples)
     {
         foreach($samples as $sample) {
             $trigger = $sample->getTrigger();
             $this->valuesSample[] = [ 'identifier' => $sample->getIdentifier(), 'value' => $sample->getValue(), 'level' => $trigger['printLevel'] ];
         }
-    }
-
-    #[ApiProperty(identifier: false)]
-    #[Groups(['Indicators:read', 'Indicator:read', 'Indicator:write', 'IndicatorValues:read'])]
-    public function getId() {
-        return $this->identifier;
     }
 }

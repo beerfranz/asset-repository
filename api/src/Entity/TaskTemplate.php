@@ -32,7 +32,7 @@ class TaskTemplate extends RogerEntity
     #[ORM\OneToMany(mappedBy: 'taskTemplate', targetEntity: Task::class)]
     private Collection $tasks;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable: true, type: 'json_document')]
     private ?array $frequency = null;
 
     public function __construct()

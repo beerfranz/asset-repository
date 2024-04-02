@@ -5,6 +5,7 @@ namespace App\Entity;
 use JsonSerializable;
 
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
 abstract class RogerEntity implements JsonSerializable {
@@ -24,7 +25,12 @@ abstract class RogerEntity implements JsonSerializable {
   
   protected function getSerializer(): Serializer
   {
-    $normalizers = [new ObjectNormalizer()];
+    $defaultContext = [
+      AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (object $object, string $format, array $context): string {
+        return $object->getId();
+      },
+    ];
+    $normalizers = [new ObjectNormalizer(null, null, null, null, null, null, $defaultContext)];
     $serializer = new Serializer($normalizers, []);
 
     return $serializer;
