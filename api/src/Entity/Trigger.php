@@ -4,7 +4,7 @@ namespace App\Entity;
 
 class Trigger extends RogerEntity {
 
-  const LEVELS = [ 'info', 'success', 'warning', 'danger' ];
+  const ALLOWED_LEVELS = [ 'info', 'success', 'warning', 'danger' ];
 
   protected ?string $printLevel = 'info';
 
@@ -12,7 +12,7 @@ class Trigger extends RogerEntity {
 
   public function setPrintLevel(string $level): self
   {
-    if (! in_array($level, self::LEVELS))
+    if (! in_array($level, self::ALLOWED_LEVELS))
       throw new \Exception('Level "' . $level . '" not authorized. Use info, success, warning or danger.');
     
     $this->printLevel = $level;
