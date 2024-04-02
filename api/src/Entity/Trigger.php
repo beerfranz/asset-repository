@@ -4,12 +4,17 @@ namespace App\Entity;
 
 class Trigger extends RogerEntity {
 
+  const LEVELS = [ 'info', 'success', 'warning', 'danger' ];
+
   protected ?string $printLevel = 'info';
 
   protected array $rules = [];
 
   public function setPrintLevel(string $level): self
   {
+    if (! in_array($level, self::LEVELS))
+      throw new \Exception('Level "' . $level . '" not authorized. Use info, success, warning or danger.');
+    
     $this->printLevel = $level;
     return $this;
   }
