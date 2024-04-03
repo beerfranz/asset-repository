@@ -49,7 +49,7 @@ use Doctrine\Common\Collections\Collection;
     uriVariables: [ 'indicatorIdentifier', 'identifier' ],
     security: "is_granted('ASSET_WRITE')"
 )]
-class IndicatorValue
+class IndicatorValue extends RogerApiResource
 {
     #[Groups(['IndicatorValues:read', 'IndicatorValue:read', 'IndicatorValue:write'])]
     #[ApiProperty(identifier: true)]
@@ -69,33 +69,35 @@ class IndicatorValue
 
     #[Groups(['IndicatorValues:read', 'IndicatorValue:read', 'IndicatorValue:write'])]
     public $validator;
+    
+    #[Groups(['IndicatorValues:read', 'IndicatorValue:read', 'IndicatorValue:write'])]
+    public ?array $trigger = null;
 
     public function __construct(){
         $this->indicator = new Indicator();
     }
 
-    public function populateFromIndicatorValueEntity(IndicatorValueEntity $indicatorValue): self
+    public function setDatetime($datetime): self
     {
-        $this->identifier = $indicatorValue->getIdentifier();
-        $this->datetime = $indicatorValue->getDatetime();
-        $this->value = $indicatorValue->getValue();
-        $this->isValidated = $indicatorValue->isIsValidated();
-        $this->validator = $indicatorValue->getValidator();
+        if (is_string($datetime))
+            $this->datetime = new \DateTimeImmutable($datetime);
 
-        $indicator = new Indicator();
+        if (is_array($datetime))
+            $this->datetime = new \DateTimeImmutable($datetime['date'], $datetime['timezone']);
 
-        $indicator->fromEntityToApi($indicatorValue->getIndicator());
-        $this->indicator = $indicator;
         return $this;
     }
 
-    #[ApiProperty(identifier: false)]
-    public function getId() {
-        return $this->identifier;
+    public function setIndicator($indicator): self
+    {
+        if (is_array($indicator)) {
+            $this->indicator = new Indicator($indicator);
+        }
+
+        return $this;
     }
 
     public function getIndicatorIdentifier() {
-        // var_dump($this); exit;
         return $this->indicator->identifier;
     }
 }

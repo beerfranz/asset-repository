@@ -49,7 +49,7 @@ final class IndicatorValueState extends CommonState implements ProcessorInterfac
             $output = [];
             foreach($indicatorValueEntities as $indicatorValueEntity) {
                 $indicatorValueApi = new IndicatorValueApi();
-                $output[] = $indicatorValueApi->populateFromIndicatorValueEntity($indicatorValueEntity);
+                $output[] = $indicatorValueApi->fromEntityToApi($indicatorValueEntity);
             }
 
             return $output;
@@ -69,8 +69,8 @@ final class IndicatorValueState extends CommonState implements ProcessorInterfac
             $indicatorValueApi->identifier = $uriVariables['identifier'];
             return $indicatorValueApi;
         }
-
-        return $indicatorValueApi->populateFromIndicatorValueEntity($indicatorValueEntity);
+        
+        return $indicatorValueApi->fromEntityToApi($indicatorValueEntity);
     }
     
     /**
@@ -93,12 +93,12 @@ final class IndicatorValueState extends CommonState implements ProcessorInterfac
                 }
             }
             
-            $indicatorValue = $this->processOneIndicatorValue((array) $data, $indicatorEntity);
+            $indicatorValue = $this->processOneIndicatorValue($data, $indicatorEntity);
 
             $data->id = $indicatorValue->getId();
 
             $indicatorValueApi = new IndicatorValueApi();
-            $indicatorValueApi->populateFromIndicatorValueEntity($indicatorValue);
+            $indicatorValueApi->fromEntityToApi($indicatorValue);
             return $indicatorValueApi;
         }
     }
@@ -107,10 +107,10 @@ final class IndicatorValueState extends CommonState implements ProcessorInterfac
     {
         $indicatorValue = null;
 
-        if (isset($data['identifier'])) {
-            $identifier = $data['identifier'];
+        $identifier = $data->__get('identifier');
 
-            $indicatorValue = $this->indicatorValueRepo->findOneByIndicatorAndIdentifier($indicator, $data['identifier']);
+        if ($identifier !== null) {
+            $indicatorValue = $this->indicatorValueRepo->findOneByIndicatorAndIdentifier($indicator, $identifier);
         }
         
         if ($indicatorValue === null)
@@ -122,11 +122,8 @@ final class IndicatorValueState extends CommonState implements ProcessorInterfac
             $indicatorValue->setIsValidated(false);
         }
 
-        if (isset($data['value']))
-            $indicatorValue->setValue($data['value']);
-
-        if (isset($date['isValidated']))
-            $indicatorValue->setIsValidated($data['isValidated']);
+        $indicatorValue->setIndicator($indicator);
+        $indicatorValue->setIsValidated($data->isValidated || false);
 
         $trigger = $this->triggerService->calculateTrigger($indicator->getTriggers(), $indicatorValue->getValue());
         $indicatorValue->setTrigger($trigger->toArray());

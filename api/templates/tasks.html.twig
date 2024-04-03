@@ -35,8 +35,8 @@ $(document).ready(function () {
 	var dataTableOpts = commonDataTableOpts();
 	dataTableOpts.ajax.url = '/tasks';
 	dataTableOpts.columns = [ 
-		{ data: 'identifier', title: 'identifier' },
-		{ data: 'title', title: 'Title', render: function(data, type, row, meta){ return '<a href="/ui/tasks/' + row.id + '">' + data + '</a>'} },
+		{ data: 'identifier', title: 'identifier', render: function(data, type, row, meta){ return '<a href="/ui/tasks/' + data + '">' + data + '</a>'} },
+		{ data: 'title', title: 'Title', render: function(data, type, row, meta){ return '<a href="/ui/tasks/' + row.identifier + '">' + data + '</a>'} },
   ];
 
 	rogerInit('tasks', dataTableOpts);

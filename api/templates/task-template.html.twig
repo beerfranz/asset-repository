@@ -1,0 +1,17 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Task template{{ taskTemplate.identifier }}{% endblock %}
+
+{% block body %}
+
+<dl>
+
+  <dt>Title</dt>
+  <dd>{{ taskTemplate.title }}</dd>
+
+  <dt>Description</dt>
+  <dd>{{ taskTemplate.description }}
+
+</dl>
+
+{% endblock %}

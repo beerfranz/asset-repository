@@ -6,7 +6,7 @@ use App\Repository\IndicatorValueRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: IndicatorValueRepository::class)]
-class IndicatorValue
+class IndicatorValue extends RogerEntity
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -32,7 +32,7 @@ class IndicatorValue
     #[ORM\Column(length: 255)]
     private ?string $identifier = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable: true, type: 'json_document')]
     private ?array $trigger = null;
 
     public function getId(): ?int

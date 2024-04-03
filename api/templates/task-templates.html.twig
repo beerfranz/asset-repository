@@ -35,7 +35,7 @@ $(document).ready(function () {
 	var dataTableOpts = commonDataTableOpts();
 	dataTableOpts.ajax.url = '/task_templates';
 	dataTableOpts.columns = [ 
-		{ data: 'identifier', title: 'Identifier' },
+		{ data: 'identifier', title: 'Identifier', render: function(data, type, row, meta){ return '<a href="/ui/task-templates/' + data + '">' + data + '</a>'} },
     { data: 'title', title: 'Title', render: function(data, type, row, meta){ return renderNullableString(data, '-'); } },
     { data: 'frequency', title: 'Repeat', render: function(data, type, row, meta) { return renderFrequency(data); } },
   ];

@@ -9,6 +9,8 @@ use App\Repository\InstanceRepository;
 use App\Repository\RiskManagerRepository;
 use App\Repository\RiskRepository;
 use App\Repository\IndicatorRepository;
+use App\Repository\TaskRepository;
+use App\Repository\TaskTemplateRepository;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -160,10 +162,26 @@ class IndexController extends AbstractController
     return $this->render('tasks.html.twig', [ 'navbar' => [ 'tasks' => 'active' ] ]);
   }
 
+  #[Route('/ui/tasks/{identifier}', name: 'getTask', methods: ['GET'])]
+  public function getTask(string $identifier, TaskRepository $repo, Request $request): Response
+  {
+    $task = $repo->findOneByIdentifier($identifier);
+
+    return $this->render('task.html.twig', [ 'task' => $task ]);
+  }
+
   #[Route('/ui/task-templates', name: 'getTaskTemplates', methods: ['GET'])]
   public function getTaskTemplates(Request $request): Response
   {
     return $this->render('task-templates.html.twig', [ 'navbar' => [ 'task_templates' => 'active' ] ]);
+  }
+
+  #[Route('/ui/task-templates/{identifier}', name: 'getTaskTemplate', methods: ['GET'])]
+  public function getTaskTemplate(string $identifier, TaskTemplateRepository $repo, Request $request): Response
+  {
+    $taskTemplate = $repo->findOneByIdentifier($identifier);
+
+    return $this->render('task-template.html.twig', [ 'taskTemplate' => $taskTemplate ]);
   }
 
   #[Route('/ui/indicators', name: 'getIndicators', methods: ['GET'])]
