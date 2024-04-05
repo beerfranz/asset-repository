@@ -1,0 +1,9 @@
+request:
+  method: PUT
+  path: /task_templates/TPL-test-data-with-workflow
+
+data:
+  title: Template test data with workflow
+  description: |
+    A long description
+  workflow: /task_workflows/simple

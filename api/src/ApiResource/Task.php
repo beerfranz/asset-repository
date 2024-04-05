@@ -37,7 +37,7 @@ use Doctrine\Common\Collections\Collection;
 )]
 #[Post(security: "is_granted('ASSET_WRITE')")]
 #[Put(security: "is_granted('ASSET_WRITE')")]
-class Task
+class Task extends RogerApiResource
 {
     #[Groups(['Tasks:read', 'Task:read'])]
     #[ApiProperty(identifier: true)]
@@ -64,22 +64,7 @@ class Task
     #[Groups(['Task:read'])]
     public $events;
 
-    public function populateFromTaskEntity(TaskEntity $task): self
-    {
-        $this->identifier = $task->getIdentifier();
-        $this->title = $task->getTitle();
-        $this->description = $task->getDescription();
-        $this->createdAt = $task->getCreatedAt();
-        $this->isDone = $task->isIsDone();
-        $this->assignedTo = $task->getAssignedTo();
-        $this->taskTemplate = $task->getTaskTemplate();
-        $this->events = $task->getTaskEvents();
+    #[Groups(['Task:read'])]
+    public $allowedNextStatuses;
 
-        return $this;
-    }
-
-    #[ApiProperty(identifier: false)]
-    public function getId() {
-        return $this->identifier;
-    }
 }

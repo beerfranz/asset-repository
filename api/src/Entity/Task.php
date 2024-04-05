@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 #[ORM\UniqueConstraint(columns:["identifier"])]
-class Task
+class Task extends RogerEntity
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
