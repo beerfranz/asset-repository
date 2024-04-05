@@ -11,6 +11,7 @@ use App\Repository\RiskRepository;
 use App\Repository\IndicatorRepository;
 use App\Repository\TaskRepository;
 use App\Repository\TaskTemplateRepository;
+use App\Repository\TaskWorkflowRepository;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -196,5 +197,19 @@ class IndexController extends AbstractController
     $indicator = $repo->findOneByIdentifier($identifier);
 
     return $this->render('indicator.html.twig', [ 'indicator' => $indicator ]);
+  }
+
+  #[Route('/ui/task-workflows', name: 'getTaskWorkflows', methods: ['GET'])]
+  public function getTaskWorkflows(Request $request): Response
+  {
+    return $this->render('task-workflows.html.twig', [ 'navbar' => [ 'task-workflows' => 'active' ] ]);
+  }
+
+  #[Route('/ui/task-workflows/{identifier}', name: 'getTaskWorkflow', methods: ['GET'])]
+  public function getTaskWorkflow(string $identifier, TaskWorkflowRepository $repo, Request $request): Response
+  {
+    $taskWorkflow = $repo->findOneByIdentifier($identifier);
+
+    return $this->render('task-workflow.html.twig', [ 'taskWorkflow' => $taskWorkflow ]);
   }
 }
