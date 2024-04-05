@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TaskWorkflowRepository::class)]
 #[ORM\UniqueConstraint(columns:["identifier"])]
-class TaskWorkflow
+class TaskWorkflow extends RogerEntity
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

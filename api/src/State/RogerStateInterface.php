@@ -2,15 +2,14 @@
 
 namespace App\State;
 
-use App\Entity\RogerEntity as Entity;
-use App\ApiResource\RogerApi as Api;
+use App\Entity\RogerEntityInterface;
+use App\ApiResource\RogerApiResourceInterface;
 
 interface RogerStateInterface
 {
-    public function processOneEntity(mixed $data);
+  public function newApi(): RogerApiResourceInterface;
 
-    public function initEntity(mixed $data): Entity;
+  public function fromApiToEntity($api, $entity): RogerEntityInterface;
 
-    public function upsertEntity(Entity $entity, mixed $data): Entity;
-
+  public function fromEntityToApi($entity, $api): RogerApiResourceInterface;
 }

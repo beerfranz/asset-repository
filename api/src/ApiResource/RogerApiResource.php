@@ -4,7 +4,7 @@ namespace App\ApiResource;
 
 use App\Entity\RogerEntity;
 
-class RogerApiResource extends RogerEntity
+class RogerApiResource extends RogerEntity implements RogerApiResourceInterface
 {
 
   public function fromEntityToApi($entity)

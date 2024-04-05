@@ -9,7 +9,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
-abstract class RogerEntity implements JsonSerializable {
+abstract class RogerEntity implements RogerEntityInterface, JsonSerializable {
   
   public function __construct(array $data = []) {
     $this->hydrator($data);

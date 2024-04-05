@@ -21,4 +21,14 @@ class TaskWorkflowStatus extends RogerEntity {
   {
     return $this->next_statuses;
   }
+
+  public function getStatus(): string
+  {
+    return $this->status;
+  }
+
+  public function getIsDone(): bool
+  {
+    return $this->isDone;
+  }
 }
