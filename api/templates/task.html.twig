@@ -6,7 +6,7 @@
 
 <dl>
 
-  {% if task.taskTemplate is defined %}
+  {% if task.taskTemplate is not null %}
     <dt>Template</dt>
     <dd><a href="/ui/task-templates/{{ task.taskTemplate.identifier }}">{{ task.taskTemplate.identifier }}</a></dd>
   {% endif %}
@@ -15,7 +15,7 @@
   <dd>{{ task.title }}</dd>
 
   <dt>Description</dt>
-  <dd>{{ task.description }}
+  <dd>{{ task.description }}</dd>
 
 </dl>
 

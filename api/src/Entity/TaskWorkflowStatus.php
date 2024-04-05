@@ -8,7 +8,7 @@ class TaskWorkflowStatus extends RogerEntity {
 
   protected array $constraints = [];
 
-  protected array $next_statuses = [];
+  protected array $nextStatuses = [];
 
   protected bool $isDone = false;
 
@@ -19,7 +19,7 @@ class TaskWorkflowStatus extends RogerEntity {
 
   public function getNextStatuses(): array
   {
-    return $this->next_statuses;
+    return $this->nextStatuses;
   }
 
   public function getStatus(): string

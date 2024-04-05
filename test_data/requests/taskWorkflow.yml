@@ -5,18 +5,18 @@ request:
 data:
   statuses:
     todo:
-      next_statuses:
+      nextStatuses:
         - in_progress
         - blocked
     in_progress:
       constraints:
         - owner is defined
-      next_statuses:
+      nextStatuses:
         - todo
         - blocked
         - done
     blocked:
-      next_statuses:
+      nextStatuses:
         - in_progress
     done:
       isDone: true
