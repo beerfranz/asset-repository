@@ -35,6 +35,9 @@ class TaskTemplate extends RogerEntity
     #[ORM\Column(nullable: true, type: 'json_document')]
     private ?array $frequency = null;
 
+    #[ORM\ManyToOne(inversedBy: 'taskTemplates')]
+    private ?TaskWorkflow $taskWorkflow = null;
+
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
@@ -131,6 +134,18 @@ class TaskTemplate extends RogerEntity
     public function setFrequency(?array $frequency): static
     {
         $this->frequency = $frequency;
+
+        return $this;
+    }
+
+    public function getTaskWorkflow(): ?TaskWorkflow
+    {
+        return $this->taskWorkflow;
+    }
+
+    public function setTaskWorkflow(?TaskWorkflow $taskWorkflow): static
+    {
+        $this->taskWorkflow = $taskWorkflow;
 
         return $this;
     }

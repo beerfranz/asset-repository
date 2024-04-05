@@ -1,0 +1,22 @@
+request:
+  method: PUT
+  path: /task_workflows/simple
+
+data:
+  statuses:
+    todo:
+      next_statuses:
+        - in_progress
+        - blocked
+    in_progress:
+      constraints:
+        - owner is defined
+      next_statuses:
+        - todo
+        - blocked
+        - done
+    blocked:
+      next_statuses:
+        - in_progress
+    done:
+      isDone: true
