@@ -47,7 +47,7 @@ abstract class RogerState implements ProcessorInterface, ProviderInterface, Roge
       $output = [];
       foreach($entities as $entity) {
         $api = $this->newApi();
-        $output[] = $this->fromEntityToApi($entity);
+        $output[] = $this->fromEntityToApi($entity, $api);
       }
 
       return $output;
@@ -60,7 +60,7 @@ abstract class RogerState implements ProcessorInterface, ProviderInterface, Roge
       return $api;
 
     if ($entity === null)
-      throw new NotFoundHttpException();
+      throw new NotFoundHttpException('Not found');
 
     return $this->fromEntityToApi($entity, $api);
   }
@@ -74,7 +74,7 @@ abstract class RogerState implements ProcessorInterface, ProviderInterface, Roge
       $entity = $this->getEntityByIdentifier($uriVariables['identifier']);
 
       if ($entity === null)
-        throw new NotFoundHttpException();
+        throw new NotFoundHttpException('Not found for delete');
 
       $this->deleteEntity($entity);
 
