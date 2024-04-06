@@ -6,4 +6,4 @@ data:
   title: Template test data with workflow
   description: |
     A long description
-  workflow: /task_workflows/simple
+  workflowIdentifier: simple

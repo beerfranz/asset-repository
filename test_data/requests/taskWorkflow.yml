@@ -5,6 +5,7 @@ request:
 data:
   statuses:
     todo:
+      isDefault: true
       nextStatuses:
         - in_progress
         - blocked

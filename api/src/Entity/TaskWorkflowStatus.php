@@ -12,6 +12,8 @@ class TaskWorkflowStatus extends RogerEntity {
 
   protected bool $isDone = false;
 
+  protected bool $isDefault = false;
+
   public function getConstraints(): array
   {
     return $this->constraints;
@@ -30,5 +32,10 @@ class TaskWorkflowStatus extends RogerEntity {
   public function getIsDone(): bool
   {
     return $this->isDone;
+  }
+
+  public function getIsDefault(): bool
+  {
+    return $this->isDefault;
   }
 }

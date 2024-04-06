@@ -38,7 +38,22 @@ final class TaskState extends RogerState
 
         $entity->setTitle($api->__get('title'));
         $entity->setDescription($api->__get('description'));
+        $entity->setAssignedTo($api->__get('assignedTo'));
+        $entity->setOwner($api->__get('owner'));
+
+        $taskTemplate = $this->service->findOneTaskTemplateByIdentifier($api->__get('taskTemplateIdentifier'));
+        $this->service->setTaskTemplate($entity, $taskTemplate);
+
+        $status = $api->__get('status');
+        if ($status !== null && $this->service->askNewStatus($entity, $status))
+            $entity->setStatus($api->__get('status'));
         
+        if ($entity->getStatus() === null && $entity->getTaskTemplate() !== null) {
+            $workflowDefaultStatus = $this->service->getDefaultStatus($entity->getTaskTemplate());
+            if ($workflowDefaultStatus !== null)
+                $entity->setStatus($this->service->getDefaultStatus($entity->getTaskTemplate()));
+        }
+
         return $entity;
     }
 

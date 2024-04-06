@@ -87,7 +87,7 @@ class TaskService extends RogerService
       return null;
     }
 
-    $statusWorkflow = $taskTemplateWorkflow['statuses'][$task->getStatus()];
+    $statusWorkflow = $taskTemplateWorkflow->getWorkflow();
 
     if ($statusWorkflow === null) {
       return [];
@@ -95,11 +95,11 @@ class TaskService extends RogerService
 
     $result = [];
 
-    foreach ($statusWorkflow['nextStatuses'] as $nextStatus) {
+    foreach ($statusWorkflow['statuses'][$task->getStatus()]->getNextStatuses() as $nextStatus) {
       
       $constraintsAreValid = true;
 
-      foreach ($taskTemplateWorkflow['statuses'][$nextStatus]['constraints'] as $constraint) {
+      foreach ($statusWorkflow['statuses'][$nextStatus]->getConstraints() as $constraint) {
         $check = $this->userTemplateService->test($constraint, [ 'owner' => $task->getOwner() ]);
 
         if (!$check->getBoolResult())
@@ -111,6 +111,31 @@ class TaskService extends RogerService
     }
 
     return $result;
+  }
+
+  public function setTaskTemplate(Task $task, ?TaskTemplate $taskTemplate)
+  {
+    if ($taskTemplate !== null)
+      $task->setTaskTemplate($taskTemplate);
+
+    return $task;
+  }
+
+  public function getDefaultStatus(TaskTemplate $taskTemplate): ?string
+  {
+    $taskTemplateWorkflow = $taskTemplate->getTaskWorkflow();
+
+    if ($taskTemplateWorkflow === null)
+      return null;
+
+    $taskWorkflow = $taskTemplateWorkflow->getWorkflow();
+
+    foreach($taskWorkflow['statuses'] as $status => $taskWorkflowStatus) {
+      if ($taskWorkflowStatus->getIsDefault() === true)
+        return $status;
+    }
+
+    return null;
   }
 
   public function askNewStatus(Task $task, string $desiredStatus)
@@ -134,13 +159,13 @@ class TaskService extends RogerService
     }
 
     // asked status not allowed in the workflow
-    if (! in_array($desiredStatus, $statusWorkflow['nextStatuses']))
+    if (! in_array($desiredStatus, $statusWorkflow->getNextStatuses()))
       return false;
 
-    $desiredStatusWorkflow = $taskTemplateWorkflow[$desiredStatus];
+    $desiredStatusWorkflow = $taskTemplateWorkflow['statuses'][$desiredStatus];
 
     // check asked status constrains
-    foreach ($desiredStatusWorkflow['constraints'] as $constraint) {
+    foreach ($desiredStatusWorkflow->getConstraints() as $constraint) {
       $check = $this->userTemplateService->test($constraint, [ 'owner' => $task->getOwner() ]);
 
       if (!$check->getBoolResult())
@@ -158,5 +183,10 @@ class TaskService extends RogerService
     $this->entityManager->flush();
     $this->entityManager->clear();
     return $task;
+  }
+
+  public function findOneTaskTemplateByIdentifier($identifier): TaskTemplate|null
+  {
+    return $this->taskTemplateRepo->findOneByIdentifier($identifier);
   }
 }

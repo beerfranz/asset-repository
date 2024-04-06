@@ -50,16 +50,25 @@ class Task extends RogerApiResource
     public $description;
 
     #[Groups(['Tasks:read', 'Task:read', 'Task:write'])]
+    public $status;
+
+    #[Groups(['Tasks:read', 'Task:read', 'Task:write'])]
     public $isDone;
 
     #[Groups(['Tasks:read', 'Task:read', 'Task:write'])]
     public $createdAt;
 
     #[Groups(['Tasks:read', 'Task:read', 'Task:write'])]
-    public $assignedTo;
+    public $owner;
 
     #[Groups(['Tasks:read', 'Task:read', 'Task:write'])]
+    public $assignedTo;
+
+    #[Groups(['Tasks:read', 'Task:read'])]
     public $taskTemplate;
+
+    #[Groups(['Task:write'])]
+    public $taskTemplateIdentifier;
 
     #[Groups(['Task:read'])]
     public $events;
