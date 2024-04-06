@@ -55,4 +55,21 @@ class TaskTemplate extends RogerApiResource
     )]
     public ?array $frequency = [];
 
+    #[Groups(['TaskTemplates:read', 'TaskTemplate:read'])]
+    #[ApiProperty(
+        openapiContext: [ "type" => "object" ]
+    )]
+    public ?array $workflow = [];
+
+    #[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
+    public $workflow_identifier;
+
+    public function setTaskWorkflow($taskWorkflow) {
+        if (isset($taskWorkflow['identifier']))
+            $this->workflow_identifier = $taskWorkflow['identifier'];
+
+        if (isset($taskWorkflow['workflow']))
+            $this->workflow = $taskWorkflow['workflow'];
+        return $this;
+    }
 }

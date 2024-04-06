@@ -6,6 +6,7 @@ use App\ApiResource\TaskTemplate as TaskTemplateApi;
 use App\Entity\TaskTemplate as TaskTemplateEntity;
 use App\Service\TaskTemplateService;
 use App\Service\FrequencyService;
+use App\Service\TaskWorkflowService;
 
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -22,9 +23,11 @@ final class TaskTemplateState extends RogerState
         Security $security,
         TaskTemplateService $service,
         FrequencyService $frequencyService,
+        TaskWorkflowService $taskWorkflowService,
     ) {
         parent::__construct($request, $logger, $security, $service);
         $this->frequencyService = $frequencyService;
+        $this->taskWorkflowService = $taskWorkflowService;
     }
 
     public function newApi(): TaskTemplateApi
@@ -41,6 +44,11 @@ final class TaskTemplateState extends RogerState
 
         if ($entity->getFrequency() !== [])
             $entity = $this->frequencyService->calculateNextIteration($entity);
+
+        $worflow_identifier = $api->__get('workflow_identifier');
+        if ($worflow_identifier !== null) {
+            $entity->setTaskWorkflow($this->taskWorkflowService->findOneByIdentifier($worflow_identifier));
+        }
         
         return $entity;
     }
@@ -48,7 +56,6 @@ final class TaskTemplateState extends RogerState
     public function fromEntityToApi($entity, $api): TaskTemplateApi
     {
         $this->simpleFromEntityToApi($entity, $api);
-
 
         return $api;
     }
