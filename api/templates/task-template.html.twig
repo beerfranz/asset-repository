@@ -12,6 +12,10 @@
   <dt>Description</dt>
   <dd>{{ taskTemplate.description }}
 
+  {% if taskTemplate.taskWorkflow is not null %}
+    <dt>Workflow</dt>
+    <dd>{{ taskTemplate.taskWorkflow.workflow | json_encode }}</dd>
+  {% endif %}
 </dl>
 
 {% endblock %}

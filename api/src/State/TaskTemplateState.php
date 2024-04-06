@@ -3,116 +3,53 @@
 namespace App\State;
 
 use App\ApiResource\TaskTemplate as TaskTemplateApi;
-use App\Entity\TaskTemplate;
-
+use App\Entity\TaskTemplate as TaskTemplateEntity;
+use App\Service\TaskTemplateService;
 use App\Service\FrequencyService;
 
-use ApiPlatform\Metadata\CollectionOperationInterface;
-use ApiPlatform\Metadata\Operation;
-use ApiPlatform\Metadata\Put;
-use ApiPlatform\Metadata\Delete;
-use ApiPlatform\State\ProcessorInterface;
-use ApiPlatform\State\ProviderInterface;
-
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Common\Collections\Criteria;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Psr\Log\LoggerInterface;
 
-final class TaskTemplateState extends CommonState implements ProcessorInterface, ProviderInterface
+final class TaskTemplateState extends RogerState
 {
-    protected $taskTemplateRepo;
     protected $frequencyService;
-
     public function __construct(
-        EntityManagerInterface $entityManager,
         RequestStack $request,
         LoggerInterface $logger,
         Security $security,
+        TaskTemplateService $service,
         FrequencyService $frequencyService,
     ) {
-        parent::__construct($entityManager, $request, $logger, $security);
-        $this->taskTemplateRepo = $entityManager->getRepository(TaskTemplate::class);
+        parent::__construct($request, $logger, $security, $service);
         $this->frequencyService = $frequencyService;
     }
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
+    public function newApi(): TaskTemplateApi
     {
-        if ($operation instanceof CollectionOperationInterface)
-        {
-            $taskTemplateEntities = $this->getCollection($this->taskTemplateRepo, $context);
-
-            $output = [];
-            foreach($taskTemplateEntities as $taskTemplateEntity) {
-                $taskTemplateApi = new TaskTemplateApi();
-                $output[] = $taskTemplateApi->fromEntityToApi($taskTemplateEntity);
-            }
-
-            return $output;
-        }
-
-        $taskTemplateEntity = $this->taskTemplateRepo->findOneByIdentifier($uriVariables['identifier']);
-        $taskTemplateApi = new TaskTemplateApi();
-
-        if ($taskTemplateEntity === null)
-            return $taskTemplateApi;
-
-        $taskTemplateApi->fromEntityToApi($taskTemplateEntity);
-
-        return $taskTemplateApi->fromEntityToApi($taskTemplateEntity);
-    }
-    
-    /**
-     * @param $data
-     */
-    public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
-    {
-        $user = $this->security->getUser();
-
-        if ($operation instanceof Delete) {
-            $taskTemplate = $this->getEntity($uriVariables['identifier']);
-            $this->deleteEntity($taskTemplate);
-        } else {
-            if (isset($uriVariables['identifier']))
-                $data->identifier = $uriVariables['identifier'];
-
-            $taskTemplate = $this->processOneTaskTemplate($data);
-
-            $data->id = $taskTemplate->getId();
-        }
+        return new TaskTemplateApi();
     }
 
-    protected function getEntity($identifier)
+    public function fromApiToEntity($api, $entity): TaskTemplateEntity
     {
-        return $this->taskTemplateRepo->findOneByIdentifier($identifier);
-    }
+        if ($entity->getIdentifier() === null)
+            $entity->setIdentifier($api->__get('identifier'));
 
-    protected function processOneTaskTemplate($data): TaskTemplate
-    {
-        $taskTemplate = null;
+        $entity = $api->fromApiToEntity($entity);
 
-        $identifier = $data->__get('identifier');
-
-        if ($identifier !== null) {
-            $taskTemplate = $this->getEntity($identifier);
-        }
+        if ($entity->getFrequency() !== [])
+            $entity = $this->frequencyService->calculateNextIteration($entity);
         
-        if ($taskTemplate === null)
-        {
-            $taskTemplate = new TaskTemplate();
-        }
+        return $entity;
+    }
 
-        $taskTemplate = $data->fromApiToEntity($taskTemplate);
+    public function fromEntityToApi($entity, $api): TaskTemplateApi
+    {
+        $this->simpleFromEntityToApi($entity, $api);
 
-        $taskTemplate = $this->frequencyService->calculateNextIteration($taskTemplate);
 
-        $this->entityManager->persist($taskTemplate);
-        $this->entityManager->flush();
-        $this->entityManager->clear();
-
-        return $taskTemplate;
+        return $api;
     }
 }

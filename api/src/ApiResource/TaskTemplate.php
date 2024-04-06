@@ -55,13 +55,4 @@ class TaskTemplate extends RogerApiResource
     )]
     public ?array $frequency = [];
 
-    public function populateFromTaskTemplateEntity(TaskTemplateEntity $taskTemplate): self
-    {
-        $this->identifier = $taskTemplate->getIdentifier();
-        $this->title = $taskTemplate->getTitle();
-        $this->description = $taskTemplate->getDescription();
-        $this->frequency = $taskTemplate->getFrequency();
-
-        return $this;
-    }
 }
