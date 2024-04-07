@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Frequency;
 use App\Entity\Task;
+use App\Entity\TaskType;
 use App\Entity\TaskTemplate;
 
 use App\Service\FrequencyService;
@@ -73,21 +74,28 @@ class TaskService extends RogerService
     }
   }
 
+  protected function getTaskWorkflow(Task $task)
+  {
+    $taskType = $task->getTaskType();
+
+    if ($taskType === null) {
+      return null;
+    }
+
+    $taskTypeWorkflow = $taskType->getTaskWorkflow();
+
+    return $taskTypeWorkflow;
+  }
+
   public function possibleNextStatus(Task $task): null|array
   {
-    $taskTemplate = $task->getTaskTemplate();
+    $taskTypeWorkflow = $this->getTaskWorkflow($task);
 
-    if ($taskTemplate === null) {
+    if ($taskTypeWorkflow === null) {
       return null;
     }
 
-    $taskTemplateWorkflow = $taskTemplate->getTaskWorkflow();
-
-    if ($taskTemplateWorkflow === null) {
-      return null;
-    }
-
-    $statusWorkflow = $taskTemplateWorkflow->getWorkflow();
+    $statusWorkflow = $taskTypeWorkflow->getWorkflow();
 
     if ($statusWorkflow === null) {
       return [];
@@ -140,13 +148,7 @@ class TaskService extends RogerService
 
   public function askNewStatus(Task $task, string $desiredStatus)
   {
-    $taskTemplate = $task->getTaskTemplate();
-
-    if ($taskTemplate === null) {
-      return $this->updateStatus($task, $desiredStatus);
-    }
-
-    $taskTemplateWorkflow = $taskTemplate->getTaskWorkflow();
+    $taskTemplateWorkflow = $taskTemplate->getTaskWorkflow($task);
 
     if ($taskTemplateWorkflow === null) {
       return $this->updateStatus($task, $desiredStatus);

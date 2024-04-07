@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 #[ORM\UniqueConstraint(columns:["identifier"])]
+#[ORM\Index(name: "isDone_idx", fields: ["isDone"])]
 class Task extends RogerEntity
 {
     #[ORM\Id]
@@ -52,6 +53,9 @@ class Task extends RogerEntity
 
     #[ORM\Column(nullable: true, length: 255)]
     private ?string $status = null;
+
+    #[ORM\ManyToOne(inversedBy: 'tasks')]
+    private ?TaskType $taskType = null;
 
     public function __construct()
     {
@@ -240,6 +244,18 @@ class Task extends RogerEntity
     public function setStatus(string $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getTaskType(): ?TaskType
+    {
+        return $this->taskType;
+    }
+
+    public function setTaskType(?TaskType $taskType): static
+    {
+        $this->taskType = $taskType;
 
         return $this;
     }

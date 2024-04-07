@@ -22,12 +22,12 @@ class TaskWorkflow extends RogerEntity
     #[ORM\Column(type: 'json_document')]
     private array $workflow = [];
 
-    #[ORM\OneToMany(mappedBy: 'taskWorkflow', targetEntity: TaskTemplate::class)]
-    private Collection $taskTemplates;
+    #[ORM\OneToMany(mappedBy: 'taskWorkflow', targetEntity: TaskType::class)]
+    private Collection $taskTypes;
 
     public function __construct()
     {
-        $this->taskTemplates = new ArrayCollection();
+        $this->taskTypes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -60,29 +60,29 @@ class TaskWorkflow extends RogerEntity
     }
 
     /**
-     * @return Collection<int, TaskTemplate>
+     * @return Collection<int, TaskType>
      */
-    public function getTaskTemplates(): Collection
+    public function getTaskTypes(): Collection
     {
-        return $this->taskTemplates;
+        return $this->taskTypes;
     }
 
-    public function addTaskTemplate(TaskTemplate $taskTemplate): static
+    public function addTaskType(TaskType $taskType): static
     {
-        if (!$this->taskTemplates->contains($taskTemplate)) {
-            $this->taskTemplates->add($taskTemplate);
-            $taskTemplate->setTaskWorkflow($this);
+        if (!$this->taskTypes->contains($taskType)) {
+            $this->taskTypes->add($taskType);
+            $taskType->setTaskWorkflow($this);
         }
 
         return $this;
     }
 
-    public function removeTaskTemplate(TaskTemplate $taskTemplate): static
+    public function removeTaskType(TaskType $taskType): static
     {
-        if ($this->taskTemplates->removeElement($taskTemplate)) {
+        if ($this->taskTypes->removeElement($taskType)) {
             // set the owning side to null (unless already changed)
-            if ($taskTemplate->getTaskWorkflow() === $this) {
-                $taskTemplate->setTaskWorkflow(null);
+            if ($taskType->getTaskWorkflow() === $this) {
+                $taskType->setTaskWorkflow(null);
             }
         }
 
