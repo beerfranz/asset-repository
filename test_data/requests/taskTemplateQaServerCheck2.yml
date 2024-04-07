@@ -1,0 +1,11 @@
+request:
+  method: PUT
+  path: /task_templates/QA-server-check-metrics
+
+data:
+  title: Server metrics
+  description: |
+    1. Go to grafana
+    2. Find the server in node_exporter_full dashboard
+  typeIdentifier: QA
+  parentIdentifier: QA-server

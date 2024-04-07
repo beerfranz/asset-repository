@@ -38,6 +38,8 @@ $(document).ready(function () {
 		{ data: 'identifier', title: 'Identifier', render: function(data, type, row, meta){ return '<a href="/ui/task-templates/' + data + '">' + data + '</a>'} },
     { data: 'title', title: 'Title', render: function(data, type, row, meta){ return renderNullableString(data, '-'); } },
     { data: 'frequency', title: 'Repeat', render: function(data, type, row, meta) { return renderFrequency(data); } },
+    { data: 'parentIdentifier', title: 'Parent', render: function(data, type, row, meta){ return renderNullableString(data, '-'); } },
+    { data: 'typeIdentifier', title: 'Type', render: function(data, type, row, meta){ return renderNullableString(data, '-'); } },
   ];
 
 	rogerInit('task-templates', dataTableOpts);

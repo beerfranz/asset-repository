@@ -49,6 +49,9 @@ final class TaskTemplateState extends RogerState
         if ($worflow_identifier !== null) {
             $entity->setTaskWorkflow($this->taskWorkflowService->findOneByIdentifier($worflow_identifier));
         }
+
+        $entity->setParent($this->service->findOneByIdentifier($api->__get('parentIdentifier')));
+        $entity->setTaskType($this->service->findOneTaskTypeByIdentifier($api->__get('typeIdentifier')));
         
         return $entity;
     }
@@ -56,6 +59,12 @@ final class TaskTemplateState extends RogerState
     public function fromEntityToApi($entity, $api): TaskTemplateApi
     {
         $this->simpleFromEntityToApi($entity, $api);
+
+        if (null !== $entity->getParent())
+            $api->parentIdentifier = $entity->getParent()->getIdentifier();
+
+        if (null !== $entity->getTaskType())
+            $api->typeIdentifier = $entity->getTaskType()->getIdentifier();
 
         return $api;
     }

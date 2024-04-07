@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Delete;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -37,6 +38,7 @@ use Doctrine\Common\Collections\Collection;
 )]
 #[Post(security: "is_granted('ASSET_WRITE')")]
 #[Put(security: "is_granted('ASSET_WRITE')")]
+#[Delete(security: "is_granted('ASSET_WRITE')")]
 class TaskTemplate extends RogerApiResource
 {
     #[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
@@ -72,4 +74,10 @@ class TaskTemplate extends RogerApiResource
             $this->workflow = $taskWorkflow['workflow'];
         return $this;
     }
+
+    #[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
+    public $parentIdentifier;
+
+    #[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
+    public $typeIdentifier;
 }

@@ -1,0 +1,9 @@
+request:
+  method: PUT
+  path: /task_templates/QA-server
+
+data:
+  title: Check a server
+  description: |
+    A long description
+  typeIdentifier: QA

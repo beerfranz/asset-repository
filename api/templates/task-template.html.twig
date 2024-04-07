@@ -10,11 +10,16 @@
   <dd>{{ taskTemplate.title }}</dd>
 
   <dt>Description</dt>
-  <dd>{{ taskTemplate.description }}
+  <dd>{{ taskTemplate.description | nl2br }}</dd>
 
-  {% if taskTemplate.taskWorkflow is not null %}
+  {% if taskTemplate.taskType.identifier is defined %}
+    <dt>Type</dt>
+    <dd>{{ taskTemplate.taskType.identifier }}</dd>
+  {% endif %}
+
+  {% if taskTemplate.taskType.taskWorkflow is defined %}
     <dt>Workflow</dt>
-    <dd>{{ taskTemplate.taskWorkflow.workflow | json_encode }}</dd>
+    <dd>{{ taskTemplate.taskType.taskWorkflow.workflow | json_encode() }}</dd>
   {% endif %}
 </dl>
 
