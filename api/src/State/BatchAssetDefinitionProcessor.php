@@ -42,6 +42,7 @@ final class BatchAssetDefinitionProcessor extends CommonState implements Process
 
     /**
      * @param BatchAssetDefinitionDto $data
+     * @return T2
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {

@@ -127,7 +127,7 @@ Init the test database and run tests with phpunit:
 docker compose exec php php bin/console --env=test doctrine:database:create
 docker compose exec php php bin/console --env=test doctrine:schema:create
 
-docker compose exec php bin/phpunit --coverage-html tests/test_coverage/
+docker compose exec -u 1000:1000 php bin/phpunit --coverage-html tests/test_coverage/
 ```
 
 **Definitions**

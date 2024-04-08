@@ -44,6 +44,7 @@ final class EnvironmentState extends CommonState implements ProcessorInterface, 
     
     /**
      * @param $data
+     * @return T2
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {

@@ -72,6 +72,7 @@ final class IndicatorState extends CommonState implements ProcessorInterface, Pr
     
     /**
      * @param $data
+     * @return T2
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {

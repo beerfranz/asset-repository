@@ -72,6 +72,7 @@ abstract class RogerState implements ProcessorInterface, ProviderInterface, Roge
 
   /**
    * @param $api
+   * @return T2
    */
   public function process(mixed $api, Operation $operation, array $uriVariables = [], array $context = [])
   {
