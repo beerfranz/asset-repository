@@ -43,42 +43,73 @@ class TaskService extends RogerService
     return $task;
   }
 
+  public function generateTaskIdentifierFromTaskTemplate(TaskTemplate $taskTemplate, ?string $identifier = null): string
+  {
+    if ($identifier === null) {
+      $datetime = new \DateTimeImmutable();
+      return $taskTemplate->getIdentifier() . '_' . $datetime->format('Ymd');
+    }
+    
+    return $taskTemplate->getIdentifier() . '_' . $identifier;
+  }
+
   public function generateTasksFromTaskTemplates() {
     $taskTemplateIds = $this->taskTemplateRepo->getTaskToGenerate();
 
     foreach ($taskTemplateIds as $taskTemplateId) {
       $taskTemplate = $this->taskTemplateRepo->find($taskTemplateId);
 
-      $datetime = new \DateTimeImmutable();
-      $taskIdentifier = $taskTemplate->getIdentifier() . '_' . $datetime->format('Ymd');
-
-      $this->generateTaskFromTaskTemplate($taskTemplate, $taskIdentifier);
+      $this->generateTaskFromTaskTemplate($taskTemplate);
     }
   }
 
-  public function generateTaskFromTaskTemplate(TaskTemplate $taskTemplate, string $taskIdentifier): Task
+  public function generateTaskFromTaskTemplate(
+    TaskTemplate $taskTemplate,
+    ?string $baseIdentifier = null,
+    ?Task $parent = null,
+  ): Task
   {
-    $task = $this->taskRepo->findOneByIdentifier($taskIdentifier);
+    $calculatedTaskIdentifier = $this->generateTaskIdentifierFromTaskTemplate($taskTemplate, $baseIdentifier);
+
+    $task = $this->taskRepo->findOneByIdentifier($calculatedTaskIdentifier);
 
     if ($task === null) {
       $task = new Task();
-      $task->setIdentifier($taskIdentifier);
+      $task->setIdentifier($calculatedTaskIdentifier);
       $task->setTaskTemplate($taskTemplate);
       $task->setCreatedAt(new \DateTimeImmutable());
     }
 
     $task->setTitle($taskTemplate->getTitle());
     $task->setDescription($taskTemplate->getDescription());
+    $task->setTaskType($taskTemplate->getTaskType());
+    $task->setStatus($this->getDefaultStatus($taskTemplate));
+
+    if ($parent !== null) {
+      $task->setParent($parent);
+    }
     
     $this->entityManager->persist($task);
     if ($taskTemplate->getFrequency() !== [])
       $this->frequencyService->calculateNextIteration($taskTemplate);
     
     $this->entityManager->persist($task);
-    $this->entityManager->flush();
-    $this->entityManager->clear();
+
+    foreach ($this->getTaskTemplateChildren($taskTemplate) as $taskTemplateChild) {
+      $childTask = $this->generateTaskFromTaskTemplate($taskTemplateChild, $baseIdentifier, $task);
+    }
+
+    if ($parent === null) {
+      $this->entityManager->flush();
+      $this->entityManager->clear();
+    }
 
     return $task;
+  }
+
+  public function getTaskTemplateChildren(TaskTemplate $taskTemplate): ?array
+  {
+    return $this->taskTemplateRepo->findChildren($taskTemplate);
   }
 
   protected function getTaskWorkflow(Task $task)
@@ -138,7 +169,7 @@ class TaskService extends RogerService
 
   public function getDefaultStatus(TaskTemplate $taskTemplate): ?string
   {
-    $taskTemplateWorkflow = $taskTemplate->getTaskWorkflow();
+    $taskTemplateWorkflow = $taskTemplate->getTaskType()->getTaskWorkflow();
 
     if ($taskTemplateWorkflow === null)
       return null;

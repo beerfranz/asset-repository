@@ -39,7 +39,7 @@ class Task extends RogerEntity
     #[ORM\OneToMany(mappedBy: 'task', targetEntity: TaskEvent::class)]
     private Collection $taskEvents;
 
-    #[ORM\ManyToOne(inversedBy: 'tasks')]
+    #[ORM\ManyToOne(inversedBy: 'tasks', cascade: ['persist'])]
     private ?TaskTemplate $taskTemplate = null;
 
     #[ORM\Column(length: 255)]
@@ -54,7 +54,7 @@ class Task extends RogerEntity
     #[ORM\Column(nullable: true, length: 255)]
     private ?string $status = null;
 
-    #[ORM\ManyToOne(inversedBy: 'tasks')]
+    #[ORM\ManyToOne(inversedBy: 'tasks', cascade: ['persist'])]
     private ?TaskType $taskType = null;
 
     public function __construct()

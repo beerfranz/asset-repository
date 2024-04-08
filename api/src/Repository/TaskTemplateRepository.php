@@ -44,6 +44,16 @@ class TaskTemplateRepository extends ServiceEntityRepository implements RogerRep
         return $result;
     }
 
+    public function findChildren(TaskTemplate $taskTemplate): array
+    {
+        return $this->createQueryBuilder('t')
+           ->andWhere('t.parent = :val')
+           ->setParameter('val', $taskTemplate)
+           ->getQuery()
+           ->getResult()
+        ;
+    }
+
 //    /**
 //     * @return TaskTemplate[] Returns an array of TaskTemplate objects
 //     */

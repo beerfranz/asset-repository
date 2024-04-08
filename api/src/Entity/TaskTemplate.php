@@ -35,7 +35,7 @@ class TaskTemplate extends RogerEntity
     #[ORM\Column(nullable: true, type: 'json_document')]
     private ?array $frequency = null;
 
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children', cascade: ['persist'])]
     private ?self $parent = null;
 
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]

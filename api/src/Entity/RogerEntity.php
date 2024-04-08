@@ -14,6 +14,10 @@ abstract class RogerEntity implements RogerEntityInterface, JsonSerializable {
   public function __construct(array $data = []) {
     $this->hydrator($data);
   }
+
+  public function __toString() {
+    return get_class($this) . '#' . $this->getIdentifier();
+  }
   
   public function hydrator(array $data = []): self
   {

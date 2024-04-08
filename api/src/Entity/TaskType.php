@@ -18,7 +18,7 @@ class TaskType extends RogerEntity
     #[ORM\Column(length: 255)]
     private ?string $identifier = null;
 
-    #[ORM\ManyToOne(inversedBy: 'taskTypes')]
+    #[ORM\ManyToOne(inversedBy: 'taskTypes', cascade: ['persist'])]
     private ?TaskWorkflow $taskWorkflow = null;
 
     #[ORM\OneToMany(mappedBy: 'taskType', targetEntity: TaskTemplate::class)]
