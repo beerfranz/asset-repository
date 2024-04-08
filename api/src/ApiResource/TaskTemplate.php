@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Delete;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -37,6 +38,17 @@ use Doctrine\Common\Collections\Collection;
 )]
 #[Post(security: "is_granted('ASSET_WRITE')")]
 #[Put(security: "is_granted('ASSET_WRITE')")]
+#[Delete(security: "is_granted('ASSET_WRITE')")]
+#[Put(
+    name: 'generate_tasks_from_template',
+    uriTemplate: '/task_templates/{identifier}/generate/{taskIdentifier}',
+    uriVariables: [ 'identifier', 'taskIdentifier' ] ,
+    security: "is_granted('ASSET_WRITE')",
+    normalizationContext: [ 'groups' => [ 'TaskTemplateGenerate' ]],
+    denormalizationContext: [ 'groups' => [ 'TaskTemplateGenerate' ]],
+    input: TaskTemplateGenerateDto::class,
+    // output: AssetDefinitionBatchDto::class,
+)]
 class TaskTemplate extends RogerApiResource
 {
     #[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
@@ -55,13 +67,27 @@ class TaskTemplate extends RogerApiResource
     )]
     public ?array $frequency = [];
 
-    public function populateFromTaskTemplateEntity(TaskTemplateEntity $taskTemplate): self
-    {
-        $this->identifier = $taskTemplate->getIdentifier();
-        $this->title = $taskTemplate->getTitle();
-        $this->description = $taskTemplate->getDescription();
-        $this->frequency = $taskTemplate->getFrequency();
+    #[Groups(['TaskTemplates:read', 'TaskTemplate:read'])]
+    #[ApiProperty(
+        openapiContext: [ "type" => "object" ]
+    )]
+    public ?array $workflow = [];
 
+    #[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
+    public $workflow_identifier;
+
+    public function setTaskWorkflow($taskWorkflow) {
+        if (isset($taskWorkflow['identifier']))
+            $this->workflow_identifier = $taskWorkflow['identifier'];
+
+        if (isset($taskWorkflow['workflow']))
+            $this->workflow = $taskWorkflow['workflow'];
         return $this;
     }
+
+    #[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
+    public $parentIdentifier;
+
+    #[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
+    public $typeIdentifier;
 }

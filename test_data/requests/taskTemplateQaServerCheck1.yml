@@ -1,0 +1,11 @@
+request:
+  method: PUT
+  path: /task_templates/QA-server-check-reboot
+
+data:
+  title: Reboot server
+  description: |
+    1. Stop the server
+    2. Connect to the server
+  typeIdentifier: QA
+  parentIdentifier: QA-server

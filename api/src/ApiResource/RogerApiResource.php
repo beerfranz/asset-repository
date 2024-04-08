@@ -4,18 +4,8 @@ namespace App\ApiResource;
 
 use App\Entity\RogerEntity;
 
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
-
-class RogerApiResource extends RogerEntity
+class RogerApiResource extends RogerEntity implements RogerApiResourceInterface
 {
-  protected function getSerializer(): Serializer
-  {
-    $normalizers = [new ObjectNormalizer()];
-    $serializer = new Serializer($normalizers, []);
-
-    return $serializer;
-  }
 
   public function fromEntityToApi($entity)
   {

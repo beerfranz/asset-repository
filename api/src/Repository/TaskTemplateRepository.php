@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\TaskTemplate;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Query\ResultSetMapping;
 
 /**
  * @extends ServiceEntityRepository<TaskTemplate>
@@ -31,6 +32,26 @@ class TaskTemplateRepository extends ServiceEntityRepository implements RogerRep
                     ->where($qb->expr()->isNotNull("t.frequency"))
                     ->getQuery()
                     ->getResult();
+    }
+
+    public function getTaskToGenerate(): array
+    {
+        $rsm = new ResultSetMapping();
+        $rsm->addScalarResult('id', 'id');
+        $result = $this->getEntityManager()->createNativeQuery("SELECT id FROM task_template WHERE cast(frequency->'nextIterationAt'->>'date' as timestamp) < now()", $rsm)
+           ->getResult()
+        ;
+        return $result;
+    }
+
+    public function findChildren(TaskTemplate $taskTemplate): array
+    {
+        return $this->createQueryBuilder('t')
+           ->andWhere('t.parent = :val')
+           ->setParameter('val', $taskTemplate)
+           ->getQuery()
+           ->getResult()
+        ;
     }
 
 //    /**

@@ -32,12 +32,22 @@ class TaskTemplate extends RogerEntity
     #[ORM\OneToMany(mappedBy: 'taskTemplate', targetEntity: Task::class)]
     private Collection $tasks;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable: true, type: 'json_document')]
     private ?array $frequency = null;
+
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children', cascade: ['persist'])]
+    private ?self $parent = null;
+
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
+    private Collection $children;
+
+    #[ORM\ManyToOne(inversedBy: 'taskTemplates')]
+    private ?TaskType $taskType = null;
 
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
+        $this->children = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -131,6 +141,60 @@ class TaskTemplate extends RogerEntity
     public function setFrequency(?array $frequency): static
     {
         $this->frequency = $frequency;
+
+        return $this;
+    }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): static
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getChildren(): Collection
+    {
+        return $this->children;
+    }
+
+    public function addChild(self $child): static
+    {
+        if (!$this->children->contains($child)) {
+            $this->children->add($child);
+            $child->setParent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChild(self $child): static
+    {
+        if ($this->children->removeElement($child)) {
+            // set the owning side to null (unless already changed)
+            if ($child->getParent() === $this) {
+                $child->setParent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getTaskType(): ?TaskType
+    {
+        return $this->taskType;
+    }
+
+    public function setTaskType(?TaskType $taskType): static
+    {
+        $this->taskType = $taskType;
 
         return $this;
     }

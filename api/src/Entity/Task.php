@@ -10,7 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 #[ORM\UniqueConstraint(columns:["identifier"])]
-class Task
+#[ORM\Index(name: "isDone_idx", fields: ["isDone"])]
+class Task extends RogerEntity
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -38,15 +39,28 @@ class Task
     #[ORM\OneToMany(mappedBy: 'task', targetEntity: TaskEvent::class)]
     private Collection $taskEvents;
 
-    #[ORM\ManyToOne(inversedBy: 'tasks')]
+    #[ORM\ManyToOne(inversedBy: 'tasks', cascade: ['persist'])]
     private ?TaskTemplate $taskTemplate = null;
 
     #[ORM\Column(length: 255)]
     private ?string $identifier = null;
 
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
+    private ?self $parent = null;
+
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
+    private Collection $children;
+
+    #[ORM\Column(nullable: true, length: 255)]
+    private ?string $status = null;
+
+    #[ORM\ManyToOne(inversedBy: 'tasks', cascade: ['persist'])]
+    private ?TaskType $taskType = null;
+
     public function __construct()
     {
         $this->taskEvents = new ArrayCollection();
+        $this->children = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -176,6 +190,72 @@ class Task
     public function setIdentifier(string $identifier): static
     {
         $this->identifier = $identifier;
+
+        return $this;
+    }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): static
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getChildren(): Collection
+    {
+        return $this->children;
+    }
+
+    public function addChild(self $child): static
+    {
+        if (!$this->children->contains($child)) {
+            $this->children->add($child);
+            $child->setParent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChild(self $child): static
+    {
+        if ($this->children->removeElement($child)) {
+            // set the owning side to null (unless already changed)
+            if ($child->getParent() === $this) {
+                $child->setParent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getTaskType(): ?TaskType
+    {
+        return $this->taskType;
+    }
+
+    public function setTaskType(?TaskType $taskType): static
+    {
+        $this->taskType = $taskType;
 
         return $this;
     }

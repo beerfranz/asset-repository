@@ -3,116 +3,92 @@
 namespace App\State;
 
 use App\ApiResource\TaskTemplate as TaskTemplateApi;
-use App\Entity\TaskTemplate;
-
+use App\ApiResource\TaskTemplateGenerateDto;
+use App\Entity\TaskTemplate as TaskTemplateEntity;
+use App\Service\TaskTemplateService;
 use App\Service\FrequencyService;
+use App\Service\TaskWorkflowService;
 
-use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;
-use ApiPlatform\Metadata\Put;
-use ApiPlatform\Metadata\Delete;
-use ApiPlatform\State\ProcessorInterface;
-use ApiPlatform\State\ProviderInterface;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Common\Collections\Criteria;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Psr\Log\LoggerInterface;
 
-final class TaskTemplateState extends CommonState implements ProcessorInterface, ProviderInterface
+final class TaskTemplateState extends RogerState
 {
-    protected $taskTemplateRepo;
     protected $frequencyService;
-
     public function __construct(
-        EntityManagerInterface $entityManager,
         RequestStack $request,
         LoggerInterface $logger,
         Security $security,
+        TaskTemplateService $service,
         FrequencyService $frequencyService,
+        TaskWorkflowService $taskWorkflowService,
     ) {
-        parent::__construct($entityManager, $request, $logger, $security);
-        $this->taskTemplateRepo = $entityManager->getRepository(TaskTemplate::class);
+        parent::__construct($request, $logger, $security, $service);
         $this->frequencyService = $frequencyService;
+        $this->taskWorkflowService = $taskWorkflowService;
+    }
+
+    public function newApi(): TaskTemplateApi
+    {
+        return new TaskTemplateApi();
     }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
-        if ($operation instanceof CollectionOperationInterface)
+        return $this->stateProvide($operation, $uriVariables, $context);
+    }
+
+    public function process(mixed $api, Operation $operation, array $uriVariables = [], array $context = [])
+    {
+        if ($api instanceof TaskTemplateGenerateDto)
         {
-            $taskTemplateEntities = $this->getCollection($this->taskTemplateRepo, $context);
+            $taskIdentifier = $uriVariables['taskIdentifier'];
+            $taskTemplateIdentifier = $uriVariables['identifier'];
 
-            $output = [];
-            foreach($taskTemplateEntities as $taskTemplateEntity) {
-                $taskTemplateApi = new TaskTemplateApi();
-                $output[] = $taskTemplateApi->fromEntityToApi($taskTemplateEntity);
-            }
+            $taskTemplate = $this->getEntityByIdentifier($taskTemplateIdentifier);
 
-            return $output;
-        }
-
-        $taskTemplateEntity = $this->taskTemplateRepo->findOneByIdentifier($uriVariables['identifier']);
-        $taskTemplateApi = new TaskTemplateApi();
-
-        if ($taskTemplateEntity === null)
-            return $taskTemplateApi;
-
-        $taskTemplateApi->fromEntityToApi($taskTemplateEntity);
-
-        return $taskTemplateApi->fromEntityToApi($taskTemplateEntity);
-    }
-    
-    /**
-     * @param $data
-     */
-    public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
-    {
-        $user = $this->security->getUser();
-
-        if ($operation instanceof Delete) {
-            $taskTemplate = $this->getEntity($uriVariables['identifier']);
-            $this->deleteEntity($taskTemplate);
-        } else {
-            if (isset($uriVariables['identifier']))
-                $data->identifier = $uriVariables['identifier'];
-
-            $taskTemplate = $this->processOneTaskTemplate($data);
-
-            $data->id = $taskTemplate->getId();
-        }
-    }
-
-    protected function getEntity($identifier)
-    {
-        return $this->taskTemplateRepo->findOneByIdentifier($identifier);
-    }
-
-    protected function processOneTaskTemplate($data): TaskTemplate
-    {
-        $taskTemplate = null;
-
-        $identifier = $data->__get('identifier');
-
-        if ($identifier !== null) {
-            $taskTemplate = $this->getEntity($identifier);
+            return $this->service->generateTaskFromTaskTemplate($taskTemplate, $taskIdentifier);
         }
         
-        if ($taskTemplate === null)
-        {
-            $taskTemplate = new TaskTemplate();
+        return $this->stateProcess($api, $operation, $uriVariables, $context);
+    }
+
+    public function fromApiToEntity($api, $entity): TaskTemplateEntity
+    {
+        if ($entity->getIdentifier() === null)
+            $entity->setIdentifier($api->__get('identifier'));
+
+        $entity = $api->fromApiToEntity($entity);
+
+        if ($entity->getFrequency() !== [])
+            $entity = $this->frequencyService->calculateNextIteration($entity);
+
+        $worflow_identifier = $api->__get('workflow_identifier');
+        if ($worflow_identifier !== null) {
+            $entity->setTaskWorkflow($this->taskWorkflowService->findOneByIdentifier($worflow_identifier));
         }
 
-        $taskTemplate = $data->fromApiToEntity($taskTemplate);
+        $entity->setParent($this->service->findOneByIdentifier($api->__get('parentIdentifier')));
+        $entity->setTaskType($this->service->findOneTaskTypeByIdentifier($api->__get('typeIdentifier')));
+        
+        return $entity;
+    }
 
-        $taskTemplate = $this->frequencyService->calculateNextIteration($taskTemplate);
+    public function fromEntityToApi($entity, $api): TaskTemplateApi
+    {
+        $this->simpleFromEntityToApi($entity, $api);
 
-        $this->entityManager->persist($taskTemplate);
-        $this->entityManager->flush();
-        $this->entityManager->clear();
+        if (null !== $entity->getParent())
+            $api->parentIdentifier = $entity->getParent()->getIdentifier();
 
-        return $taskTemplate;
+        if (null !== $entity->getTaskType())
+            $api->typeIdentifier = $entity->getTaskType()->getIdentifier();
+
+        return $api;
     }
 }

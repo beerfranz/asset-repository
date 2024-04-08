@@ -15,4 +15,5 @@ return [
     Symfony\Bundle\DebugBundle\DebugBundle::class => ['dev' => true, 'test' => true],
     Zenstruck\Foundry\ZenstruckFoundryBundle::class => ['dev' => true, 'test' => true],
     Beerfranz\ServiceBundle\ServiceBundle::class => ['all' => true],
+    Dunglas\DoctrineJsonOdm\Bundle\DunglasDoctrineJsonOdmBundle::class => ['all' => true],
 ];

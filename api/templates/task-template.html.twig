@@ -1,0 +1,26 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Task template{{ taskTemplate.identifier }}{% endblock %}
+
+{% block body %}
+
+<dl>
+
+  <dt>Title</dt>
+  <dd>{{ taskTemplate.title }}</dd>
+
+  <dt>Description</dt>
+  <dd>{{ taskTemplate.description | nl2br }}</dd>
+
+  {% if taskTemplate.taskType.identifier is defined %}
+    <dt>Type</dt>
+    <dd>{{ taskTemplate.taskType.identifier }}</dd>
+  {% endif %}
+
+  {% if taskTemplate.taskType.taskWorkflow is defined %}
+    <dt>Workflow</dt>
+    <dd>{{ taskTemplate.taskType.taskWorkflow.workflow | json_encode() }}</dd>
+  {% endif %}
+</dl>
+
+{% endblock %}

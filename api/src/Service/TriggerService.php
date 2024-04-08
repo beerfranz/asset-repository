@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Trigger;
 use App\Service\UserTemplate;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,17 +26,15 @@ class TriggerService
     $this->userTemplateService = $userTemplateService;
   }
 
-  public function calculateTrigger($triggers, $valueToTest)
+  public function calculateTrigger(array $rules, $valueToTest): Trigger
   {
-  	$trigger = [];
-  	$trigger['rules'] = $triggers;
-  	$trigger['printLevel'] = 'success';
+  	$trigger = new Trigger([ 'rules' => $rules, 'printLevel' => 'success' ]);
 
-  	foreach($triggers as $level => $rule) {
+  	foreach($rules as $level => $rule) {
   		$check = $this->userTemplateService->test($rule, [ 'value' => $valueToTest ]);
 
   		if ($check->getBoolResult()) {
-  			$trigger['printLevel'] = $level;
+  			$trigger->setPrintLevel($level);
   			break;
   		}
   	}

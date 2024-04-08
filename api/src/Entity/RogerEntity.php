@@ -4,10 +4,19 @@ namespace App\Entity;
 
 use JsonSerializable;
 
-abstract class RogerEntity implements JsonSerializable {
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Serializer\Serializer;
+
+abstract class RogerEntity implements RogerEntityInterface, JsonSerializable {
   
   public function __construct(array $data = []) {
     $this->hydrator($data);
+  }
+
+  public function __toString() {
+    return get_class($this) . '#' . $this->getIdentifier();
   }
   
   public function hydrator(array $data = []): self
@@ -19,6 +28,19 @@ abstract class RogerEntity implements JsonSerializable {
     return $this;
   }
   
+  protected function getSerializer(): Serializer
+  {
+    $defaultContext = [
+      AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (object $object, string $format, array $context): string {
+        return $object->getId();
+      },
+    ];
+    $normalizers = [new DateTimeNormalizer, new ObjectNormalizer(null, null, null, null, null, null, $defaultContext)];
+    $serializer = new Serializer($normalizers, []);
+
+    return $serializer;
+  }
+
   public function __set($name, $value)
   {
 
@@ -66,6 +88,11 @@ abstract class RogerEntity implements JsonSerializable {
       $result[$name] = $this->__get($name);
     }
     return $result;
+  }
+
+  public function toArray(): array
+  {
+    return $this->getSerializer()->normalize($this, 'array');
   }
 
 }

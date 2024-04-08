@@ -1,0 +1,10 @@
+# link a risk manager to an asset
+request:
+  method: PUT
+  path: /tasks/t-with-workflow
+
+data:
+  title: Task with simple workflow
+  description: |
+    A long description
+  taskTemplateIdentifier: TPL-test-data-with-workflow

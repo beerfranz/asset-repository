@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Delete;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -37,7 +38,8 @@ use Doctrine\Common\Collections\Collection;
 )]
 #[Post(security: "is_granted('ASSET_WRITE')")]
 #[Put(security: "is_granted('ASSET_WRITE')")]
-class Task
+#[Delete(security: "is_granted('ASSET_WRITE')")]
+class Task extends RogerApiResource
 {
     #[Groups(['Tasks:read', 'Task:read'])]
     #[ApiProperty(identifier: true)]
@@ -50,36 +52,30 @@ class Task
     public $description;
 
     #[Groups(['Tasks:read', 'Task:read', 'Task:write'])]
+    public $status;
+
+    #[Groups(['Tasks:read', 'Task:read', 'Task:write'])]
     public $isDone;
 
     #[Groups(['Tasks:read', 'Task:read', 'Task:write'])]
     public $createdAt;
 
     #[Groups(['Tasks:read', 'Task:read', 'Task:write'])]
-    public $assignedTo;
+    public $owner;
 
     #[Groups(['Tasks:read', 'Task:read', 'Task:write'])]
+    public $assignedTo;
+
+    #[Groups(['Tasks:read', 'Task:read'])]
     public $taskTemplate;
+
+    #[Groups(['Task:write'])]
+    public $taskTemplateIdentifier;
 
     #[Groups(['Task:read'])]
     public $events;
 
-    public function populateFromTaskEntity(TaskEntity $task): self
-    {
-        $this->identifier = $task->getIdentifier();
-        $this->title = $task->getTitle();
-        $this->description = $task->getDescription();
-        $this->createdAt = $task->getCreatedAt();
-        $this->isDone = $task->isIsDone();
-        $this->assignedTo = $task->getAssignedTo();
-        $this->taskTemplate = $task->getTaskTemplate();
-        $this->events = $task->getTaskEvents();
+    #[Groups(['Task:read'])]
+    public $allowedNextStatuses;
 
-        return $this;
-    }
-
-    #[ApiProperty(identifier: false)]
-    public function getId() {
-        return $this->identifier;
-    }
 }

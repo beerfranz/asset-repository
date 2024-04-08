@@ -137,7 +137,7 @@ function renderFrequency(frequency) {
     output = frequency.description;
 
   if (frequency.nextIterationAt !== undefined)
-    output = '<span data-toggle="tooltip" title="Next iteration: ' + new Date(frequency.nextIterationAt.date).toISOString() + '">' + output + '</span>';
+    output = '<span data-toggle="tooltip" title="Next iteration: ' + new Date(frequency.nextIterationAt).toISOString() + '">' + output + '</span>';
 
   return output;
 }

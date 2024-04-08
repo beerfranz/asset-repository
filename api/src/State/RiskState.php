@@ -57,6 +57,7 @@ final class RiskState extends CommonState implements ProcessorInterface, Provide
     
     /**
      * @param $data
+     * @return T2
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {

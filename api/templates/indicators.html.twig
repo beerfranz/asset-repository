@@ -35,7 +35,7 @@ $(document).ready(function () {
 	var dataTableOpts = commonDataTableOpts();
 	dataTableOpts.ajax.url = '/indicators';
 	dataTableOpts.columns = [ 
-		{ data: 'identifier', title: 'Identifier' },
+		{ data: 'identifier', title: 'Identifier', render: function(data, type, row, meta){ return '<a href="/ui/indicators/' + data + '">' + data + '</a>'} },
     { data: 'namespace', title: 'Namespace' },
     { data: 'description', title: 'Description' },
     { data: 'frequency', title: 'Collect frequency', render: function(data, type, row, meta) { return renderFrequency(data); } },
