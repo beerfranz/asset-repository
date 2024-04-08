@@ -40,6 +40,11 @@ abstract class RogerState implements ProcessorInterface, ProviderInterface, Roge
 
   public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
   {
+    return $this->stateProvide($operation, $uriVariables, $context);
+  }
+
+  protected function stateProvide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
+  {
     if ($operation instanceof CollectionOperationInterface)
     {
       $entities = $this->getCollection($context);
@@ -69,6 +74,11 @@ abstract class RogerState implements ProcessorInterface, ProviderInterface, Roge
    * @param $api
    */
   public function process(mixed $api, Operation $operation, array $uriVariables = [], array $context = [])
+  {
+    return $this->stateProcess($api, $operation, $uriVariables, $context);
+  }
+
+  public function stateProcess(mixed $api, Operation $operation, array $uriVariables = [], array $context = [])
   {
     if ($operation instanceof Delete) {
       $entity = $this->getEntityByIdentifier($uriVariables['identifier']);

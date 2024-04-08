@@ -3,10 +3,13 @@
 namespace App\State;
 
 use App\ApiResource\TaskTemplate as TaskTemplateApi;
+use App\ApiResource\TaskTemplateGenerateDto;
 use App\Entity\TaskTemplate as TaskTemplateEntity;
 use App\Service\TaskTemplateService;
 use App\Service\FrequencyService;
 use App\Service\TaskWorkflowService;
+
+use ApiPlatform\Metadata\Operation;
 
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -33,6 +36,26 @@ final class TaskTemplateState extends RogerState
     public function newApi(): TaskTemplateApi
     {
         return new TaskTemplateApi();
+    }
+
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
+    {
+        return $this->stateProvide($operation, $uriVariables, $context);
+    }
+
+    public function process(mixed $api, Operation $operation, array $uriVariables = [], array $context = [])
+    {
+        if ($api instanceof TaskTemplateGenerateDto)
+        {
+            $taskIdentifier = $uriVariables['taskIdentifier'];
+            $taskTemplateIdentifier = $uriVariables['identifier'];
+
+            $taskTemplate = $this->getEntityByIdentifier($taskTemplateIdentifier);
+
+            return $this->service->generateTaskFromTaskTemplate($taskTemplate, $taskIdentifier);
+        }
+        
+        return $this->stateProcess($api, $operation, $uriVariables, $context);
     }
 
     public function fromApiToEntity($api, $entity): TaskTemplateEntity

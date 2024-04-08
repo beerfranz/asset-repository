@@ -43,35 +43,42 @@ class TaskService extends RogerService
     return $task;
   }
 
-  public function generateTasksFromTaskTemplate() {
+  public function generateTasksFromTaskTemplates() {
     $taskTemplateIds = $this->taskTemplateRepo->getTaskToGenerate();
 
     foreach ($taskTemplateIds as $taskTemplateId) {
       $taskTemplate = $this->taskTemplateRepo->find($taskTemplateId);
 
       $datetime = new \DateTimeImmutable();
-
       $taskIdentifier = $taskTemplate->getIdentifier() . '_' . $datetime->format('Ymd');
 
-      $task = $this->taskRepo->findOneByIdentifier($taskIdentifier);
-
-      if ($task === null) {
-        $task = new Task();
-        $task->setIdentifier($taskIdentifier);
-        $task->setTaskTemplate($taskTemplate);
-        $task->setCreatedAt($datetime);
-      }
-
-      $task->setTitle($taskTemplate->getTitle());
-      $task->setDescription($taskTemplate->getDescription());
-      
-      $this->entityManager->persist($task);
-
-      $this->frequencyService->calculateNextIteration($taskTemplate);
-      $this->entityManager->persist($task);
-      $this->entityManager->flush();
-      $this->entityManager->clear();
+      $this->generateTaskFromTaskTemplate($taskTemplate, $taskIdentifier);
     }
+  }
+
+  public function generateTaskFromTaskTemplate(TaskTemplate $taskTemplate, string $taskIdentifier): Task
+  {
+    $task = $this->taskRepo->findOneByIdentifier($taskIdentifier);
+
+    if ($task === null) {
+      $task = new Task();
+      $task->setIdentifier($taskIdentifier);
+      $task->setTaskTemplate($taskTemplate);
+      $task->setCreatedAt(new \DateTimeImmutable());
+    }
+
+    $task->setTitle($taskTemplate->getTitle());
+    $task->setDescription($taskTemplate->getDescription());
+    
+    $this->entityManager->persist($task);
+    if ($taskTemplate->getFrequency() !== [])
+      $this->frequencyService->calculateNextIteration($taskTemplate);
+    
+    $this->entityManager->persist($task);
+    $this->entityManager->flush();
+    $this->entityManager->clear();
+
+    return $task;
   }
 
   protected function getTaskWorkflow(Task $task)

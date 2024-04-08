@@ -39,6 +39,16 @@ use Doctrine\Common\Collections\Collection;
 #[Post(security: "is_granted('ASSET_WRITE')")]
 #[Put(security: "is_granted('ASSET_WRITE')")]
 #[Delete(security: "is_granted('ASSET_WRITE')")]
+#[Put(
+    name: 'generate_tasks_from_template',
+    uriTemplate: '/task_templates/{identifier}/generate/{taskIdentifier}',
+    uriVariables: [ 'identifier', 'taskIdentifier' ] ,
+    security: "is_granted('ASSET_WRITE')",
+    normalizationContext: [ 'groups' => [ 'TaskTemplateGenerate' ]],
+    denormalizationContext: [ 'groups' => [ 'TaskTemplateGenerate' ]],
+    input: TaskTemplateGenerateDto::class,
+    // output: AssetDefinitionBatchDto::class,
+)]
 class TaskTemplate extends RogerApiResource
 {
     #[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]

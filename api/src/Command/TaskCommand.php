@@ -26,7 +26,7 @@ class TaskCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->taskService->generateTasksFromTaskTemplate();
+        $this->taskService->generateTasksFromTaskTemplates();
 
         // this method must return an integer number with the "exit status code"
         // of the command. You can also use these constants to make code more readable

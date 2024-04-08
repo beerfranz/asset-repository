@@ -7,6 +7,8 @@ use App\Entity\TaskTemplate;
 use App\Entity\TaskWorkflow;
 use App\Entity\TaskType;
 
+use App\Service\TaskService;
+
 use Doctrine\ORM\EntityManagerInterface;
 
 use Psr\Log\LoggerInterface;
@@ -19,6 +21,7 @@ class TaskTemplateService extends RogerService
   public function __construct(
     EntityManagerInterface $entityManager,
     LoggerInterface $logger,
+    protected TaskService $taskService,
   ) {
     parent::__construct($entityManager, $logger, TaskTemplate::class);
 
@@ -35,6 +38,11 @@ class TaskTemplateService extends RogerService
   public function findOneTaskTypeByIdentifier($identifier)
   {
     return $this->taskTypeRepo->findOneByIdentifier($identifier);
+  }
+
+  public function generateTaskFromTaskTemplate(TaskTemplate $taskTemplate, $identifier): Task
+  {
+    return $this->taskService->generateTaskFromTaskTemplate($taskTemplate, $identifier);
   }
 
 }
