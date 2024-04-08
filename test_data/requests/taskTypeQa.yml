@@ -1,0 +1,6 @@
+request:
+  method: PUT
+  path: /task_types/QA
+
+data:
+  workflowIdentifier: QA

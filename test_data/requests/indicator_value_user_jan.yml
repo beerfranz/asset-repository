@@ -1,0 +1,8 @@
+request:
+  method: PUT
+  path: /indicators/active-users/values/2024-01
+
+data:
+  value: 81
+  isValidated: true
+  validator: me

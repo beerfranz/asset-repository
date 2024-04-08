@@ -64,6 +64,7 @@ final class InstanceState extends CommonState implements ProcessorInterface, Pro
 
     /**
      * @param $data
+     * @return T2
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {

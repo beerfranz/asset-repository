@@ -108,6 +108,15 @@
     "doctrine/sql-formatter": {
         "version": "1.1.2"
     },
+    "dunglas/doctrine-json-odm": {
+        "version": "1.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "0.1",
+            "ref": "c2ab78f625df0c89af5908d50a28602ff8c4919f"
+        }
+    },
     "friendsofphp/php-cs-fixer": {
         "version": "3.4",
         "recipe": {
@@ -338,6 +347,18 @@
         },
         "files": [
             "config/packages/mercure.yaml"
+        ]
+    },
+    "symfony/messenger": {
+        "version": "6.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "6.0",
+            "ref": "ba1ac4e919baba5644d31b57a3284d6ba12d52ee"
+        },
+        "files": [
+            "config/packages/messenger.yaml"
         ]
     },
     "symfony/monolog-bridge": {

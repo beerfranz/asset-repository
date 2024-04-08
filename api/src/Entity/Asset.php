@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Type\AssetAttributeType;
+
 use App\Filter\AutocompleteFilter;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -135,6 +137,9 @@ class Asset
     #[Groups(['Asset:read', 'Asset:write'])]
     private ?array $rules = null;
 
+    #[ORM\OneToMany(mappedBy: 'asset', targetEntity: Risk::class)]
+    private Collection $risks;
+
     public function __construct()
     {
         $this->assetAudits = new ArrayCollection();
@@ -142,6 +147,7 @@ class Asset
         $this->children = new ArrayCollection();
         $this->fromRelations = new ArrayCollection();
         $this->toRelations = new ArrayCollection();
+        $this->risks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -180,7 +186,23 @@ class Asset
 
     public function setAttributes(?array $attributes): self
     {
-        $this->attributes = $attributes;
+        if ($attributes === null)
+            $this->attributes = $attributes;
+        elseif (is_array($attributes)) {
+            $this->attributes = [];
+            foreach($attributes as $namespace => $namespaced_vars) {
+                $this->attributes[$namespace] = [];
+                if (is_array($namespaced_vars)) {
+                    foreach($namespaced_vars as $attributeIdentifier => $attributeProperties) {
+                        $attributeObject = new AssetAttributeType($attributeProperties);
+                        $this->attributes[$namespace][$attributeIdentifier] = $attributeObject->serialize();
+                    }
+                }
+            }
+        } else {
+            // fallback if attributes are not well formated
+            $this->attributes = $attributes;
+        }
 
         return $this;
     }
@@ -487,6 +509,36 @@ class Asset
     public function setRules(?array $rules): static
     {
         $this->rules = $rules;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Risk>
+     */
+    public function getRisks(): Collection
+    {
+        return $this->risks;
+    }
+
+    public function addRisk(Risk $risk): static
+    {
+        if (!$this->risks->contains($risk)) {
+            $this->risks->add($risk);
+            $risk->setAsset($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRisk(Risk $risk): static
+    {
+        if ($this->risks->removeElement($risk)) {
+            // set the owning side to null (unless already changed)
+            if ($risk->getAsset() === $this) {
+                $risk->setAsset(null);
+            }
+        }
 
         return $this;
     }

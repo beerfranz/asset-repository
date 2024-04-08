@@ -1,0 +1,22 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Task {{ task.identifier }}{% endblock %}
+
+{% block body %}
+
+<dl>
+
+  {% if task.taskTemplate is not null %}
+    <dt>Template</dt>
+    <dd><a href="/ui/task-templates/{{ task.taskTemplate.identifier }}">{{ task.taskTemplate.identifier }}</a></dd>
+  {% endif %}
+
+  <dt>Title</dt>
+  <dd>{{ task.title }}</dd>
+
+  <dt>Description</dt>
+  <dd>{{ task.description }}</dd>
+
+</dl>
+
+{% endblock %}

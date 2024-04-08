@@ -6,6 +6,12 @@ use App\Repository\AssetRepository;
 use App\Repository\AssetDefinitionRepository;
 use App\Repository\AssetAuditRepository;
 use App\Repository\InstanceRepository;
+use App\Repository\RiskManagerRepository;
+use App\Repository\RiskRepository;
+use App\Repository\IndicatorRepository;
+use App\Repository\TaskRepository;
+use App\Repository\TaskTemplateRepository;
+use App\Repository\TaskWorkflowRepository;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -113,6 +119,22 @@ class IndexController extends AbstractController
     return $this->render('map.html.twig', [ 'navbar' => [ 'map' => 'active' ] ]);
   }
 
+  #[Route('/ui/risk-managers', name: 'getRiskManagers', methods: ['GET'])]
+  public function getRiskManagers(Request $request): Response
+  {
+    return $this->render('risk-managers.html.twig', [ 'navbar' => [ 'riskManagers' => 'active' ] ]);
+  }
+
+  #[Route('/ui/risk-managers/{identifier}', name: 'getRiskManager', methods: ['GET'])]
+  public function getRiskManager(string $identifier, RiskManagerRepository $repo, RiskRepository $riskRepo, Request $request): Response
+  {
+    $riskManager = $repo->findOneByIdentifier($identifier);
+
+    $risks = $riskRepo->findBy([ 'riskManager' => $riskManager]);
+
+    return $this->render('risk-manager.html.twig', [ 'riskManager' => $riskManager, 'risks' => $risks ]);
+  }
+
   #[Route('/ui/dashboard', name: 'getDashboard', methods: ['GET'])]
   public function getDashboard(Request $request, AssetRepository $assetRepo, InstanceRepository $instanceRepo): Response
   {
@@ -133,5 +155,61 @@ class IndexController extends AbstractController
       'countInstancesTotalErrors' => $countInstancesTotalErrors,
       'countInstancesReconcilied' => $countInstancesReconcilied,
     ] ]);
+  }
+
+  #[Route('/ui/tasks', name: 'getTasks', methods: ['GET'])]
+  public function getTasks(Request $request): Response
+  {
+    return $this->render('tasks.html.twig', [ 'navbar' => [ 'tasks' => 'active' ] ]);
+  }
+
+  #[Route('/ui/tasks/{identifier}', name: 'getTask', methods: ['GET'])]
+  public function getTask(string $identifier, TaskRepository $repo, Request $request): Response
+  {
+    $task = $repo->findOneByIdentifier($identifier);
+
+    return $this->render('task.html.twig', [ 'task' => $task ]);
+  }
+
+  #[Route('/ui/task-templates', name: 'getTaskTemplates', methods: ['GET'])]
+  public function getTaskTemplates(Request $request): Response
+  {
+    return $this->render('task-templates.html.twig', [ 'navbar' => [ 'task_templates' => 'active' ] ]);
+  }
+
+  #[Route('/ui/task-templates/{identifier}', name: 'getTaskTemplate', methods: ['GET'])]
+  public function getTaskTemplate(string $identifier, TaskTemplateRepository $repo, Request $request): Response
+  {
+    $taskTemplate = $repo->findOneByIdentifier($identifier);
+
+    return $this->render('task-template.html.twig', [ 'taskTemplate' => $taskTemplate ]);
+  }
+
+  #[Route('/ui/indicators', name: 'getIndicators', methods: ['GET'])]
+  public function getIndicators(Request $request): Response
+  {
+    return $this->render('indicators.html.twig', [ 'navbar' => [ 'indicators' => 'active' ] ]);
+  }
+
+  #[Route('/ui/indicators/{identifier}', name: 'getIndicator', methods: ['GET'])]
+  public function getIndicator(string $identifier, IndicatorRepository $repo, Request $request): Response
+  {
+    $indicator = $repo->findOneByIdentifier($identifier);
+
+    return $this->render('indicator.html.twig', [ 'indicator' => $indicator ]);
+  }
+
+  #[Route('/ui/task-workflows', name: 'getTaskWorkflows', methods: ['GET'])]
+  public function getTaskWorkflows(Request $request): Response
+  {
+    return $this->render('task-workflows.html.twig', [ 'navbar' => [ 'task-workflows' => 'active' ] ]);
+  }
+
+  #[Route('/ui/task-workflows/{identifier}', name: 'getTaskWorkflow', methods: ['GET'])]
+  public function getTaskWorkflow(string $identifier, TaskWorkflowRepository $repo, Request $request): Response
+  {
+    $taskWorkflow = $repo->findOneByIdentifier($identifier);
+
+    return $this->render('task-workflow.html.twig', [ 'taskWorkflow' => $taskWorkflow ]);
   }
 }

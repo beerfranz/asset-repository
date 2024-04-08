@@ -37,6 +37,7 @@ final class VersionState extends CommonState implements ProcessorInterface, Prov
     
     /**
      * @param BatchAssetDto $data
+     * @return T2
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {

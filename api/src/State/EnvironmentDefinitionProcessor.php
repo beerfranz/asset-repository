@@ -22,6 +22,7 @@ final class EnvironmentDefinitionProcessor extends CommonState implements Proces
 
     /**
      * @param EnvironmentDefinitionDto $data
+     * @return T2
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {

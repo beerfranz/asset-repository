@@ -174,4 +174,11 @@ abstract class CommonState {
 
         $object->setKind($kind);
     }
+
+    protected function deleteEntity($entity)
+    {
+        $this->entityManager->remove($entity);
+        $this->entityManager->flush();
+        $this->entityManager->clear();
+    }
 }

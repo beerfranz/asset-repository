@@ -64,6 +64,7 @@ final class AssetDefinitionState extends CommonState implements ProcessorInterfa
     
     /**
      * @param AssetDefinition $data
+     * @return T2
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {

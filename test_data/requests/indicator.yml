@@ -1,0 +1,15 @@
+request:
+  method: PUT
+  path: /indicators/active-users
+
+data:
+  description: |
+    active users / total users
+  namespace: application usages
+  targetValue: 80
+  triggers:
+    danger: value < 60
+    warning: value < 70
+  frequency: 
+    description: monthly
+    crontab: '0 0 1 * *'

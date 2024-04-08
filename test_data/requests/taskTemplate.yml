@@ -1,0 +1,11 @@
+request:
+  method: PUT
+  path: /task_templates/TPL-test-data
+
+data:
+  title: Template test data
+  description: |
+    A long description
+  frequency: 
+    description: monthly
+    crontab: '0 0 1 * *'

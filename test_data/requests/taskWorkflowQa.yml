@@ -1,0 +1,18 @@
+request:
+  method: PUT
+  path: /task_workflows/QA
+
+data:
+  statuses:
+    tocheck:
+      isDefault: true
+      nextStatuses:
+        - checked
+        - failed
+        - skip
+    checked:
+      isDone: true
+    failed:
+      isDone: true
+    skip:
+      isDone: true

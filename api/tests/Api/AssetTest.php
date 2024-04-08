@@ -60,7 +60,7 @@ class AssetTest extends Functional
     // Update asset
     static::createClient()->request('PATCH', '/assets/1', [ 
       'headers' => array_merge($userHeaders, [ 'Content-Type' => 'application/merge-patch+json']),
-      'json' => [ 'attributes' => [ 'test' => 'one test' ] ] 
+      'json' => [ 'attributes' => [ 'nogroup' => [ 'test' => 'one test' ] ] ] 
     ]);
     $this->assertResponseStatusCodeSame(200);
     $this->assertJsonContains([
@@ -68,7 +68,7 @@ class AssetTest extends Functional
       '@type' => 'Asset',
       // 'identifier' => 'UnitTest',
       // 'createdBy' => $userHeaders['x-token-user-email'],
-      'attributes' => [ 'test' => 'one test' ],
+      'attributes' => [ 'nogroup' => [ 'test' =>  'one test' ] ],
     ]);
 
     // Audit update
@@ -95,7 +95,7 @@ class AssetTest extends Functional
       'subject' => 'UnitTest',
       'action' => 'remove',
       'actor' => $userHeaders['x-token-user-email'],
-      'data' => array_merge($data, [ 'attributes' => [ 'test' => 'one test' ] ]),
+      'data' => array_merge($data, [ 'attributes' => [ 'nogroup' => [ 'test' => [ 'value' => 'one test' ] ] ] ]),
     ]);
 
   }

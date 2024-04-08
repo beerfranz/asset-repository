@@ -16,7 +16,7 @@ class IsValidOwnerValidator extends ConstraintValidator
         $this->security = $security;
     }
 
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         /* @var App\Validator\IsValidOwner $constraint */
 

@@ -30,9 +30,13 @@ data:
         ec2:
           region: eu-west-3
           InstanceType: t3.micro
-          KeyName: in ["my-ssh", "test-ssh"]
+          KeyName:
+            condition: value in ["my-ssh", "test-ssh"]
           architecture: arm64
           missingForInstance: baaad
+          propagateThis:
+            value: propagate
+            propagateToInstances: true
         notPresentInInstance:
           foo: bar
       description: |
@@ -44,7 +48,7 @@ data:
         - name: google
           link: https://google.com
       rules:
-        friendlyName: preg_match('/^DevServer-[0-9]*$/', friendlyName)
+        friendlyName: friendlyName matches '/^DevServer-[0-9]*$/'
         kind: kind == 'server'
 
     # - identifier: orphaned-app

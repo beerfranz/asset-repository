@@ -19,9 +19,11 @@ Caddy (web server) => PHP => Database (ex: Postgres)
     * owner: the owner of the asset (ISO 27001 requirement)
     * type (defined bellow)
     * attributes: a free field
+      * question: attributes[category][attributeName] have properties: constraint (check instances), propagate (instance inherite) => move attributes to an array of objects, with multiple properties: group, --value, condition, propagateToInstances,-- childAssetInheritance
     * audits (defined bellow)
   * Asset type: define a category (server, container, pod, etc...)  => Template ?
   * Asset audits: track modifications on assets (create, update, remove)
+  * risk management
 
   * Instance/Inventory: something that is or was running. eq: Inventory
     * optionaly (prefered) link to an asset
@@ -125,7 +127,7 @@ Init the test database and run tests with phpunit:
 docker compose exec php php bin/console --env=test doctrine:database:create
 docker compose exec php php bin/console --env=test doctrine:schema:create
 
-docker compose exec php bin/phpunit --coverage-html tests/test_coverage/
+docker compose exec -u 1000:1000 php bin/phpunit --coverage-html tests/test_coverage/
 ```
 
 **Definitions**
