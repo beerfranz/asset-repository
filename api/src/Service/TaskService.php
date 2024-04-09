@@ -83,7 +83,10 @@ class TaskService extends RogerService
     $task->setTitle($taskTemplate->getTitle());
     $task->setDescription($taskTemplate->getDescription());
     $task->setTaskType($taskTemplate->getTaskType());
-    $task->setStatus($this->getDefaultStatus($taskTemplate));
+
+    $defaultStatus = $this->getDefaultStatus($taskTemplate);
+    if ($defaultStatus !== null)
+      $task->setStatus($defaultStatus);
 
     if ($parent !== null) {
       $task->setParent($parent);
@@ -169,7 +172,11 @@ class TaskService extends RogerService
 
   public function getDefaultStatus(TaskTemplate $taskTemplate): ?string
   {
-    $taskTemplateWorkflow = $taskTemplate->getTaskType()->getTaskWorkflow();
+    $taskType = $taskTemplate->getTaskType();
+    if ($taskType === null)
+      return null;
+
+    $taskTemplateWorkflow = $taskType->getTaskWorkflow();
 
     if ($taskTemplateWorkflow === null)
       return null;
