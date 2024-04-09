@@ -15,7 +15,7 @@ class RiskTest extends Functional
   {
 
     // Create asset
-    $identifier = 'iso27001';
+    $identifier = 'unitTest';
     $input = [
       'values' => [
         'value' => [
@@ -46,11 +46,8 @@ class RiskTest extends Functional
         'info' => 'aggregator < 4',
       ],
     ];
-    $output = [
-      '@context' => '/contexts/RiskManager',
-      '@id' => '/risk_managers/iso27001',                                                                
-      '@type' => 'RiskManager',
-    ];
+    
+    $output = $this->calculateSimpleOutput('RiskManager', $identifier, '/risk_managers/' . $identifier, $input);
 
     $this->testIdempotentCrud('/risk_managers/' . $identifier, [
       'headers' => $this->getAdminUser(),

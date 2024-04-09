@@ -38,12 +38,8 @@ use Doctrine\Common\Collections\Collection;
 #[Post(security: "is_granted('ASSET_WRITE')")]
 #[Put(security: "is_granted('ASSET_WRITE')")]
 #[Delete(security: "is_granted('ASSET_WRITE')")]
-class RiskManager
+class RiskManager extends RogerApiResource
 {
-    #[Groups(['RiskManagers:read', 'RiskManager:read'])]
-    #[ApiProperty(identifier: false)]
-    public $id;
-
     #[Groups(['RiskManagers:read', 'RiskManager:read', 'RiskManager:write'])]
     #[ApiProperty(identifier: true)]
     public $identifier;
@@ -56,8 +52,4 @@ class RiskManager
 
     #[Groups(['RiskManagers:read', 'RiskManager:read', 'RiskManager:write'])]
     public $triggers;
-
-    public function getId() {
-        return $this->identifier;
-    }
 }

@@ -167,18 +167,6 @@ class Asset
         return $this;
     }
 
-    public function getType(): ?AssetType
-    {
-        return $this->type;
-    }
-
-    public function setType(?AssetType $type): self
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
     public function getAttributes(): array
     {
         return $this->attributes;
