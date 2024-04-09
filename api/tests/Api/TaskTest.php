@@ -13,7 +13,6 @@ class TaskTest extends Functional
    **/
   public function testAdminCRUDTask(): void
   {
-    $userHeaders = $this->getAdminUser();
 
     // Create asset
     $identifier = 'UnitTest';
@@ -29,33 +28,11 @@ class TaskTest extends Functional
       'identifier' => $identifier,
     ]);
 
-    static::createClient()->request('GET', '/tasks/' . $identifier,
-      [ 'headers' => $userHeaders ]);
-    $this->assertResponseStatusCodeSame(404);
-
-    static::createClient()->request('PUT', '/tasks/' . $identifier , [
-      'json' => $input,
-      'headers' => $userHeaders
+    $this->testIdempotentCrud('/tasks/' . $identifier, [
+      'headers' => $this->getAdminUser(),
+      'input' => $input,
+      'output' => $output,
     ]);
-
-    $this->assertResponseStatusCodeSame(200);
-    $this->assertJsonContains($output);
-
-    // Read task
-    static::createClient()->request('GET', '/tasks/' . $identifier,
-      [ 'headers' => $userHeaders ]);
-
-    $this->assertResponseStatusCodeSame(200);
-    $this->assertJsonContains($output);
-
-    // Delete task
-    static::createClient()->request('DELETE', '/tasks/' . $identifier,
-      [ 'headers' => $userHeaders ]);
-    $this->assertResponseStatusCodeSame(204);
-
-    static::createClient()->request('GET', '/tasks/' . $identifier,
-      [ 'headers' => $userHeaders ]);
-    $this->assertResponseStatusCodeSame(404);
 
   }
 

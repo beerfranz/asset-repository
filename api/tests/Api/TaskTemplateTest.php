@@ -10,8 +10,6 @@ class TaskTemplateTest extends Functional
 
   public function testAdminCreateTaskTemplate(): void
   {
-    $userHeaders = $this->getAdminUser();
-
     $identifier = 'tt-001';
     $input = [
       'title' => 'test title',
@@ -25,40 +23,31 @@ class TaskTemplateTest extends Functional
       'identifier' => $identifier,
     ]);
 
-    static::createClient()->request('GET', '/task_templates/' . $identifier,
-      [ 'headers' => $userHeaders ]);
-    $this->assertResponseStatusCodeSame(404);
+    $this->testIdempotentCrud('/task_templates/' . $identifier, [
+      'headers' => $this->getAdminUser(),
+      'input' => $input,
+      'output' => $output,
+    ]);
 
-    static::createClient()->request('PUT', '/task_templates/' . $identifier , [
-      'json' => $input,
-      'headers' => $userHeaders
+  }
+
+  protected function generateTaskFromTaskTemplate($uri, $context)
+  {
+    static::createClient()->request('PUT', $uri, [
+      'json' => [], 
+      'headers' => $context['headers'],
     ]);
 
     $this->assertResponseStatusCodeSame(200);
-    $this->assertJsonContains($output);
 
-    // Read task
-    static::createClient()->request('GET', '/task_templates/' . $identifier,
-      [ 'headers' => $userHeaders ]);
-
-    $this->assertResponseStatusCodeSame(200);
-    $this->assertJsonContains($output);
-
-    // Delete task
-    static::createClient()->request('DELETE', '/task_templates/' . $identifier,
-      [ 'headers' => $userHeaders ]);
-    $this->assertResponseStatusCodeSame(204);
-
-    static::createClient()->request('GET', '/task_templates/' . $identifier,
-      [ 'headers' => $userHeaders ]);
-    $this->assertResponseStatusCodeSame(404);
-
+    $this->testGet($context['taskUri'], [
+      'headers' => $context['headers'],
+      'output' => $context['taskOutput'],
+    ]);
   }
 
   public function testAdminCreateTaskTemplateAndPropagate(): void
   {
-    $userHeaders = $this->getAdminUser();
-
     $identifier = 'tt-001';
     $input = [
       'title' => 'test title',
@@ -80,27 +69,97 @@ class TaskTemplateTest extends Functional
       'identifier' => $taskIdentifier,
     ]);
 
-    static::createClient()->request('PUT', '/task_templates/' . $identifier , [
-      'json' => $input,
-      'headers' => $userHeaders
+    $this->testPut('/task_templates/' . $identifier, [
+      'headers' => $this->getAdminUser(),
+      'input' => $input,
+      'output' => $output,
     ]);
 
-    $this->assertResponseStatusCodeSame(200);
-    $this->assertJsonContains($output);
-
-    static::createClient()->request('PUT', '/task_templates/' . $identifier . '/generate/t-001', [
-      'json' => [], 
-      'headers' => $userHeaders
+    $this->generateTaskFromTaskTemplate('/task_templates/' . $identifier . '/generate/t-001', [
+      'headers' => $this->getAdminUser(),
+      'taskUri' => '/tasks/' . $taskIdentifier,
+      'taskOutput' => $taskOutput
     ]);
 
-    $this->assertResponseStatusCodeSame(200);
+  }
 
-    // Read task
-    static::createClient()->request('GET', '/tasks/' . $taskIdentifier,
-      [ 'headers' => $userHeaders ]
-    );
-    $this->assertResponseStatusCodeSame(200);
-    $this->assertJsonContains($taskOutput);
+  public function testTaskTemplateWithWorkflow(): void
+  {
+
+    // Add workflow
+
+    $workflowIdentifier = 'workflow-QA';
+    $workflowInput = [
+      'statuses' => [
+        'toCheck' => [
+          'isDefault' => true,
+          'nextStatuses' => [ 'checked', 'failed', 'skip' ],
+        ],
+        'checked' => [
+          'isDone' => true,
+        ],
+        'failed' => [
+          'isDone' => true,
+        ],
+        'skip' => [
+          'isDone' => true,
+        ],
+      ]
+    ];
+    $workflowOutput = $this->calculateSimpleOutput('TaskWorkflow', $workflowIdentifier, '/task_workflows/' . $workflowIdentifier, $workflowInput);
+
+    $this->testPut('/task_workflows/' . $workflowIdentifier, [
+      'headers' => $this->getAdminUser(),
+      'input' => $workflowInput,
+      'output' => $workflowOutput,
+    ]);
+
+    // Add type with workflow
+
+    $typeIdentifier = 'type-QA';
+    $typeInput = [
+      'workflowIdentifier' => $workflowIdentifier,
+    ];
+    $typeOutput = $this->calculateSimpleOutput('TaskType', $typeIdentifier, '/task_types/' . $typeIdentifier, $typeInput);
+
+    $this->testPut('/task_types/' . $typeIdentifier, [
+      'headers' => $this->getAdminUser(),
+      'input' => $typeInput,
+      'output' => $typeOutput,
+    ]);
+
+    // Add template with type
+
+    $taskTemplateIdentifier = 'tt-001';
+    $taskTemplateInput = [
+      'title' => 'test title',
+      'description' => 'test description',
+      'typeIdentifier' => $typeIdentifier,
+    ];
+
+    $taskTemplateOutput = $this->calculateSimpleOutput('TaskTemplate', $taskTemplateIdentifier, '/task_templates/' . $taskTemplateIdentifier, $taskTemplateInput);
+
+    $this->testPut('/task_templates/' . $taskTemplateIdentifier, [
+      'headers' => $this->getAdminUser(),
+      'input' => $taskTemplateInput,
+      'output' => $taskTemplateOutput,
+    ]);
+
+    // Generate task from template
+
+    $taskIdentifier = $taskTemplateIdentifier . '_' . 't-001';
+    $taskOutput = $this->calculateSimpleOutput('Task', $taskIdentifier, '/tasks/' . $taskIdentifier, 
+      array_merge($taskTemplateInput, [ 'status' => 'toCheck' ] ));
+    unset($taskOutput['typeIdentifier']);
+
+    $this->generateTaskFromTaskTemplate('/task_templates/' . $taskTemplateIdentifier . '/generate/t-001', [
+      'headers' => $this->getAdminUser(),
+      'taskUri' => '/tasks/' . $taskIdentifier,
+      'taskOutput' => $taskOutput
+    ]);
+
+    // Update task status
+
   }
 
 }

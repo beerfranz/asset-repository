@@ -20,17 +20,17 @@ use Psr\Log\LoggerInterface;
 final class TaskTemplateState extends RogerState
 {
     protected $frequencyService;
+
     public function __construct(
         RequestStack $request,
         LoggerInterface $logger,
         Security $security,
         TaskTemplateService $service,
         FrequencyService $frequencyService,
-        TaskWorkflowService $taskWorkflowService,
+        protected TaskWorkflowService $taskWorkflowService,
     ) {
         parent::__construct($request, $logger, $security, $service);
         $this->frequencyService = $frequencyService;
-        $this->taskWorkflowService = $taskWorkflowService;
     }
 
     public function newApi(): TaskTemplateApi
