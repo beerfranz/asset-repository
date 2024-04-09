@@ -105,6 +105,21 @@ abstract class Functional extends ApiTestCase {
     	$this->testGet($uri, $context);
 	}
 
+	protected function testPatch(string $uri, array $context) {
+		static::createClient()->request('PATCH', $uri,
+      [
+      	'json' => $context['input'],
+      	'headers' => array_merge(['Content-Type' => 'application/merge-patch+json'], $context['headers']),
+    	]
+  	);
+
+  	$this->assertResponseStatusCodeSame($this->getContextResponseStatus($context));
+    $this->assertJsonContains($context['output']);
+
+    if (isset($context['withGetTest']) && $context['withGetTest'] === true)
+    	$this->testGet($uri, $context);
+	}
+
 	protected function testIdempotentCrud(string $uri, array $context) {
 		$this->assertNotExists($uri, $context);
 		$this->testPut($uri, array_merge($context, ['withGetTest' => true ]));
@@ -119,5 +134,12 @@ abstract class Functional extends ApiTestCase {
       '@type' => $class,
       'identifier' => $identifier,
     ]);
+	}
+
+	protected function getContextResponseStatus(array $context) {
+		if (isset($context['responseStatus']))
+			return $context['responseStatus'];
+		else
+			return 200;
 	}
 }

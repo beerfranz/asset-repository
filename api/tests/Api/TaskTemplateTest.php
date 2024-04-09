@@ -160,6 +160,23 @@ class TaskTemplateTest extends Functional
 
     // Update task status
 
+    // test bad status (not in workflow)
+    $this->testPatch('/tasks/' . $taskIdentifier, [
+      'headers' => $this->getAdminUser(),
+      'input' => [ 'status' => 'foo' ],
+      'output' => [
+        '@type' => 'hydra:Error',
+        'hydra:description' => 'status "foo" not allowed in the workflow workflow-QA. Allowed values: checked, failed, skip',
+      ],
+      'responseStatus' => 400,
+    ]);
+
+    // good status with isDone
+    $this->testPatch('/tasks/' . $taskIdentifier, [
+      'headers' => $this->getAdminUser(),
+      'input' => [ 'status' => 'checked' ],
+      'output' => [ 'isDone' => true ],
+    ]);
   }
 
 }
