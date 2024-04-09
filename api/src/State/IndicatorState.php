@@ -62,8 +62,11 @@ final class IndicatorState extends CommonState implements ProcessorInterface, Pr
         $indicatorEntity = $this->indicatorRepo->findOneByIdentifier($uriVariables['identifier']);
         $indicatorApi = new IndicatorApi();
 
-        if ($indicatorEntity === null)
+        if ($indicatorEntity === null && $operation instanceof Put)
             return $indicatorApi;
+
+        if ($indicatorEntity === null)
+          throw new NotFoundHttpException('Not found');
 
         $indicatorApi->fromEntityToApi($indicatorEntity);
 
@@ -79,7 +82,8 @@ final class IndicatorState extends CommonState implements ProcessorInterface, Pr
         $user = $this->security->getUser();
 
         if ($operation instanceof Delete) {
-            $this->delete($data);
+            $indicatorEntity = $this->indicatorRepo->findOneByIdentifier($uriVariables['identifier']);
+            $this->delete($indicatorEntity);
         } else {
             if (isset($uriVariables['identifier']))
                 $data->identifier = $uriVariables['identifier'];

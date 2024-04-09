@@ -41,7 +41,16 @@ final class RiskManagerState extends CommonState implements ProcessorInterface, 
             return $this->getCollection($this->riskManagerRepo, $context);
         }
 
-        return $this->riskManagerRepo->findOneByIdentifier($uriVariables['identifier']);
+        $riskManagerApi = new RiskManagerDto();
+        $riskManagerEntity = $this->riskManagerRepo->findOneByIdentifier($uriVariables['identifier']);
+
+        if ($riskManagerEntity === null && $operation instanceof Put)
+            return $riskManagerApi;
+
+        if ($riskManagerEntity === null)
+          throw new NotFoundHttpException('Not found');
+
+        return $riskManagerApi;
     }
     
     /**
@@ -53,7 +62,8 @@ final class RiskManagerState extends CommonState implements ProcessorInterface, 
         $user = $this->security->getUser();
 
         if ($operation instanceof Delete) {
-            $this->delete($data);
+            $riskManager = $this->riskManagerRepo->findOneByIdentifier($uriVariables['identifier']);
+            $this->delete($riskManager);
         } else {
             if (isset($uriVariables['id']))
                 $data->id = $uriVariables['id'];

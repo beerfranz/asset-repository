@@ -21,18 +21,15 @@ class TaskTest extends Functional
       'description' => 'test description',
     ];
 
-    $output = array_merge($input, [
-      '@context' => '/contexts/Task',
-      '@id' => '/tasks/' . $identifier,
-      '@type' => 'Task',
-      'identifier' => $identifier,
-    ]);
+    $output = $this->calculateSimpleOutput('Task', $identifier, '/tasks/' . $identifier, $input);
 
     $this->testIdempotentCrud('/tasks/' . $identifier, [
       'headers' => $this->getAdminUser(),
       'input' => $input,
       'output' => $output,
     ]);
+
+
 
   }
 
