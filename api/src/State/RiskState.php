@@ -2,10 +2,8 @@
 
 namespace App\State;
 
-use App\ApiResource\Risk as RiskDto;
-use App\Entity\Risk;
-use App\Entity\RiskManager;
-use App\Entity\Asset;
+use App\ApiResource\Risk as RiskApi;
+use App\Entity\Risk as RiskEntity;
 
 use App\Service\RiskService;
 
@@ -16,7 +14,6 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\State\ProcessorInterface;
 use ApiPlatform\State\ProviderInterface;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Collections\Criteria;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -24,140 +21,88 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Psr\Log\LoggerInterface;
 
-final class RiskState extends CommonState implements ProcessorInterface, ProviderInterface
+final class RiskState extends RogerState
 {
-    protected $riskRepo;
-    protected $assetRepo;
-    protected $riskManagerRepo;
-    protected $riskService;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
         RequestStack $request,
         LoggerInterface $logger,
         Security $security,
-        RiskService $riskService,
+        RiskService $service,
     ) {
-        parent::__construct($entityManager, $request, $logger, $security);
-        $this->riskRepo = $entityManager->getRepository(Risk::class);
-        $this->riskManagerRepo = $entityManager->getRepository(RiskManager::class);
-        $this->assetRepo = $entityManager->getRepository(Asset::class);
-        $this->riskService = $riskService;
+        parent::__construct($request, $logger, $security, $service);
     }
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
+    public function newApi(): RiskApi
     {
-        if ($operation instanceof CollectionOperationInterface)
-        {
-            return $this->getCollection($this->riskRepo, $context);
-        }
-
-        return $this->riskRepo->findOneByIdentifier($uriVariables['identifier']);
-    }
-    
-    /**
-     * @param $data
-     * @return T2
-     */
-    public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
-    {
-        $user = $this->security->getUser();
-
-        if ($operation instanceof Delete) {
-            $this->delete($data);
-        } else {
-            if (isset($uriVariables['id']))
-                $data->id = $uriVariables['id'];
-
-            if (isset($uriVariables['identifier']))
-                $data->identifier = $uriVariables['identifier'];
-
-            $risk = $this->processOneRisk((array) $data);
-
-            $data->id = $risk->getId();
-        }
+        return new RiskApi();
     }
 
-    protected function processOneRisk($data): Risk
+    public function fromApiToEntity($api, $entity): RiskEntity
     {
-
-        if (isset($data['identifier'])) {
-            $identifier = $data['identifier'];
-
-            $risk = $this->riskRepo->findOneByIdentifier($identifier);
-        } else {
-            $risk = $this->riskRepo->find($data['id']);
-            if ($risk === null)
-                throw new NotFoundHttpException('Sorry not existing!');
-        }
-        
-        if ($risk === null)
-        {
-            $risk = new Risk();
-            $risk->setIdentifier($identifier);
+        if ($entity->getIdentifier() === null) {
+            $entity->setIdentifier($api->__get('identifier'));
         }
 
-        if (isset($data['asset'])) {
-            if (isset($data['asset']['identifier'])) {
-                $asset = $this->assetRepo->findOneByIdentifier($data['asset']['identifier']);
+        // $entity = $api->fromApiToEntity($entity);
+        $entity->setDescription($api->__get('description'));
+
+        if ($api->__get('asset') !== null) {
+            if (isset($api->__get('asset')['identifier'])) {
+                $asset = $this->service->findOneAssetByIdentifier($api->__get('asset')['identifier']);
                 if ($asset !== null) {
-                    $risk->setAsset($asset);
+                    $entity->setAsset($asset);
                 }
             }
         }
 
-        if (isset($data['riskManager'])) {
-            if (isset($data['riskManager']['identifier'])) {
-                $riskManager = $this->riskManagerRepo->findOneByIdentifier($data['riskManager']['identifier']);
+        if (null !== $api->__get('riskManager')) {
+            if (null !== $api->__get('riskManager')['identifier']) {
+                $riskManager = $this->service->findOneRiskManagerByIdentifier($api->__get('riskManager')['identifier']);
                 if ($riskManager !== null) {
-                    $risk->setRiskManager($riskManager);
+                    $entity->setRiskManager($riskManager);
                 }
             }
         }
 
-        if (isset($data['description']))
-            $risk->setDescription($data['description']);
+        $values = $api->__get('values');
 
-        if (isset($data['values'])) {
-            // Update values aggregator
-            $aggregatedRisk = $this->riskService->aggregateRisk(
-                $risk->getRiskManager()->getValuesAggregator(),
-                $data['values'],
-                $risk->getRiskManager()->getTriggers()
+        $aggregatedRisk = $this->service->aggregateRisk(
+            $entity->getRiskManager()->getValuesAggregator(),
+            $values,
+            $entity->getRiskManager()->getTriggers(),
+        );
+
+        $values['aggregatedRisk'] = $aggregatedRisk;
+        $entity->setValues($values);
+
+        $values = $entity->getValues();
+        $mitigations = $api->__get('mitigations');
+        foreach($mitigations as $mitigationId => $mitigation) {
+            $values = array_merge($values, $mitigation['effects']);
+            $aggregatedRisk = $this->service->aggregateRisk(
+                $entity->getRiskManager()->getValuesAggregator(),
+                $values,
+                $entity->getRiskManager()->getTriggers(),
             );
-
-            $data['values']['aggregatedRisk'] = $aggregatedRisk;
-
-            $risk->setValues($data['values']);
+            $mitigations[$mitigationId]['aggregatedRisk'] = $aggregatedRisk;
         }
+        $entity->setMitigations($mitigations);
 
-        if (isset($data['mitigations'])) {
-            $values = $risk->getValues();
-
-            // Update mitigations aggregators
-            foreach($data['mitigations'] as $mitigationId => $mitigation) {
-                $values = array_merge($values, $mitigation['effects']);
-                $aggregatedRisk = $this->riskService->aggregateRisk(
-                    $risk->getRiskManager()->getValuesAggregator(),
-                    $values,
-                    $risk->getRiskManager()->getTriggers()
-                );
-                $data['mitigations'][$mitigationId]['aggregatedRisk'] = $aggregatedRisk;
-            }
-
-            $risk->setMitigations($data['mitigations']);
-        }
-
-        $this->entityManager->persist($risk);
-        $this->entityManager->flush();
-        $this->entityManager->clear();
-
-        return $risk;
+        return $entity;
     }
 
-    protected function delete(Risk $risk) {
-        $this->entityManager->remove($risk);
-        $this->entityManager->flush();
-        $this->entityManager->clear();
+    public function fromEntityToApi($entity, $api): RiskApi
+    {
+        // $this->simpleFromEntityToApi($entity, $api);
+        $api->identifier = $entity->getIdentifier();
+        $api->asset = $entity->getAsset()->getIdentifier();
+        $api->riskManager = $entity->getRiskManager()->getIdentifier();
+        $api->description = $entity->getDescription();
+        $api->values = $entity->getValues();
+        $api->mitigations = $entity->getMitigations();
+
+        return $api;
     }
+
 }
