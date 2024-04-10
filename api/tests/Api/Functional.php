@@ -70,7 +70,7 @@ abstract class Functional extends ApiTestCase {
       	'headers' => $context['headers'],
     	]
   	);
-    $this->assertResponseStatusCodeSame(200);
+    $this->assertResponseStatusCodeSame(201);
     $this->assertJsonContains($context['output']);
 	}
 
