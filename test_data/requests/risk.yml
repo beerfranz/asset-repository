@@ -4,8 +4,10 @@ request:
   path: /risks/R-02
 
 data:
-  asset: https://localhost/assets/34
-  riskManager: https://localhost/entity/risk_managers/5
+  asset:
+    identifier: DevServer
+  riskManager:
+    identifier: iso27001
   description: server is down
   values:
     disponibility: 3

@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
 use App\Repository\RiskRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,14 +11,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RiskRepository::class)]
 #[ORM\UniqueConstraint(columns:["identifier"])]
-#[ApiResource(
-    normalizationContext: ['groups' => ['Risks:read']],
-    denormalizationContext: ['groups' => ['Risks:write']],
-    security: "is_granted('ASSET_READ')",
-    routePrefix: '/entity',
-)]
 #[UniqueEntity(fields: ['identifier'], message: 'There is already a risk with this identifier')]
-class Risk
+class Risk extends RogerEntity
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

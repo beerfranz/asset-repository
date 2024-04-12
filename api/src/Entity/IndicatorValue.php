@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
+use App\Doctrine\IndicatorValueListener;
 use App\Repository\IndicatorValueRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\EntityListeners([IndicatorValueListener::class])]
 #[ORM\Entity(repositoryClass: IndicatorValueRepository::class)]
 class IndicatorValue extends RogerEntity
 {

@@ -7,52 +7,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\Patch;
-use ApiPlatform\Metadata\Put;
-use ApiPlatform\Metadata\Delete;
-
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RiskManagerRepository::class)]
 #[ORM\UniqueConstraint(columns:["identifier"])]
-#[ApiResource(
-    normalizationContext: ['groups' => ['RiskManagers:read']],
-    denormalizationContext: ['groups' => ['RiskManagers:write']],
-    security: "is_granted('ASSET_READ')",
-    routePrefix: '/entity',
-)]
-#[GetCollection(
-    normalizationContext: ['groups' => ['RiskManagers:read']],
-    denormalizationContext: ['groups' => ['RiskManagers:write']],
-)]
-#[Post(
-    normalizationContext: ['groups' => ['RiskManager:read']],
-    denormalizationContext: ['groups' => ['RiskManager:write']],
-)]
-#[Get(
-    normalizationContext: ['groups' => ['RiskManager:read']],
-    denormalizationContext: ['groups' => ['RiskManager:write']],
-)]
-#[Put(
-    normalizationContext: ['groups' => ['RiskManager:read']],
-    denormalizationContext: ['groups' => ['RiskManager:write']],
-)]
-#[Patch(
-    normalizationContext: ['groups' => ['RiskManager:read']],
-    denormalizationContext: ['groups' => ['RiskManager:write']],
-)]
-#[Delete(
-    normalizationContext: ['groups' => ['RiskManager:read']],
-    denormalizationContext: ['groups' => ['RiskManager:write']],
-)]
 #[UniqueEntity(fields: ['identifier'], message: 'There is already a risk manager with this identifier')]
-
-class RiskManager
+class RiskManager extends RogerEntity
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

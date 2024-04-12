@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Delete;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -36,12 +37,9 @@ use Doctrine\Common\Collections\Collection;
 )]
 #[Post(security: "is_granted('ASSET_WRITE')")]
 #[Put(security: "is_granted('ASSET_WRITE')")]
-class Risk
+#[Delete(security: "is_granted('ASSET_WRITE')")]
+class Risk extends RogerApiResource
 {
-    #[Groups(['Risks:read', 'Risk:read'])]
-    #[ApiProperty(identifier: false)]
-    public $id;
-
     #[Groups(['Risks:read', 'Risk:read', 'Risk:write'])]
     #[ApiProperty(identifier: true)]
     public $identifier;
@@ -60,8 +58,4 @@ class Risk
 
     #[Groups(['Risks:read', 'Risk:read', 'Risk:write'])]
     public $mitigations;
-
-    public function getId() {
-        return $this->identifier;
-    }
 }

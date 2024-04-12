@@ -33,9 +33,8 @@
 
 $(document).ready(function () {
 	var dataTableOpts = commonDataTableOpts();
-	dataTableOpts.ajax.url = '/entity/risk_managers';
-	dataTableOpts.columns = [ 
-		{ data: 'id', title: 'ID' },
+	dataTableOpts.ajax.url = '/risk_managers';
+	dataTableOpts.columns = [
 		{ data: 'identifier', title: 'Identifier', render: function(data, type, row, meta){ return '<a href="/ui/risk-managers/' + data + '">' + data + renderFriendlyName(row) + '</a>'} },
   ];
 

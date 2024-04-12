@@ -11,6 +11,7 @@ use App\Service\FrequencyService;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Scheduler\Trigger\CronExpressionTrigger;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 use Psr\Log\LoggerInterface;
 
@@ -83,7 +84,10 @@ class TaskService extends RogerService
     $task->setTitle($taskTemplate->getTitle());
     $task->setDescription($taskTemplate->getDescription());
     $task->setTaskType($taskTemplate->getTaskType());
-    $task->setStatus($this->getDefaultStatus($taskTemplate));
+
+    $defaultStatus = $this->getDefaultStatus($taskTemplate);
+    if ($defaultStatus !== null)
+      $task->setStatus($defaultStatus);
 
     if ($parent !== null) {
       $task->setParent($parent);
@@ -169,7 +173,11 @@ class TaskService extends RogerService
 
   public function getDefaultStatus(TaskTemplate $taskTemplate): ?string
   {
-    $taskTemplateWorkflow = $taskTemplate->getTaskType()->getTaskWorkflow();
+    $taskType = $taskTemplate->getTaskType();
+    if ($taskType === null)
+      return null;
+
+    $taskTemplateWorkflow = $taskType->getTaskWorkflow();
 
     if ($taskTemplateWorkflow === null)
       return null;
@@ -186,7 +194,7 @@ class TaskService extends RogerService
 
   public function askNewStatus(Task $task, string $desiredStatus)
   {
-    $taskTemplateWorkflow = $taskTemplate->getTaskWorkflow($task);
+    $taskTemplateWorkflow = $this->getTaskWorkflow($task)->getWorkflow();
 
     if ($taskTemplateWorkflow === null) {
       return $this->updateStatus($task, $desiredStatus);
@@ -200,7 +208,7 @@ class TaskService extends RogerService
 
     // asked status not allowed in the workflow
     if (! in_array($desiredStatus, $statusWorkflow->getNextStatuses()))
-      return false;
+      throw new BadRequestHttpException('status "' . $desiredStatus . '" not allowed in the workflow ' . $this->getTaskWorkflow($task)->getIdentifier() . '. Allowed values: ' . implode(', ', $statusWorkflow->getNextStatuses()));
 
     $desiredStatusWorkflow = $taskTemplateWorkflow['statuses'][$desiredStatus];
 
@@ -209,19 +217,15 @@ class TaskService extends RogerService
       $check = $this->userTemplateService->test($constraint, [ 'owner' => $task->getOwner() ]);
 
       if (!$check->getBoolResult())
-        return false;
+        throw new BadRequestHttpException('status "' . $desiredStatus . '" not allowed in the workflow ' . $this->getTaskWorkflow($task)->getIdentifier() . '. Desired status constraint not validated : ' . $constraint);
     }
 
-    return $this->updateStatus($task, $desiredStatus);
+    return $this->updateStatus($task, $desiredStatus, $desiredStatusWorkflow->getIsDone());
   }
 
   protected function updateStatus(Task $task, string $status, bool $isDone = false) {
-    $task->setStatus($desiredStatus);
+    $task->setStatus($status);
     $task->setIsDone($isDone);
-
-    $this->entityManager->persist($task);
-    $this->entityManager->flush();
-    $this->entityManager->clear();
     return $task;
   }
 

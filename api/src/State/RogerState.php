@@ -25,6 +25,8 @@ abstract class RogerState implements ProcessorInterface, ProviderInterface, Roge
   protected $logger;
   protected $request;
   protected $security;
+  protected $uriVariables = [];
+  protected $context = [];
 
   public function __construct(
     RequestStack $request,
@@ -45,6 +47,9 @@ abstract class RogerState implements ProcessorInterface, ProviderInterface, Roge
 
   protected function stateProvide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
   {
+    $this->uriVariables = $uriVariables;
+    $this->context = $context;
+
     if ($operation instanceof CollectionOperationInterface)
     {
       $entities = $this->getCollection($context);
@@ -58,7 +63,11 @@ abstract class RogerState implements ProcessorInterface, ProviderInterface, Roge
       return $output;
     }
 
-    $entity = $this->getEntityByIdentifier($uriVariables['identifier']);
+    if (count($uriVariables) === 1 && isset($uriVariables['identifier']))
+      $entity = $this->getEntityByIdentifier($uriVariables['identifier']);
+    else
+      $entity = $this->getEntityByIdentifiers($uriVariables);
+
     $api = $this->newApi();
 
     if ($entity === null && $operation instanceof Put)
@@ -81,6 +90,9 @@ abstract class RogerState implements ProcessorInterface, ProviderInterface, Roge
 
   public function stateProcess(mixed $api, Operation $operation, array $uriVariables = [], array $context = [])
   {
+    $this->uriVariables = $uriVariables;
+    $this->context = $context;
+
     if ($operation instanceof Delete) {
       $entity = $this->getEntityByIdentifier($uriVariables['identifier']);
 
@@ -129,6 +141,11 @@ abstract class RogerState implements ProcessorInterface, ProviderInterface, Roge
   protected function getEntityByIdentifier($identifier)
   {
     return $this->service->findOneByIdentifier($identifier);
+  }
+
+  protected function getEntityByIdentifiers(array $identifiers)
+  {
+    return $this->service->findOneByIdentifiers($identifiers);
   }
 
   protected function deleteEntity($entity)

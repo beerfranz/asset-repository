@@ -2,26 +2,43 @@
 
 namespace App\Service;
 
+use App\Entity\Risk;
+use App\Entity\RiskManager;
+use App\Entity\Asset;
+
 use App\Service\UserTemplate;
 
 use Doctrine\ORM\EntityManagerInterface;
 
 use Psr\Log\LoggerInterface;
 
-class RiskService
+class RiskService extends RogerService
 {
-  protected $logger;
-  protected $entityManager;
-  protected $userTemplate;
 
   public function __construct(
     EntityManagerInterface $entityManager,
     LoggerInterface $logger,
-    UserTemplate $userTemplate,
+    protected UserTemplate $userTemplate,
   ) {
-    $this->entityManager = $entityManager;
-    $this->logger = $logger;
-    $this->userTemplate = $userTemplate;
+    parent::__construct($entityManager, $logger, Risk::class);
+
+    $this->assetRepo = $entityManager->getRepository(Asset::class);
+    $this->riskManagerRepo = $entityManager->getRepository(RiskManager::class);
+  }
+
+  public function newEntity(): Risk
+  {
+    $entity = new Risk();
+
+    return $entity;
+  }
+
+  public function findOneAssetByIdentifier($identifier) {
+    return $this->findOneByIdentifierInRepo($identifier, $this->assetRepo);
+  }
+
+  public function findOneRiskManagerByIdentifier($identifier) {
+    return $this->findOneByIdentifierInRepo($identifier, $this->riskManagerRepo);
   }
 
   public function aggregateRisk(string $formula, array $values, array $triggers = []): array
