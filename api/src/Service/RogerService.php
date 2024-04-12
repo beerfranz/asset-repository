@@ -29,6 +29,11 @@ abstract class RogerService implements RogerServiceInterface
     return $this->repo->findOneByIdentifier($identifier);
   }
 
+  public function findOneByIdentifiers(array $identifiers): null|RogerEntityInterface
+  {
+    return $this->repo->findOneByIdentifiers($identifiers);
+  }
+
   public function findOneByIdentifierInRepo($identifier, $repo): null|object
   {
     return $repo->findOneByIdentifier($identifier);

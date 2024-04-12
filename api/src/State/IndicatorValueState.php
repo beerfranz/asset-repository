@@ -4,7 +4,8 @@ namespace App\State;
 
 use App\ApiResource\IndicatorValue as IndicatorValueApi;
 use App\Entity\Indicator;
-use App\Entity\IndicatorValue;
+use App\Entity\IndicatorValue as IndicatorValueEntity;
+use App\Service\IndicatorValueService;
 use App\Service\TriggerService;
 
 use ApiPlatform\Metadata\CollectionOperationInterface;
@@ -22,123 +23,110 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Psr\Log\LoggerInterface;
 
-final class IndicatorValueState extends CommonState implements ProcessorInterface, ProviderInterface
+final class IndicatorValueState extends RogerState
 {
-    protected $indicatorRepo;
-    protected $indicatorValueRepo;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
         RequestStack $request,
         LoggerInterface $logger,
         Security $security,
-        TriggerService $triggerService,
+        IndicatorValueService $service,
+        protected TriggerService $triggerService,
     ) {
-        parent::__construct($entityManager, $request, $logger, $security);
-        $this->triggerService = $triggerService;
-        $this->indicatorValueRepo = $entityManager->getRepository(IndicatorValue::class);
-        $this->indicatorRepo = $entityManager->getRepository(Indicator::class);
+        parent::__construct($request, $logger, $security, $service);
     }
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
+    public function newApi(): IndicatorValueApi
     {
-        if ($operation instanceof CollectionOperationInterface)
-        {
-            $indicatorValueEntities = $this->getCollection($this->indicatorValueRepo, $context);
+        return new IndicatorValueApi();
+    }
 
-            $output = [];
-            foreach($indicatorValueEntities as $indicatorValueEntity) {
-                $indicatorValueApi = new IndicatorValueApi();
-                $output[] = $indicatorValueApi->fromEntityToApi($indicatorValueEntity);
-            }
+    public function fromApiToEntity($api, $entity): IndicatorValueEntity
+    {
+        $indicator = $this->service->findOneIndicatorByIdentifier($this->uriVariables['indicatorIdentifier']);
 
-            return $output;
+        if ($entity->getIdentifier() === null){
+            $entity->setIdentifier($api->__get('identifier'));
+            $entity->setIndicator($indicator);
+            $entity->setDatetime(new \DateTimeImmutable());
+            $entity->setIsValidated(false);
         }
 
-        $indicatorValueApi = new IndicatorValueApi();
+        $entity->setValue($api->__get('value'));
+        $entity->setIsValidated($api->isValidated || false);
 
-        $indicatorEntity = $this->indicatorRepo->findOneByIdentifier($uriVariables['indicatorIdentifier']);
-        if ($indicatorEntity === null) {
-            $indicatorValueApi->identifier = $uriVariables['identifier'];
-            return $indicatorValueApi;
-        }
+        $trigger = $this->triggerService->calculateTrigger($indicator->getTriggers(), $entity->getValue());
+        $entity->setTrigger($trigger->toArray());
 
-        $indicatorValueEntity = $this->indicatorValueRepo->findOneByIndicatorAndIdentifier($indicatorEntity, $uriVariables['identifier']);
+        return $entity;
+    }
 
-        if ($indicatorValueEntity === null){
-            $indicatorValueApi->identifier = $uriVariables['identifier'];
-            return $indicatorValueApi;
-        }
-        
-        return $indicatorValueApi->fromEntityToApi($indicatorValueEntity);
+    public function fromEntityToApi($entity, $api): IndicatorValueApi
+    {   
+        return $api->fromEntityToApi($entity);
     }
     
-    /**
-     * @param $data
-     * @return T2
-     */
-    public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
-    {
-        $user = $this->security->getUser();
+    // /**
+    //  * @param $data
+    //  * @return T2
+    //  */
+    // public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
+    // {
+    //     $user = $this->security->getUser();
 
-        if ($operation instanceof Delete) {
-            $this->delete($data);
-        } else {
-            if (isset($uriVariables['identifier']))
-                $data->identifier = $uriVariables['identifier'];
+    //     if ($operation instanceof Delete) {
+    //         $this->delete($data);
+    //     } else {
+    //         if (isset($uriVariables['identifier']))
+    //             $data->identifier = $uriVariables['identifier'];
 
-            if (isset($uriVariables['indicatorIdentifier'])) {
-                $indicatorEntity = $this->indicatorRepo->findOneByIdentifier($uriVariables['indicatorIdentifier']);
-                if ($indicatorEntity === null) {
-                    throw new \Exception('Indicator not found');
-                }
-            }
+    //         if (isset($uriVariables['indicatorIdentifier'])) {
+    //             $indicatorEntity = $this->indicatorRepo->findOneByIdentifier($uriVariables['indicatorIdentifier']);
+    //             if ($indicatorEntity === null) {
+    //                 throw new \Exception('Indicator not found');
+    //             }
+    //         }
             
-            $indicatorValue = $this->processOneIndicatorValue($data, $indicatorEntity);
+    //         $indicatorValue = $this->processOneIndicatorValue($data, $indicatorEntity);
 
-            $data->id = $indicatorValue->getId();
+    //         $data->id = $indicatorValue->getId();
 
-            $indicatorValueApi = new IndicatorValueApi();
-            $indicatorValueApi->fromEntityToApi($indicatorValue);
-            return $indicatorValueApi;
-        }
-    }
+    //         $indicatorValueApi = new IndicatorValueApi();
+    //         $indicatorValueApi->fromEntityToApi($indicatorValue);
+    //         return $indicatorValueApi;
+    //     }
+    // }
 
-    protected function processOneIndicatorValue($data, Indicator $indicator): IndicatorValue
-    {
-        $indicatorValue = null;
+    // protected function processOneIndicatorValue($data, Indicator $indicator): IndicatorValue
+    // {
+    //     $indicatorValue = null;
 
-        $identifier = $data->__get('identifier');
+    //     $identifier = $data->__get('identifier');
 
-        if ($identifier !== null) {
-            $indicatorValue = $this->indicatorValueRepo->findOneByIndicatorAndIdentifier($indicator, $identifier);
-        }
+    //     if ($identifier !== null) {
+    //         $indicatorValue = $this->indicatorValueRepo->findOneByIndicatorAndIdentifier($indicator, $identifier);
+    //     }
         
-        if ($indicatorValue === null)
-        {
-            $indicatorValue = new IndicatorValue();
-            $indicatorValue->setIdentifier($identifier);
-            $indicatorValue->setIndicator($indicator);
-            $indicatorValue->setDatetime(new \DateTimeImmutable());
-            $indicatorValue->setIsValidated(false);
-        }
+    //     if ($indicatorValue === null)
+    //     {
+    //         $indicatorValue = new IndicatorValue();
+    //         $indicatorValue->setIdentifier($identifier);
+    //         $indicatorValue->setIndicator($indicator);
+    //         $indicatorValue->setDatetime(new \DateTimeImmutable());
+    //         $indicatorValue->setIsValidated(false);
+    //     }
 
-        $indicatorValue->setIndicator($indicator);
-        $indicatorValue->setIsValidated($data->isValidated || false);
+    //     $indicatorValue->setIndicator($indicator);
+    //     $indicatorValue->setIsValidated($data->isValidated || false);
 
-        $trigger = $this->triggerService->calculateTrigger($indicator->getTriggers(), $indicatorValue->getValue());
-        $indicatorValue->setTrigger($trigger->toArray());
+    //     $trigger = $this->triggerService->calculateTrigger($indicator->getTriggers(), $indicatorValue->getValue());
+    //     $indicatorValue->setTrigger($trigger->toArray());
 
-        $this->entityManager->persist($indicatorValue);
-        $this->entityManager->flush();
-        $this->entityManager->clear();
+    //     $this->entityManager->persist($indicatorValue);
+    //     $this->entityManager->flush();
+    //     $this->entityManager->clear();
 
-        return $indicatorValue;
-    }
+    //     return $indicatorValue;
+    // }
 
-    protected function delete(IndicatorValue $indicatorValue) {
-        $this->entityManager->remove($indicatorValue);
-        $this->entityManager->flush();
-        $this->entityManager->clear();
-    }
 }
