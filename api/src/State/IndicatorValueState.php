@@ -8,32 +8,19 @@ use App\Entity\IndicatorValue as IndicatorValueEntity;
 use App\Service\IndicatorValueService;
 use App\Service\TriggerService;
 
-use ApiPlatform\Metadata\CollectionOperationInterface;
-use ApiPlatform\Metadata\Operation;
-use ApiPlatform\Metadata\Put;
-use ApiPlatform\Metadata\Delete;
-use ApiPlatform\State\ProcessorInterface;
-use ApiPlatform\State\ProviderInterface;
+use App\State\RogerStateFacade;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Common\Collections\Criteria;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpFoundation\RequestStack;
-
-use Psr\Log\LoggerInterface;
 
 final class IndicatorValueState extends RogerState
 {
 
     public function __construct(
-        RequestStack $request,
-        LoggerInterface $logger,
-        Security $security,
+        RogerStateFacade $facade,
         IndicatorValueService $service,
         protected TriggerService $triggerService,
     ) {
-        parent::__construct($request, $logger, $security, $service);
+        parent::__construct($facade, $service);
     }
 
     public function newApi(): IndicatorValueApi

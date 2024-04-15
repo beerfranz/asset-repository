@@ -7,22 +7,16 @@ use App\Entity\RiskManager as RiskManagerEntity;
 
 use App\Service\RiskManagerService;
 
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\RequestStack;
-
-use Psr\Log\LoggerInterface;
+use App\State\RogerStateFacade;
 
 final class RiskManagerState extends RogerState
 {
-    protected $riskManagerRepo;
 
     public function __construct(
-        RequestStack $request,
-        LoggerInterface $logger,
-        Security $security,
+        RogerStateFacade $facade,
         RiskManagerService $service,
     ) {
-        parent::__construct($request, $logger, $security, $service);
+        parent::__construct($facade, $service);
     }
 
     public function newApi(): RiskManagerApi

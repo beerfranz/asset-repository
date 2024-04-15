@@ -32,10 +32,9 @@ final class IndicatorState extends CommonState implements ProcessorInterface, Pr
         RequestStack $request,
         LoggerInterface $logger,
         Security $security,
-        FrequencyService $frequencyService,
+        protected FrequencyService $frequencyService,
     ) {
         parent::__construct($entityManager, $request, $logger, $security);
-        $this->frequencyService = $frequencyService;
         $this->indicatorRepo = $entityManager->getRepository(Indicator::class);
         $this->indicatorValueRepo = $entityManager->getRepository(IndicatorValue::class);
     }
