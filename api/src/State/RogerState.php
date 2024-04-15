@@ -5,6 +5,7 @@ namespace App\State;
 use App\ApiResource\RogerApiResourceInterface;
 use App\Entity\RogerEntityInterface;
 use App\Service\RogerServiceInterface;
+use App\State\RogerStateFacade;
 
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;
@@ -12,6 +13,8 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\State\ProcessorInterface;
 use ApiPlatform\State\ProviderInterface;
+use ApiPlatform\State\Pagination\Pagination;
+use ApiPlatform\State\Pagination\TraversablePaginator;
 
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -21,23 +24,21 @@ use Psr\Log\LoggerInterface;
 
 abstract class RogerState implements ProcessorInterface, ProviderInterface, RogerStateInterface
 {
-  protected $service;
-  protected $logger;
   protected $request;
+  protected $logger;
   protected $security;
+  protected $pagination;
   protected $uriVariables = [];
   protected $context = [];
 
   public function __construct(
-    RequestStack $request,
-    LoggerInterface $logger,
-    Security $security,
-    RogerServiceInterface $service,
+    protected RogerStateFacade $facade,
+    protected RogerServiceInterface $service,
   ) {
-    $this->request = $request->getCurrentRequest();
-    $this->logger = $logger;
-    $this->security = $security;
-    $this->service = $service;
+    $this->request = $facade->getCurrentRequest();
+    $this->logger = $facade->getLogger();
+    $this->security = $facade->getSecurity();
+    $this->pagination = $facade->getPagination();
   }
 
   public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
@@ -52,7 +53,11 @@ abstract class RogerState implements ProcessorInterface, ProviderInterface, Roge
 
     if ($operation instanceof CollectionOperationInterface)
     {
+      $currentPage = $this->pagination->getPage($context);
+      $itemsPerPage = $this->pagination->getLimit($operation, $context);
+      $offset = $this->pagination->getOffset($operation, $context);
       $entities = $this->getCollection($context);
+      $totalItems = count($entities);
 
       $output = [];
       foreach($entities as $entity) {
@@ -60,7 +65,12 @@ abstract class RogerState implements ProcessorInterface, ProviderInterface, Roge
         $output[] = $this->fromEntityToApi($entity, $api);
       }
 
-      return $output;
+      return new TraversablePaginator(
+        new \ArrayIterator($output),
+        $currentPage,
+        $itemsPerPage,
+        $totalItems,
+      );
     }
 
     if (count($uriVariables) === 1 && isset($uriVariables['identifier']))

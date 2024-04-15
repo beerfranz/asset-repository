@@ -11,25 +11,19 @@ use App\Service\TaskWorkflowService;
 
 use ApiPlatform\Metadata\Operation;
 
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpFoundation\RequestStack;
-
-use Psr\Log\LoggerInterface;
 
 final class TaskTemplateState extends RogerState
 {
     protected $frequencyService;
 
     public function __construct(
-        RequestStack $request,
-        LoggerInterface $logger,
-        Security $security,
+        RogerStateFacade $facade,
         TaskTemplateService $service,
         FrequencyService $frequencyService,
         protected TaskWorkflowService $taskWorkflowService,
     ) {
-        parent::__construct($request, $logger, $security, $service);
+        parent::__construct($facade, $service);
         $this->frequencyService = $frequencyService;
     }
 
@@ -40,6 +34,10 @@ final class TaskTemplateState extends RogerState
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
+        $operationInputs = $operation->getInput();
+        if (isset($operationInputs['name']) && $operationInputs['name'] === 'TaskTemplateGenerateDto')
+            return new TaskTemplateGenerateDto();
+        
         return $this->stateProvide($operation, $uriVariables, $context);
     }
 

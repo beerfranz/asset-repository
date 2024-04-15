@@ -6,6 +6,7 @@ use App\ApiResource\Risk as RiskApi;
 use App\Entity\Risk as RiskEntity;
 
 use App\Service\RiskService;
+use App\State\RogerStateFacade;
 
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;
@@ -13,6 +14,7 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\State\ProcessorInterface;
 use ApiPlatform\State\ProviderInterface;
+use ApiPlatform\State\Pagination\Pagination;
 
 use Doctrine\Common\Collections\Criteria;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -25,12 +27,10 @@ final class RiskState extends RogerState
 {
 
     public function __construct(
-        RequestStack $request,
-        LoggerInterface $logger,
-        Security $security,
+        RogerStateFacade $facade,
         RiskService $service,
     ) {
-        parent::__construct($request, $logger, $security, $service);
+        parent::__construct($facade, $service);
     }
 
     public function newApi(): RiskApi

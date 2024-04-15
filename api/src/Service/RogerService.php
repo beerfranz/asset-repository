@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\RogerEntityInterface;
+use App\Repository\RogerRepositoryInterface;
 
 use Doctrine\ORM\EntityManagerInterface;
 

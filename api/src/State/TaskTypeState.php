@@ -7,21 +7,14 @@ use App\Entity\TaskType as TaskTypeEntity;
 
 use App\Service\TaskTypeService;
 
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\RequestStack;
-
-use Psr\Log\LoggerInterface;
-
 final class TaskTypeState extends RogerState
 {
 
     public function __construct(
-        RequestStack $request,
-        LoggerInterface $logger,
-        Security $security,
+        RogerStateFacade $facade,
         TaskTypeService $service,
     ) {
-        parent::__construct($request, $logger, $security, $service);
+        parent::__construct($facade, $service);
     }
 
     public function newApi(): TaskTypeApi

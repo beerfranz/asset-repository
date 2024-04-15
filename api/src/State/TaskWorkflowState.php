@@ -8,21 +8,14 @@ use App\Entity\TaskWorkflowStatus;
 
 use App\Service\TaskWorkflowService;
 
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\RequestStack;
-
-use Psr\Log\LoggerInterface;
-
 final class TaskWorkflowState extends RogerState
 {
 
     public function __construct(
-        RequestStack $request,
-        LoggerInterface $logger,
-        Security $security,
+        RogerStateFacade $facade,
         TaskWorkflowService $service,
     ) {
-        parent::__construct($request, $logger, $security, $service);
+        parent::__construct($facade, $service);
     }
 
     public function newApi(): TaskWorkflowApi

@@ -14,6 +14,8 @@ use Psr\Log\LoggerInterface;
 
 class RiskService extends RogerService
 {
+  protected $assetRepo;
+  protected $riskManagerRepo;
 
   public function __construct(
     EntityManagerInterface $entityManager,
