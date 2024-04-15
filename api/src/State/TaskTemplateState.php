@@ -34,6 +34,10 @@ final class TaskTemplateState extends RogerState
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
+        $operationInputs = $operation->getInput();
+        if (isset($operationInputs['name']) && $operationInputs['name'] === 'TaskTemplateGenerateDto')
+            return new TaskTemplateGenerateDto();
+        
         return $this->stateProvide($operation, $uriVariables, $context);
     }
 
