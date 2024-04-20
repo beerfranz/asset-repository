@@ -28,5 +28,3 @@ services:
     # please note that last definitions always *replace* previous ones
     App\Doctrine\AssetListener:
         tags: [doctrine.orm.entity_listener]
-    App\Doctrine\IndicatorValueListener:
-        tags: [doctrine.orm.entity_listener]

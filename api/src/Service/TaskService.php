@@ -68,6 +68,7 @@ class TaskService extends RogerService
     TaskTemplate $taskTemplate,
     ?string $baseIdentifier = null,
     ?Task $parent = null,
+    ?array $properties = [],
   ): Task
   {
     $calculatedTaskIdentifier = $this->generateTaskIdentifierFromTaskTemplate($taskTemplate, $baseIdentifier);
@@ -84,6 +85,12 @@ class TaskService extends RogerService
     $task->setTitle($taskTemplate->getTitle());
     $task->setDescription($taskTemplate->getDescription());
     $task->setTaskType($taskTemplate->getTaskType());
+
+    foreach($properties as $property => $values) {
+      if ($property === 'attributes') {
+          $task->setAttributes($values);
+      }
+    }
 
     $defaultStatus = $this->getDefaultStatus($taskTemplate);
     if ($defaultStatus !== null)

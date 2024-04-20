@@ -44,6 +44,9 @@ class TaskTemplate extends RogerEntity
     #[ORM\ManyToOne(inversedBy: 'taskTemplates')]
     private ?TaskType $taskType = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $attributes = null;
+
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
@@ -195,6 +198,18 @@ class TaskTemplate extends RogerEntity
     public function setTaskType(?TaskType $taskType): static
     {
         $this->taskType = $taskType;
+
+        return $this;
+    }
+
+    public function getAttributes(): ?array
+    {
+        return $this->attributes;
+    }
+
+    public function setAttributes(?array $attributes): static
+    {
+        $this->attributes = $attributes;
 
         return $this;
     }

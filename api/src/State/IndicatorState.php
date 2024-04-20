@@ -5,7 +5,11 @@ namespace App\State;
 use App\ApiResource\Indicator as IndicatorApi;
 use App\Entity\Indicator;
 use App\Entity\IndicatorValue;
+
+use App\Service\IndicatorService;
 use App\Service\FrequencyService;
+
+use App\State\RogerStateFacade;
 
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;
@@ -22,111 +26,53 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Psr\Log\LoggerInterface;
 
-final class IndicatorState extends CommonState implements ProcessorInterface, ProviderInterface
+final class IndicatorState extends RogerState
 {
-    protected $indicatorRepo;
-    protected $indicatorValueRepo;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
-        RequestStack $request,
-        LoggerInterface $logger,
-        Security $security,
+        RogerStateFacade $facade,
+        IndicatorService $service,
         protected FrequencyService $frequencyService,
     ) {
-        parent::__construct($entityManager, $request, $logger, $security);
-        $this->indicatorRepo = $entityManager->getRepository(Indicator::class);
-        $this->indicatorValueRepo = $entityManager->getRepository(IndicatorValue::class);
+        parent::__construct($facade, $service);
     }
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
+    public function fromApiToEntity($api, $entity): Indicator
     {
+        if ($entity->getIdentifier() === null)
+            $entity->setIdentifier($api->__get('identifier'));
 
-        if ($operation instanceof CollectionOperationInterface)
-        {
-            $indicatorEntities = $this->getCollection($this->indicatorRepo, $context);
-
-            $output = [];
-            foreach($indicatorEntities as $indicatorEntity) {
-                $indicatorApi = new IndicatorApi();
-                $valuesSample = $this->indicatorValueRepo->findIndicatorSample($indicatorEntity);
-                $indicatorApi->setValuesSample($valuesSample);
-                
-                $output[] = $indicatorApi->fromEntityToApi($indicatorEntity);
-            }
-
-            return $output;
+        $taskTemplate = null;
+        if (null !== $api->__get('taskTemplate') && null !== $api->__get('taskTemplate')->__get('identifier')) {
+            $taskTemplate = $this->service->findOneTaskTemplateByIdentifier($api->__get('taskTemplate')->__get('identifier'));
+            $api->__set('taskTemplate', null);
         }
 
-        $indicatorEntity = $this->indicatorRepo->findOneByIdentifier($uriVariables['identifier']);
-        $indicatorApi = new IndicatorApi();
+        $entity = $api->fromApiToEntity($entity);
+        if ($taskTemplate !== null)
+            $entity->setTaskTemplate($taskTemplate);
 
-        if ($indicatorEntity === null && $operation instanceof Put)
-            return $indicatorApi;
-
-        if ($indicatorEntity === null)
-          throw new NotFoundHttpException('Not found');
-
-        $indicatorApi->fromEntityToApi($indicatorEntity);
-
-        return $indicatorApi->fromEntityToApi($indicatorEntity);
-    }
-    
-    /**
-     * @param $data
-     * @return T2
-     */
-    public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
-    {
-        $user = $this->security->getUser();
-
-        if ($operation instanceof Delete) {
-            $indicatorEntity = $this->indicatorRepo->findOneByIdentifier($uriVariables['identifier']);
-            $this->delete($indicatorEntity);
-        } else {
-            if (isset($uriVariables['identifier']))
-                $data->identifier = $uriVariables['identifier'];
-
-            $indicator = $this->processOneIndicator($data);
-
-            $data->id = $indicator->getId();
-        }
-    }
-
-    protected function processOneIndicator($data): Indicator
-    {
-        $indicator = null;
-
-        $identifier = $data->__get('identifier');
-
-        if ($identifier !== null) {
-            $indicator = $this->getEntity($identifier);
-        }
+        $this->frequencyService->calculateNextIteration($entity);
         
-        if ($indicator === null)
-        {
-            $indicator = new Indicator();
-        }
-
-        $indicator = $data->fromApiToEntity($indicator);
-
-        $indicator = $this->frequencyService->calculateNextIteration($indicator);
-
-        $this->entityManager->persist($indicator);
-        $this->entityManager->flush();
-        $this->entityManager->clear();
-
-        return $indicator;
+        return $entity;
     }
 
-    protected function delete(Indicator $indicator) {
-        $this->entityManager->remove($indicator);
-        $this->entityManager->flush();
-        $this->entityManager->clear();
-    }
-
-    protected function getEntity($identifier)
+    public function fromEntityToApi($entity, $api): IndicatorApi
     {
-        return $this->indicatorRepo->findOneByIdentifier($identifier);
+        $api->identifier = $entity->getIdentifier();
+        $api->frequency = $entity->getFrequency();
+        $api->namespace = $entity->getNamespace();
+        $api->description = $entity->getDescription();
+        $api->targetValue = $entity->getTargetValue();
+        $api->triggers = $entity->getTriggers();
+        $valuesSample = $this->service->findIndicatorSample($entity);
+        $api->setValuesSample($valuesSample);
+
+        return $api;
+    }
+
+    public function newApi(): IndicatorApi
+    {
+        return new IndicatorApi();
     }
 }

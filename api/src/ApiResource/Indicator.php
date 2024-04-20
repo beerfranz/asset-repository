@@ -70,11 +70,23 @@ class Indicator extends RogerApiResource
     #[Groups(['Indicators:read', 'Indicator:read'])]
     public $valuesSample = [];
 
+    #[Groups(['Indicators:read', 'Indicator:read', 'Indicator:write'])]
+    public ?TaskTemplate $taskTemplate = null;
+
     public function setValuesSample($samples)
     {
         foreach($samples as $sample) {
             $trigger = $sample->getTrigger();
             $this->valuesSample[] = [ 'identifier' => $sample->getIdentifier(), 'value' => $sample->getValue(), 'level' => $trigger['printLevel'] ];
         }
+    }
+
+    public function setTaskTemplate($taskTemplate): self
+    {
+        if (is_array($taskTemplate)) {
+            $this->taskTemplate = new TaskTemplate($taskTemplate);
+        }
+
+        return $this;
     }
 }

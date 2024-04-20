@@ -22,11 +22,35 @@ class TaskNotificationHandler
   public function newIndicatorValue(IndicatorValueMessage $message)
   {
     $event = $message->getEvent();
+    $context = $message->getContext();
 
-    if ($event === 'create_indicator_value') {
-      $taskTemplate = $this->service->findOneTaskTemplateByIdentifier('TPL-test-data-with-workflow');
+    if ($event === 'update_indicator_value' && isset($context['indicatorValue']['indicator']['taskTemplate']['identifier'])) {
+      
+      $messageIndicatorValue = $context['indicatorValue'];
+      $messageIndicator = $messageIndicatorValue['indicator'];
+      $messageTaskTemplate = $messageIndicator['taskTemplate'];
 
-      $this->service->generateTaskFromTaskTemplate($taskTemplate, 'indicator');
+      $taskTemplate = $this->service->findOneTaskTemplateByIdentifier($messageTaskTemplate['identifier']);
+
+      $properties = [];
+      $properties['attributes'] = [
+        'indicator' => [
+          'identifier' => $messageIndicator['identifier'],
+        ],
+        'indicatorValue' => [
+          'identifier' => $messageIndicatorValue['identifier'],
+        ],
+        'relatedTo' => [
+          'indicatorValue' => '/indicators/' . $messageIndicator['identifier'] . '/values/' . $messageIndicatorValue['identifier'],
+        ]
+      ];
+
+      $task = $this->service->generateTaskFromTaskTemplate(
+        $taskTemplate,
+        $messageIndicator['identifier'] . '_' . $messageIndicatorValue['identifier'],
+        null,
+        $properties,
+      );
     }
   }
 

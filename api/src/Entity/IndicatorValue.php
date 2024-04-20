@@ -6,7 +6,7 @@ use App\Doctrine\IndicatorValueListener;
 use App\Repository\IndicatorValueRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\EntityListeners([IndicatorValueListener::class])]
+// #[ORM\EntityListeners([IndicatorValueListener::class])]
 #[ORM\Entity(repositoryClass: IndicatorValueRepository::class)]
 class IndicatorValue extends RogerEntity
 {
@@ -36,6 +36,9 @@ class IndicatorValue extends RogerEntity
 
     #[ORM\Column(nullable: true, type: 'json_document')]
     private ?array $trigger = null;
+
+    #[ORM\ManyToOne]
+    private ?Task $task = null;
 
     public function getId(): ?int
     {
@@ -147,6 +150,18 @@ class IndicatorValue extends RogerEntity
     public function setTrigger(?array $trigger): static
     {
         $this->trigger = $trigger;
+
+        return $this;
+    }
+
+    public function getTask(): ?Task
+    {
+        return $this->task;
+    }
+
+    public function setTask(?Task $task): static
+    {
+        $this->task = $task;
 
         return $this;
     }
