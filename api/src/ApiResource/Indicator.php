@@ -6,6 +6,8 @@ use App\State\IndicatorState;
 use App\Entity\Indicator as IndicatorEntity;
 use App\Entity\Frequency;
 
+use App\ApiResource\TaskTemplate;
+
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
@@ -83,8 +85,12 @@ class Indicator extends RogerApiResource
 
     public function setTaskTemplate($taskTemplate): self
     {
-        if (is_array($taskTemplate)) {
+        if (is_array($taskTemplate))
             $this->taskTemplate = new TaskTemplate($taskTemplate);
+        elseif ($taskTemplate instanceof TaskTemplate){
+            $this->taskTemplate = $taskTemplate;
+        } else {
+            $this->taskTemplate = $taskTemplate;
         }
 
         return $this;

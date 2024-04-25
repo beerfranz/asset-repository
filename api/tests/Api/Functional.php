@@ -2,12 +2,14 @@
 
 namespace App\Tests\Api;
 
+use App\Tests\Api\RogerTestMessageTrait;
+
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
 abstract class Functional extends ApiTestCase {
-	use ResetDatabase, Factories;
+	use ResetDatabase, Factories, RogerTestMessageTrait;
 
 	protected $entityManager;
 

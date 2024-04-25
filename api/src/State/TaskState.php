@@ -34,6 +34,7 @@ final class TaskState extends RogerState
         $entity->setDescription($api->__get('description'));
         $entity->setAssignedTo($api->__get('assignedTo'));
         $entity->setOwner($api->__get('owner'));
+        $entity->setAttributes($api->__get('attributes'));
 
         $taskTemplate = $this->service->findOneTaskTemplateByIdentifier($api->__get('taskTemplateIdentifier'));
         $this->service->setTaskTemplate($entity, $taskTemplate);

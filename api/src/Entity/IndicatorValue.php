@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Doctrine\IndicatorValueListener;
+use App\Doctrine\RogerListener;
 use App\Repository\IndicatorValueRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-// #[ORM\EntityListeners([IndicatorValueListener::class])]
+// #[ORM\EntityListeners([RogerListener::class])]
 #[ORM\Entity(repositoryClass: IndicatorValueRepository::class)]
 class IndicatorValue extends RogerEntity
 {
@@ -18,7 +18,7 @@ class IndicatorValue extends RogerEntity
     #[ORM\Column]
     private ?\DateTimeImmutable $datetime = null;
 
-    #[ORM\ManyToOne(inversedBy: 'indicatorValues')]
+    #[ORM\ManyToOne(inversedBy: 'indicatorValues', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Indicator $indicator = null;
 
@@ -37,8 +37,8 @@ class IndicatorValue extends RogerEntity
     #[ORM\Column(nullable: true, type: 'json_document')]
     private ?array $trigger = null;
 
-    #[ORM\ManyToOne]
-    private ?Task $task = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $taskIdentifier = null;
 
     public function getId(): ?int
     {
@@ -154,14 +154,14 @@ class IndicatorValue extends RogerEntity
         return $this;
     }
 
-    public function getTask(): ?Task
+    public function getTaskIdentifier(): ?string
     {
-        return $this->task;
+        return $this->taskIdentifier;
     }
 
-    public function setTask(?Task $task): static
+    public function setTaskIdentifier(?string $taskIdentifier): static
     {
-        $this->task = $task;
+        $this->taskIdentifier = $taskIdentifier;
 
         return $this;
     }

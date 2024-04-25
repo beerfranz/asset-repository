@@ -2,7 +2,7 @@
 
 namespace App\Message;
 
-abstract class RogerAsyncMessage extends RogerMessage
+class RogerAsyncMessage extends RogerMessage
 {
 
 }

@@ -1,0 +1,7 @@
+request:
+  method: PUT
+  path: /task_templates/dev-indicator
+
+data:
+  title: Indicators from dev team
+  typeIdentifier: dev-indicator

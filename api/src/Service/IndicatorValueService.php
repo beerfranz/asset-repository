@@ -16,6 +16,7 @@ use Psr\Log\LoggerInterface;
 
 class IndicatorValueService extends RogerService
 {
+  protected $indicatorRepo;
 
   public function __construct(
     EntityManagerInterface $entityManager,
@@ -49,7 +50,7 @@ class IndicatorValueService extends RogerService
     return $this->indicatorRepo->findOneByIdentifier($identifier);
   }
 
-  public function generateTask(IndicatorValue $indicatorValue): void
+  public function sendMessage(IndicatorValue $indicatorValue): void
   {
 
     $context = [
@@ -65,11 +66,11 @@ class IndicatorValueService extends RogerService
         'identifier' => $indicator->getIdentifier(),
       ];
 
-      $taskTemplate = $indicator->getTaskTemplate();
+      $taskTemplateIdentifier = $indicator->getTaskTemplateIdentifier();
 
-      if ($taskTemplate !== null) {
+      if ($taskTemplateIdentifier !== null) {
         $context['indicatorValue']['indicator']['taskTemplate'] = [
-          'identifier' => $taskTemplate->getIdentifier(),
+          'identifier' => $taskTemplateIdentifier,
         ];
       }
     }
@@ -81,6 +82,6 @@ class IndicatorValueService extends RogerService
   {
     parent::persistEntity($entity);
 
-    $this->generateTask($entity);
+    $this->sendMessage($entity);
   }
 }

@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Entity\Indicator;
 use App\Entity\IndicatorValue;
-use App\Entity\TaskTemplate;
 
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -23,7 +22,6 @@ class IndicatorService extends RogerService
   ) {
     parent::__construct($entityManager, $logger, Indicator::class);
     $this->indicatorValueRepo = $entityManager->getRepository(IndicatorValue::class);
-    $this->taskTemplateRepo = $entityManager->getRepository(TaskTemplate::class);
   }
 
   public function newEntity(): Indicator
@@ -37,10 +35,4 @@ class IndicatorService extends RogerService
   {
     return $this->indicatorValueRepo->findIndicatorSample($indicator);
   }
-
-  public function findOneTaskTemplateByIdentifier(string $taskTemplateIdentifier)
-  {
-    return $this->findOneByIdentifierInRepo($taskTemplateIdentifier, $this->taskTemplateRepo);
-  }
-
 }

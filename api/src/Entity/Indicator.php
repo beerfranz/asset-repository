@@ -41,8 +41,8 @@ class Indicator extends RogerEntity
     #[ORM\OneToMany(mappedBy: 'indicator', targetEntity: IndicatorValue::class)]
     private Collection $indicatorValues;
 
-    #[ORM\ManyToOne]
-    private ?TaskTemplate $taskTemplate = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $taskTemplateIdentifier = null;
 
     public function __construct()
     {
@@ -171,14 +171,14 @@ class Indicator extends RogerEntity
         return $this;
     }
 
-    public function getTaskTemplate(): ?TaskTemplate
+    public function getTaskTemplateIdentifier(): ?string
     {
-        return $this->taskTemplate;
+        return $this->taskTemplateIdentifier;
     }
 
-    public function setTaskTemplate(?TaskTemplate $taskTemplate): static
+    public function setTaskTemplateIdentifier(?string $taskTemplateIdentifier): static
     {
-        $this->taskTemplate = $taskTemplate;
+        $this->taskTemplateIdentifier = $taskTemplateIdentifier;
 
         return $this;
     }

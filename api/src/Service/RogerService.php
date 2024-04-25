@@ -49,14 +49,12 @@ abstract class RogerService implements RogerServiceInterface
   {
     $this->entityManager->remove($entity);
     $this->entityManager->flush();
-    $this->entityManager->clear();
   }
 
   public function persistEntity(RogerEntityInterface $entity)
   {
     $this->entityManager->persist($entity);
     $this->entityManager->flush();
-    $this->entityManager->clear();
   }
 
   public function getCollection($context)

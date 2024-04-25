@@ -6,7 +6,8 @@ use App\Entity\Frequency;
 use App\Entity\Task;
 use App\Entity\TaskType;
 use App\Entity\TaskTemplate;
-
+use App\Entity\RogerEntityInterface;
+use App\Message\TaskMessage;
 use App\Service\FrequencyService;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -76,6 +77,7 @@ class TaskService extends RogerService
     $task = $this->taskRepo->findOneByIdentifier($calculatedTaskIdentifier);
 
     if ($task === null) {
+      $this->logger->debug('generateTaskFromTaskTemplate: new task with identifier ' . $calculatedTaskIdentifier);
       $task = new Task();
       $task->setIdentifier($calculatedTaskIdentifier);
       $task->setTaskTemplate($taskTemplate);
@@ -93,17 +95,20 @@ class TaskService extends RogerService
     }
 
     $defaultStatus = $this->getDefaultStatus($taskTemplate);
-    if ($defaultStatus !== null)
+    if ($defaultStatus !== null) {
       $task->setStatus($defaultStatus);
+    }
 
     if ($parent !== null) {
-      $task->setParent($parent);
+      $task->setParegenerateTaskFromTaskTemplatent($parent);
     }
     
-    $this->entityManager->persist($task);
-    if ($taskTemplate->getFrequency() !== [])
+    // $this->entityManager->persist($task);
+    if ($taskTemplate->getFrequency() !== []) {
       $this->frequencyService->calculateNextIteration($taskTemplate);
+    }
     
+    $this->logger->debug('persist task ' . $calculatedTaskIdentifier);
     $this->entityManager->persist($task);
 
     foreach ($this->getTaskTemplateChildren($taskTemplate) as $taskTemplateChild) {
@@ -112,7 +117,6 @@ class TaskService extends RogerService
 
     if ($parent === null) {
       $this->entityManager->flush();
-      $this->entityManager->clear();
     }
 
     return $task;
@@ -240,4 +244,5 @@ class TaskService extends RogerService
   {
     return $this->taskTemplateRepo->findOneByIdentifier($identifier);
   }
+
 }

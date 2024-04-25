@@ -42,15 +42,15 @@ final class IndicatorState extends RogerState
         if ($entity->getIdentifier() === null)
             $entity->setIdentifier($api->__get('identifier'));
 
-        $taskTemplate = null;
+        $taskTemplateIdentifier = null;
         if (null !== $api->__get('taskTemplate') && null !== $api->__get('taskTemplate')->__get('identifier')) {
-            $taskTemplate = $this->service->findOneTaskTemplateByIdentifier($api->__get('taskTemplate')->__get('identifier'));
+            $taskTemplateIdentifier = $api->__get('taskTemplate')->__get('identifier');
             $api->__set('taskTemplate', null);
         }
 
         $entity = $api->fromApiToEntity($entity);
-        if ($taskTemplate !== null)
-            $entity->setTaskTemplate($taskTemplate);
+        if ($taskTemplateIdentifier !== null)
+            $entity->setTaskTemplateIdentifier($taskTemplateIdentifier);
 
         $this->frequencyService->calculateNextIteration($entity);
         
@@ -67,6 +67,9 @@ final class IndicatorState extends RogerState
         $api->triggers = $entity->getTriggers();
         $valuesSample = $this->service->findIndicatorSample($entity);
         $api->setValuesSample($valuesSample);
+
+        if (null !== $entity->getTaskTemplateIdentifier())
+            $api->setTaskTemplate([ 'identifier' => $entity->getTaskTemplateIdentifier()]);
 
         return $api;
     }
