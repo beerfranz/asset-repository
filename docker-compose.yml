@@ -1,7 +1,7 @@
 version: "3.4"
 
 services:
-  php:
+  php: &php
     build:
       context: ./api
       target: app_php
@@ -28,6 +28,16 @@ services:
       JWKS_URL: ${OAUTH_JWTS_URL}
       JWT_SKIP_VERIFY: "true"
       SYMFONY_PHPUNIT_REQUIRE: "nikic/php-parser:^4.13"  # fix test coverage
+
+  php-worker:
+    <<: *php
+    build:
+      context: ./api
+      target: app_php_dev
+    volumes:
+      - ./api:/srv/app
+      - ./api/docker/php/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
+    command: [ "php", "bin/console", "messenger:consume", "async" ] # for production: add restart and "--limit=10", "--time-limit=60"
 
   # pwa:
   #   build:
