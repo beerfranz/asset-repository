@@ -76,6 +76,9 @@ class Task extends RogerApiResource
     #[Groups(['Task:write'])]
     public $taskTemplateIdentifier;
 
+    #[Groups(['Task:read', 'Task:write'])]
+    public $attributes;
+
     #[Groups(['Task:read'])]
     public $events;
 

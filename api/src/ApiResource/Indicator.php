@@ -6,6 +6,8 @@ use App\State\IndicatorState;
 use App\Entity\Indicator as IndicatorEntity;
 use App\Entity\Frequency;
 
+use App\ApiResource\TaskTemplate;
+
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
@@ -70,11 +72,27 @@ class Indicator extends RogerApiResource
     #[Groups(['Indicators:read', 'Indicator:read'])]
     public $valuesSample = [];
 
+    #[Groups(['Indicators:read', 'Indicator:read', 'Indicator:write'])]
+    public ?TaskTemplate $taskTemplate = null;
+
     public function setValuesSample($samples)
     {
         foreach($samples as $sample) {
             $trigger = $sample->getTrigger();
             $this->valuesSample[] = [ 'identifier' => $sample->getIdentifier(), 'value' => $sample->getValue(), 'level' => $trigger['printLevel'] ];
         }
+    }
+
+    public function setTaskTemplate($taskTemplate): self
+    {
+        if (is_array($taskTemplate))
+            $this->taskTemplate = new TaskTemplate($taskTemplate);
+        elseif ($taskTemplate instanceof TaskTemplate){
+            $this->taskTemplate = $taskTemplate;
+        } else {
+            $this->taskTemplate = $taskTemplate;
+        }
+
+        return $this;
     }
 }

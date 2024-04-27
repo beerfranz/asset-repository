@@ -37,7 +37,7 @@ class AssetDefinitionRelation
     #[Groups(['AssetDefinition:read'])]
     private ?string $name = null;
 
-    #[ORM\ManyToOne(inversedBy: 'assetDefinitionRelations', cascade: ['persist'])]
+    #[ORM\ManyToOne(inversedBy: 'relations', cascade: ['persist'])]
     #[Groups(['AssetDefinition:read'])]
     private ?Source $source = null;
 

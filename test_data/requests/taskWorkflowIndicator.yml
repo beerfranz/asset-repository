@@ -1,0 +1,17 @@
+request:
+  method: PUT
+  path: /task_workflows/dev-indicator
+
+data:
+  statuses:
+    todo:
+      isDefault: true
+      nextStatuses:
+        - to_valid
+    to_valid:
+      constraints:
+        - attributes.indicator.value is defined
+      nextStatuses:
+        - validated
+    validated:
+      isDone: true

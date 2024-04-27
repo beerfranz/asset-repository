@@ -4,19 +4,24 @@ namespace App\Service;
 
 use App\Entity\Indicator;
 use App\Entity\IndicatorValue;
+use App\Entity\RogerEntityInterface;
+use App\Message\IndicatorValueMessage;
 
 use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 use Psr\Log\LoggerInterface;
 
 class IndicatorValueService extends RogerService
 {
+  protected $indicatorRepo;
 
   public function __construct(
     EntityManagerInterface $entityManager,
     LoggerInterface $logger,
+    protected MessageBusInterface $bus,
   ) {
     parent::__construct($entityManager, $logger, IndicatorValue::class);
 
@@ -43,5 +48,40 @@ class IndicatorValueService extends RogerService
   public function findOneIndicatorByIdentifier($identifier): ?Indicator
   {
     return $this->indicatorRepo->findOneByIdentifier($identifier);
+  }
+
+  public function sendMessage(IndicatorValue $indicatorValue): void
+  {
+
+    $context = [
+      'indicatorValue' => [
+        'identifier' => $indicatorValue->getIdentifier(),
+      ]
+    ];
+
+    $indicator = $indicatorValue->getIndicator();
+
+    if ($indicator !== null) {
+      $context['indicatorValue']['indicator'] = [
+        'identifier' => $indicator->getIdentifier(),
+      ];
+
+      $taskTemplateIdentifier = $indicator->getTaskTemplateIdentifier();
+
+      if ($taskTemplateIdentifier !== null) {
+        $context['indicatorValue']['indicator']['taskTemplate'] = [
+          'identifier' => $taskTemplateIdentifier,
+        ];
+      }
+    }
+
+    $this->bus->dispatch(new IndicatorValueMessage('update_indicator_value', $context));
+  }
+
+  public function persistEntity(RogerEntityInterface $entity)
+  {
+    parent::persistEntity($entity);
+
+    $this->sendMessage($entity);
   }
 }

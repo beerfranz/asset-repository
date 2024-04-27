@@ -6,7 +6,8 @@ use App\Entity\Frequency;
 use App\Entity\Task;
 use App\Entity\TaskType;
 use App\Entity\TaskTemplate;
-
+use App\Entity\RogerEntityInterface;
+use App\Message\TaskMessage;
 use App\Service\FrequencyService;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -68,6 +69,7 @@ class TaskService extends RogerService
     TaskTemplate $taskTemplate,
     ?string $baseIdentifier = null,
     ?Task $parent = null,
+    ?array $properties = [],
   ): Task
   {
     $calculatedTaskIdentifier = $this->generateTaskIdentifierFromTaskTemplate($taskTemplate, $baseIdentifier);
@@ -75,6 +77,7 @@ class TaskService extends RogerService
     $task = $this->taskRepo->findOneByIdentifier($calculatedTaskIdentifier);
 
     if ($task === null) {
+      $this->logger->debug('generateTaskFromTaskTemplate: new task with identifier ' . $calculatedTaskIdentifier);
       $task = new Task();
       $task->setIdentifier($calculatedTaskIdentifier);
       $task->setTaskTemplate($taskTemplate);
@@ -85,17 +88,25 @@ class TaskService extends RogerService
     $task->setDescription($taskTemplate->getDescription());
     $task->setTaskType($taskTemplate->getTaskType());
 
+    foreach($properties as $property => $values) {
+      if ($property === 'attributes') {
+          $task->setAttributes($values);
+      }
+    }
+
     $defaultStatus = $this->getDefaultStatus($taskTemplate);
-    if ($defaultStatus !== null)
+    if ($defaultStatus !== null) {
       $task->setStatus($defaultStatus);
+    }
 
     if ($parent !== null) {
-      $task->setParent($parent);
+      $task->setParegenerateTaskFromTaskTemplatent($parent);
     }
     
-    $this->entityManager->persist($task);
-    if ($taskTemplate->getFrequency() !== [])
+    // $this->entityManager->persist($task);
+    if ($taskTemplate->getFrequency() !== []) {
       $this->frequencyService->calculateNextIteration($taskTemplate);
+    }
     
     $this->entityManager->persist($task);
 
@@ -105,7 +116,6 @@ class TaskService extends RogerService
 
     if ($parent === null) {
       $this->entityManager->flush();
-      $this->entityManager->clear();
     }
 
     return $task;
@@ -194,6 +204,9 @@ class TaskService extends RogerService
 
   public function askNewStatus(Task $task, string $desiredStatus)
   {
+    if ($task->getStatus() === $desiredStatus)
+      return $task;
+
     $taskTemplateWorkflow = $this->getTaskWorkflow($task)->getWorkflow();
 
     if ($taskTemplateWorkflow === null) {
@@ -214,7 +227,7 @@ class TaskService extends RogerService
 
     // check asked status constrains
     foreach ($desiredStatusWorkflow->getConstraints() as $constraint) {
-      $check = $this->userTemplateService->test($constraint, [ 'owner' => $task->getOwner() ]);
+      $check = $this->userTemplateService->test($constraint, [ 'owner' => $task->getOwner(), 'attributes' => $task->getAttributes() ]);
 
       if (!$check->getBoolResult())
         throw new BadRequestHttpException('status "' . $desiredStatus . '" not allowed in the workflow ' . $this->getTaskWorkflow($task)->getIdentifier() . '. Desired status constraint not validated : ' . $constraint);
@@ -233,4 +246,5 @@ class TaskService extends RogerService
   {
     return $this->taskTemplateRepo->findOneByIdentifier($identifier);
   }
+
 }

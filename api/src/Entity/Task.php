@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\TaskRepository;
+use App\Doctrine\RogerListener;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -11,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 #[ORM\UniqueConstraint(columns:["identifier"])]
 #[ORM\Index(name: "isDone_idx", fields: ["isDone"])]
+#[ORM\EntityListeners([RogerListener::class])]
 class Task extends RogerEntity
 {
     #[ORM\Id]
@@ -56,6 +59,9 @@ class Task extends RogerEntity
 
     #[ORM\ManyToOne(inversedBy: 'tasks', cascade: ['persist'])]
     private ?TaskType $taskType = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?array $attributes = null;
 
     public function __construct()
     {
@@ -256,6 +262,18 @@ class Task extends RogerEntity
     public function setTaskType(?TaskType $taskType): static
     {
         $this->taskType = $taskType;
+
+        return $this;
+    }
+
+    public function getAttributes(): ?array
+    {
+        return $this->attributes;
+    }
+
+    public function setAttributes(?array $attributes): static
+    {
+        $this->attributes = $attributes;
 
         return $this;
     }

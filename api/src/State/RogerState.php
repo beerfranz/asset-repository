@@ -9,6 +9,7 @@ use App\State\RogerStateFacade;
 
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\State\ProcessorInterface;
@@ -30,6 +31,7 @@ abstract class RogerState implements ProcessorInterface, ProviderInterface, Roge
   protected $pagination;
   protected $uriVariables = [];
   protected $context = [];
+  protected $isPatch = false;
 
   public function __construct(
     protected RogerStateFacade $facade,
@@ -112,6 +114,9 @@ abstract class RogerState implements ProcessorInterface, ProviderInterface, Roge
       $this->deleteEntity($entity);
 
     } else {
+      if ($operation instanceof Patch)
+        $this->isPatch = true;
+      
       if (isset($uriVariables['identifier']))
         $api->__set('identifier', $uriVariables['identifier']);
 

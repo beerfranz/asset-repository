@@ -13,3 +13,4 @@ data:
   frequency: 
     description: monthly
     crontab: '0 0 1 * *'
+  taskTemplate: /task_templates/dev-indicator

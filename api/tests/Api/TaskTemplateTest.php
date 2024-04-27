@@ -8,6 +8,26 @@ use App\Tests\Factory\TaskTemplateFactory;
 class TaskTemplateTest extends Functional
 {
 
+  public static function getWorkflowInput() {
+    return [
+      'statuses' => [
+        'toCheck' => [
+          'isDefault' => true,
+          'nextStatuses' => [ 'checked', 'failed', 'skip' ],
+        ],
+        'checked' => [
+          'isDone' => true,
+        ],
+        'failed' => [
+          'isDone' => true,
+        ],
+        'skip' => [
+          'isDone' => true,
+        ],
+      ]
+    ];
+  }
+
   public function testAdminCreateTaskTemplate(): void
   {
     $identifier = 'tt-001';
@@ -89,23 +109,7 @@ class TaskTemplateTest extends Functional
     // Add workflow
 
     $workflowIdentifier = 'workflow-QA';
-    $workflowInput = [
-      'statuses' => [
-        'toCheck' => [
-          'isDefault' => true,
-          'nextStatuses' => [ 'checked', 'failed', 'skip' ],
-        ],
-        'checked' => [
-          'isDone' => true,
-        ],
-        'failed' => [
-          'isDone' => true,
-        ],
-        'skip' => [
-          'isDone' => true,
-        ],
-      ]
-    ];
+    $workflowInput = self::getWorkflowInput();
     $workflowOutput = $this->calculateSimpleOutput('TaskWorkflow', $workflowIdentifier, '/task_workflows/' . $workflowIdentifier, $workflowInput);
 
     $this->testPut('/task_workflows/' . $workflowIdentifier, [
