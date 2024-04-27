@@ -108,7 +108,6 @@ class TaskService extends RogerService
       $this->frequencyService->calculateNextIteration($taskTemplate);
     }
     
-    $this->logger->debug('persist task ' . $calculatedTaskIdentifier);
     $this->entityManager->persist($task);
 
     foreach ($this->getTaskTemplateChildren($taskTemplate) as $taskTemplateChild) {
@@ -205,6 +204,9 @@ class TaskService extends RogerService
 
   public function askNewStatus(Task $task, string $desiredStatus)
   {
+    if ($task->getStatus() === $desiredStatus)
+      return $task;
+
     $taskTemplateWorkflow = $this->getTaskWorkflow($task)->getWorkflow();
 
     if ($taskTemplateWorkflow === null) {
@@ -225,7 +227,7 @@ class TaskService extends RogerService
 
     // check asked status constrains
     foreach ($desiredStatusWorkflow->getConstraints() as $constraint) {
-      $check = $this->userTemplateService->test($constraint, [ 'owner' => $task->getOwner() ]);
+      $check = $this->userTemplateService->test($constraint, [ 'owner' => $task->getOwner(), 'attributes' => $task->getAttributes() ]);
 
       if (!$check->getBoolResult())
         throw new BadRequestHttpException('status "' . $desiredStatus . '" not allowed in the workflow ' . $this->getTaskWorkflow($task)->getIdentifier() . '. Desired status constraint not validated : ' . $constraint);

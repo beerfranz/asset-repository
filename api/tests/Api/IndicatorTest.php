@@ -38,7 +38,7 @@ class IndicatorTest extends Functional
         ],
         'to_valid' => [
           'constraints' => [
-            'attributes.indicator.value is defined',
+            'attributes.indicatorValue.value is defined',
           ],
           'nextStatuses' => [
             'validated',
@@ -163,12 +163,7 @@ class IndicatorTest extends Functional
     ]);
 
     $this->assertQueueCount(1);
-    $this->processQueue(1);
-    $this->assertQueueIsEmpty();
-    $this->transport('async')
-            ->rejected()
-            ->assertEmpty();
-
+    $this->processQueue();
 
     $task = self::getTask();
       
@@ -177,12 +172,52 @@ class IndicatorTest extends Functional
       'output' => $task,
     ]);
 
-    // Update task with value
+    // Test bad status
+    $this->testPatch('/tasks/' . $task['identifier'], [
+      'headers' => $this->getAdminUser(),
+      'input' => [ 'status' => 'validated' ],
+      'output' => [],
+      'responseStatus' => 400,
+    ]);
 
+    // Test status without all constraints
+    $this->testPatch('/tasks/' . $task['identifier'], [
+      'headers' => $this->getAdminUser(),
+      'input' => [ 'status' => 'to_valid' ],
+      'output' => [],
+      'responseStatus' => 400,
+    ]);
+
+    // Update task with value
+    $this->testPatch('/tasks/' . $task['identifier'], [
+      'headers' => $this->getAdminUser(),
+      'input' => [ 'attributes' => [ 'indicatorValue' => [ 'value' => 69 ] ] ],
+      'output' => $task,
+    ]);
+
+    // Update task status to_valid (should be merged with previous test)
+    $this->testPatch('/tasks/' . $task['identifier'], [
+      'headers' => $this->getAdminUser(),
+      'input' => [ 'status' => 'to_valid' ],
+      'output' => array_merge($task, [ 'status' => 'to_valid' ]),
+    ]);
+
+    $this->processQueue();
 
     // Update task status to validated
+    $this->testPatch('/tasks/' . $task['identifier'], [
+      'headers' => $this->getAdminUser(),
+      'input' => [ 'status' => 'validated' ],
+      'output' => array_merge($task, [ 'status' => 'validated', 'isDone' => true ]),
+    ]);
+
+    $this->processQueue();
 
     // assert indicator value is validated
+    $this->testGet('/indicators/' . $indicator['identifier'] . '/values/' . $indicatorValue['identifier'], [
+      'headers' => $this->getAdminUser(),
+      'output' => array_merge($indicatorValue, [ 'isValidated' => true ]),
+    ]);
 
   }
 

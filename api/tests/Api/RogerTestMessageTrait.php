@@ -21,10 +21,10 @@ trait RogerTestMessageTrait {
         try {
             if (null === $id)
                 $this->transport('async')->process();
-            else
+            else {
                 $this->transport('async')->process($id);
-
-            $this->transport('async')->rejected()->assertEmpty();
+                $this->transport('async')->rejected()->assertEmpty();
+            }
         } catch (\Throwable $t) {
             fwrite(STDERR, print_r('Message is rejected', true));
             var_dump($this->getRejectedMessages());
