@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Patch;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -45,6 +46,11 @@ use Doctrine\Common\Collections\Collection;
     security: "is_granted('ASSET_WRITE')"
 )]
 #[Put(
+    uriTemplate: '/indicators/{indicatorIdentifier}/values/{identifier}',
+    uriVariables: [ 'indicatorIdentifier', 'identifier' ],
+    security: "is_granted('ASSET_WRITE')"
+)]
+#[Patch(
     uriTemplate: '/indicators/{indicatorIdentifier}/values/{identifier}',
     uriVariables: [ 'indicatorIdentifier', 'identifier' ],
     security: "is_granted('ASSET_WRITE')"
