@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Patch;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -49,6 +50,11 @@ use Doctrine\Common\Collections\Collection;
     uriVariables: [ 'indicatorIdentifier', 'identifier' ],
     security: "is_granted('ASSET_WRITE')"
 )]
+#[Patch(
+    uriTemplate: '/indicators/{indicatorIdentifier}/values/{identifier}',
+    uriVariables: [ 'indicatorIdentifier', 'identifier' ],
+    security: "is_granted('ASSET_WRITE')"
+)]
 class IndicatorValue extends RogerApiResource
 {
     #[Groups(['IndicatorValues:read', 'IndicatorValue:read', 'IndicatorValue:write'])]
@@ -67,10 +73,10 @@ class IndicatorValue extends RogerApiResource
     #[Groups(['IndicatorValues:read', 'IndicatorValue:read', 'IndicatorValue:write'])]
     public $isValidated;
 
-    #[Groups(['IndicatorValues:read', 'IndicatorValue:read', 'IndicatorValue:write'])]
+    #[Groups(['IndicatorValues:read', 'IndicatorValue:read'])]
     public $validator;
     
-    #[Groups(['IndicatorValues:read', 'IndicatorValue:read', 'IndicatorValue:write'])]
+    #[Groups(['IndicatorValues:read', 'IndicatorValue:read'])]
     public ?array $trigger = null;
 
     public function __construct(){

@@ -117,12 +117,28 @@ function renderIndicatorValues(values) {
   Object.keys(values).forEach(function(key) {
     value = values[key];
 
-    result += '<td class="bg-' + value.level + '">' + value.value + '</td>';
+    result += '<td class="bg-' + value.level + '">' + renderIndicatorValue(value.value, { level: value.level, taskIdentifier: value.taskIdentifier, isValidated: value.isValidated, validator: value.validator }) + '</td>';
   });
 
   result += '</tr></table>';
 
   return result;
+}
+
+function renderIndicatorValue(value, options) {
+  let tpl = value;
+  if (options.taskIdentifier !== undefined && options.taskIdentifier !== null)
+    tpl = '<a href="/tasks/' + options.taskIdentifier + '">' + tpl + '</a>';
+
+  if (options.isValidated === true)
+    tpl = tpl + '&nbsp;<span class="glyphicon glyphicon-ok-sign text-success" aria-hidden="true" data-toggle="tooltip" title="Validated by ' + options.validator + '"></span>';
+  else
+    tpl = tpl + '&nbsp;<span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true" data-toggle="tooltip" title="Not validated"></span>';
+
+  if (options.trigger !== undefined && options.trigger.printLevel !== undefined)
+    tpl = '<div class="bg-' + options.trigger.printLevel + '">' + tpl + '</div>';
+
+  return tpl;
 }
 
 function renderFrequency(frequency) {

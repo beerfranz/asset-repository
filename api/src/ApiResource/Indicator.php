@@ -79,7 +79,14 @@ class Indicator extends RogerApiResource
     {
         foreach($samples as $sample) {
             $trigger = $sample->getTrigger();
-            $this->valuesSample[] = [ 'identifier' => $sample->getIdentifier(), 'value' => $sample->getValue(), 'level' => $trigger['printLevel'] ];
+            $this->valuesSample[] = [
+                'identifier' => $sample->getIdentifier(),
+                'value' => $sample->getValue(),
+                'level' => $trigger['printLevel'],
+                'isValidated' => $sample->isIsValidated(),
+                'validator' => $sample->getValidator(),
+                'taskIdentifier' => $sample->getTaskIdentifier(),
+            ];
         }
     }
 

@@ -8,7 +8,7 @@ use App\Entity\RogerEntityInterface;
 use App\Message\IndicatorValueMessage;
 
 use Doctrine\ORM\EntityManagerInterface;
-
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -22,6 +22,7 @@ class IndicatorValueService extends RogerService
     EntityManagerInterface $entityManager,
     LoggerInterface $logger,
     protected MessageBusInterface $bus,
+    protected Security $security,
   ) {
     parent::__construct($entityManager, $logger, IndicatorValue::class);
 
@@ -33,6 +34,16 @@ class IndicatorValueService extends RogerService
     $entity = new IndicatorValue();
 
     return $entity;
+  }
+
+  public function validate(IndicatorValue $indicatorValue): IndicatorValue
+  {
+    if ($indicatorValue->getValidator() === null)
+      $indicatorValue->setValidator($this->security->getUser()->getEmail());
+
+    $indicatorValue->setIsValidated(true);
+
+    return $indicatorValue;
   }
 
   public function findOneByIdentifiers(array $identifiers): null|IndicatorValue

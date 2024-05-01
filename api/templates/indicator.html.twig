@@ -14,6 +14,13 @@
           <p id="indicator-description">{{ indicator.description }}</p>
         </div>
       {% endif %}
+      <table class="table">
+        <tr><th>Namespace</th><td>{{ indicator.namespace }}</td></tr>
+        <tr><th>Target</th><td>{{ indicator.targetValue }}</td></tr>
+        <tr><th>Trigger</th><td>{{ indicator.triggers | json_encode }}</td></tr>
+        <tr><th>Frequency</th><td>{{ indicator.frequency | json_encode }}</td></tr>
+        <tr><th>Task template</th><td><a href="/ui/task-templates/{{ indicator.taskTemplateIdentifier }}">{{ indicator.taskTemplateIdentifier }}</a></td></tr>
+      </table>
   </div>
 </div>
 
@@ -29,13 +36,60 @@
 
 <script>
 
+function renderIndicatorValueActions(options) {
+  let actions = '';
+  if (options.isValidated === true) {
+    actions += `<a role="button" onClick="invalidateIndicator('/indicators/${options.indicator.identifier}/values/${options.identifier}');">${RogerUtils.iconKo({ title: 'Invalidate' })}</a>`;
+  } else {
+
+    actions += `<a class="edit-indicator-value" data-value="${options.value}" data-callback-action="PUT" data-callback="/indicators/${options.indicator.identifier}/values/${options.identifier}" >${RogerUtils.iconEdit({ title: 'Edit value' })}</a>`;
+
+    actions += `<a role="button" onClick="validateIndicator('/indicators/${options.indicator.identifier}/values/${options.identifier}');">${RogerUtils.iconOk({ title: 'Validate' })}</a>`;
+  }
+
+  return actions;
+}
+
+function validateIndicator(action) {
+  RogerForm.submit({
+    url: action,
+    method: 'PATCH',
+    data: { isValidated: true },
+  });
+}
+
+function invalidateIndicator(action) {
+  RogerForm.submit({
+    url: action,
+    method: 'PATCH',
+    data: { isValidated: false },
+  });
+}
+
+$(document).on('click', '.edit-indicator-value', function(e) {
+  e.preventDefault();
+
+  var value = $(this).attr('data-value');
+
+  var action = $(this).attr('data-callback');
+  var method = $(this).attr('data-callback-action');
+
+  var fields = [
+    { name: 'value', value: value, label: 'Value' },
+  ];
+
+  RogerForm.initModal({ method: method, action: action, fields: fields });
+
+});
+
+
 $(document).ready(function () {
 	var dataTableOpts = commonDataTableOpts();
 	dataTableOpts.ajax.url = '/indicators/{{ indicator.identifier }}/values';
 	dataTableOpts.columns = [ 
 		{ data: 'identifier', title: 'Identifier' },
-    { data: 'value', title: 'value' },
-    // { data: 'valuesSample', title: 'Values', render: function(data, type, row, meta){ return renderIndicatorValues(data); } }
+    { data: 'value', title: 'value', render: function(data, type, row, meta){ return renderIndicatorValue(data, row); } },
+    { data: '', title: 'Actions', orderable: false, render: function(data, type, row, meta){ return renderIndicatorValueActions(row); } }
   ];
 
 	rogerInit('values', dataTableOpts);
