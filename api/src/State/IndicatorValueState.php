@@ -40,7 +40,12 @@ final class IndicatorValueState extends RogerState
         }
 
         $entity->setValue($api->__get('value'));
-        $entity->setIsValidated($api->isValidated || false);
+
+        if ($api->__get('value') !== null && $api->__get('isValidated') === true)
+            $this->service->validate($entity);
+
+        if ($api->__get('isValidated') === false)   
+            $entity->setIsValidated(false);
 
         $trigger = $this->triggerService->calculateTrigger($indicator->getTriggers(), $entity->getValue());
         $entity->setTrigger($trigger->toArray());

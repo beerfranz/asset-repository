@@ -73,10 +73,10 @@ class IndicatorValue extends RogerApiResource
     #[Groups(['IndicatorValues:read', 'IndicatorValue:read', 'IndicatorValue:write'])]
     public $isValidated;
 
-    #[Groups(['IndicatorValues:read', 'IndicatorValue:read', 'IndicatorValue:write'])]
+    #[Groups(['IndicatorValues:read', 'IndicatorValue:read'])]
     public $validator;
     
-    #[Groups(['IndicatorValues:read', 'IndicatorValue:read', 'IndicatorValue:write'])]
+    #[Groups(['IndicatorValues:read', 'IndicatorValue:read'])]
     public ?array $trigger = null;
 
     public function __construct(){
