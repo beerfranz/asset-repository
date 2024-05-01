@@ -117,7 +117,6 @@ function renderIndicatorValues(values) {
   Object.keys(values).forEach(function(key) {
     value = values[key];
 
-    // result += '<td class="bg-' + value.level + '">' + value.value + '</td>';
     result += '<td class="bg-' + value.level + '">' + renderIndicatorValue(value.value, { level: value.level, taskIdentifier: value.taskIdentifier, isValidated: value.isValidated, validator: value.validator }) + '</td>';
   });
 
