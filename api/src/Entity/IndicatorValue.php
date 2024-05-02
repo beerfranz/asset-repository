@@ -6,7 +6,7 @@ use App\Doctrine\RogerListener;
 use App\Repository\IndicatorValueRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-// #[ORM\EntityListeners([RogerListener::class])]
+#[ORM\EntityListeners([RogerListener::class])]
 #[ORM\Entity(repositoryClass: IndicatorValueRepository::class)]
 class IndicatorValue extends RogerEntity
 {

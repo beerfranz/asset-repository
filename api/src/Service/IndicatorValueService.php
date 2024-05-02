@@ -6,6 +6,7 @@ use App\Entity\Indicator;
 use App\Entity\IndicatorValue;
 use App\Entity\RogerEntityInterface;
 use App\Message\IndicatorValueMessage;
+use App\Message\RogerAsyncMessage;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -61,38 +62,8 @@ class IndicatorValueService extends RogerService
     return $this->indicatorRepo->findOneByIdentifier($identifier);
   }
 
-  public function sendMessage(IndicatorValue $indicatorValue): void
-  {
-
-    $context = [
-      'indicatorValue' => [
-        'identifier' => $indicatorValue->getIdentifier(),
-      ]
-    ];
-
-    $indicator = $indicatorValue->getIndicator();
-
-    if ($indicator !== null) {
-      $context['indicatorValue']['indicator'] = [
-        'identifier' => $indicator->getIdentifier(),
-      ];
-
-      $taskTemplateIdentifier = $indicator->getTaskTemplateIdentifier();
-
-      if ($taskTemplateIdentifier !== null) {
-        $context['indicatorValue']['indicator']['taskTemplate'] = [
-          'identifier' => $taskTemplateIdentifier,
-        ];
-      }
-    }
-
-    $this->bus->dispatch(new IndicatorValueMessage('update_indicator_value', $context));
-  }
-
   public function persistEntity(RogerEntityInterface $entity)
   {
     parent::persistEntity($entity);
-
-    $this->sendMessage($entity);
   }
 }

@@ -4,36 +4,43 @@ namespace App\MessageHandler;
 
 use App\Message\TaskNotification;
 use App\Message\IndicatorValueMessage;
+use App\Message\RogerAsyncMessage;
+use App\MessageHandler\RogerHandlerAbstract;
 use App\Service\TaskService;
 
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Psr\Log\LoggerInterface;
 
 
-class TaskNotificationHandler
+class TaskHandler extends RogerHandlerAbstract
 {
 
   public function __construct(
-    private TaskService $service,
-    private LoggerInterface $logger,
+    protected TaskService $service,
+    protected LoggerInterface $logger,
   )
   {
 
   }
 
   #[AsMessageHandler]
-  public function newIndicatorValue(IndicatorValueMessage $message)
+  public function indicatorValueMessage(IndicatorValueMessage $message)
   {
+    $this->handlerName = __METHOD__;
+    $this->messageClass = $message::class;
+
+    $this->logReceiveMessage();
+
     $event = $message->getEvent();
     $context = $message->getContext();
 
-    if (in_array($event, ['create_indicator_value', 'update_indicator_value']) && isset($context['indicatorValue']['indicator']['taskTemplate']['identifier'])) {
-      
-      $messageIndicatorValue = $context['indicatorValue'];
+    if ($this->isAboutEntityNames($context, [ 'IndicatorValue' ]) && isset($context['entity']['indicator']['taskTemplateIdentifier'])) {
+      $this->logProcessingMessage();
+      $messageIndicatorValue = $context['entity'];
       $messageIndicator = $messageIndicatorValue['indicator'];
-      $messageTaskTemplate = $messageIndicator['taskTemplate'];
+      $messageTaskTemplateIdentifier = $messageIndicator['taskTemplateIdentifier'];
 
-      $taskTemplate = $this->service->findOneTaskTemplateByIdentifier($messageTaskTemplate['identifier']);
+      $taskTemplate = $this->service->findOneTaskTemplateByIdentifier($messageTaskTemplateIdentifier);
 
       $properties = [];
       $properties['attributes'] = [
@@ -59,6 +66,8 @@ class TaskNotificationHandler
         $this->logger->error('Failed to generate task for indicator value ' . $messageIndicator['identifier'] . '_' . $messageIndicatorValue['identifier']);
         throw $e;
       }
+    } else {
+      $this->logIgnoringMessage('not about entity IndicatorValue');
     }
   }
 

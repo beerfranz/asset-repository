@@ -58,6 +58,8 @@ var RogerForm = {
 
     if (options.method === 'PATCH')
       options.headers['Content-Type'] = 'application/merge-patch+json';
+    else
+      options.headers['Content-Type'] = 'application/ld+json';
 
     $.ajax({
       url: options.url,
