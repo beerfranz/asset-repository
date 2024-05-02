@@ -5,6 +5,8 @@ use App\Entity\RogerEntity;
 
 use App\Doctrine\RogerListenerFacade;
 use App\Message\RogerAsyncMessage;
+use App\Message\IndicatorValueMessage;
+use App\Message\TaskMessage;
 
 use Doctrine\ORM\Event\PostLoadEventArgs;
 use Doctrine\ORM\Event\PostPersistEventArgs;
@@ -98,6 +100,14 @@ class RogerListener
         // $context['entity'] = $this->serializer->normalize($this->entity, 'array', [ 'Messenger' ]);
         $context['entity'] = $this->entity->toArray();
 
-        $this->bus->dispatch(new RogerAsyncMessage($this->action . '_entity', $context));
+        $class_array = explode('\\', $context['class']);
+        $context['className'] = end($class_array);
+
+        $messageClass = '\\App\\Message\\' . $context['className'] . 'Message';
+        if (!class_exists($messageClass))
+            $messageClass = '\\App\\Message\\RogerAsyncMessage';
+
+        $this->logger->info('Dispatch message ' . $messageClass . ': ' . $this->action . ' ' . $this->entity::class);
+        $this->bus->dispatch(new $messageClass($this->action, $context));
     }
 }

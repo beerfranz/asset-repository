@@ -4,36 +4,39 @@ namespace App\MessageHandler;
 
 use App\Message\TaskMessage;
 use App\Message\RogerAsyncMessage;
+use App\Message\IndicatorValueMessage;
 use App\Service\IndicatorService;
 use App\Service\IndicatorValueService;
-use App\MessageHandler\RogerHandlerTrait;
+use App\MessageHandler\RogerHandlerAbstract;
 
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Psr\Log\LoggerInterface;
 
 
-class IndicatorHandler
+class IndicatorHandler extends RogerHandlerAbstract
 {
 
-  use RogerHandlerTrait;
-
   public function __construct(
-    private IndicatorService $service,
-    private IndicatorValueService $valueService,
-    private LoggerInterface $logger,
+    protected IndicatorService $service,
+    protected IndicatorValueService $valueService,
+    protected LoggerInterface $logger,
   )
   {
 
   }
 
   #[AsMessageHandler]
-  public function taskHandler(RogerAsyncMessage $message)
+  public function taskMessage(TaskMessage $message)
   {
+    $this->handlerName = __METHOD__;
+    $this->messageClass = $message::class;
+
     $event = $message->getEvent();
     $context = $message->getContext();
 
-    if ($this->isAboutEntityNames($context, [ 'Task' ])) {
+    $this->logReceiveMessage();
 
+    if ($this->isAboutEntityNames($context, [ 'Task' ])) {
 
       if ($this->isTaskDone($context)) {
 
@@ -43,6 +46,8 @@ class IndicatorHandler
           isset($context['entity']['attributes']['indicatorValue']['value'])
         ) {
 
+          $this->logProcessingMessage();
+
           $indicatorIdentifier = $context['entity']['attributes']['indicator']['identifier'];
           $indicatorValueIdentifier = $context['entity']['attributes']['indicatorValue']['identifier'];
 
@@ -50,9 +55,12 @@ class IndicatorHandler
           $indicatorValue->setValue($context['entity']['attributes']['indicatorValue']['value']);
           $indicatorValue->setIsValidated(true);
           $this->valueService->persistEntity($indicatorValue);
-        }
-      }
-      
+        } else
+          $this->logIgnoringMessage('context not compete');
+      } else
+        $this->logIgnoringMessage('task not done');
+    } else {
+      $this->logIgnoringMessage('not about entity Task');
     }
   
   }
