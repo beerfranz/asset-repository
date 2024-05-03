@@ -17,8 +17,46 @@
   <dt>Description</dt>
   <dd>{{ task.description }}</dd>
 
+  <dt>Status</dt>
+  <dd>
+    {{ task.status }} {% if task.isDone %}(done){% endif %}
+    {% if allowedNextStatuses | length > 0 %}
+      ==> <span id="placeholder-change-status"></span>
+      <select name="status" id="select-status">
+        {% for allowedNextStatus in allowedNextStatuses %}
+          <option value="{{ allowedNextStatus }}">{{ allowedNextStatus }}</option>
+        {% endfor %}
+      </select>
+      <span class="txt-danger" id="change-status-error"></span>
+      <button id="change-status" onClick="changeStatus('/tasks/{{ task.identifier }}')">Update</button>
+    {% endif %}
+  </dd>
+
 </dl>
 
 {% include 'components/attributes.html.twig' with { 'attributes': task.attributes } %}
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+function changeStatus(action) {
+  var nextStatus = $('#select-status').val();
+  RogerForm.submit({
+    url: action,
+    method: 'PATCH',
+    data: { status: nextStatus },
+    success: function(data) {
+      location.reload();
+    },
+    error: function(data) {
+      $('#change-status-error').html(data);
+    }
+  });
+}
+
+</script>
 
 {% endblock %}

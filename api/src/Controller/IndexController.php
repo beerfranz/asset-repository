@@ -9,7 +9,7 @@ use App\Repository\InstanceRepository;
 use App\Repository\RiskManagerRepository;
 use App\Repository\RiskRepository;
 use App\Repository\IndicatorRepository;
-use App\Repository\TaskRepository;
+use App\Service\TaskService;
 use App\Repository\TaskTemplateRepository;
 use App\Repository\TaskWorkflowRepository;
 
@@ -164,11 +164,12 @@ class IndexController extends AbstractController
   }
 
   #[Route('/ui/tasks/{identifier}', name: 'getTask', methods: ['GET'])]
-  public function getTask(string $identifier, TaskRepository $repo, Request $request): Response
+  public function getTask(string $identifier, TaskService $service, Request $request): Response
   {
-    $task = $repo->findOneByIdentifier($identifier);
+    $task = $service->findOneByIdentifier($identifier);
+    $allowedNextStatuses = $service->possibleNextStatus($task);
 
-    return $this->render('task.html.twig', [ 'task' => $task ]);
+    return $this->render('task.html.twig', [ 'task' => $task, 'allowedNextStatuses' => $allowedNextStatuses ]);
   }
 
   #[Route('/ui/task-templates', name: 'getTaskTemplates', methods: ['GET'])]
