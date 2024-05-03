@@ -10,6 +10,7 @@ use App\Repository\RiskManagerRepository;
 use App\Repository\RiskRepository;
 use App\Repository\IndicatorRepository;
 use App\Service\TaskService;
+use App\Service\TaskTypeService;
 use App\Repository\TaskTemplateRepository;
 use App\Repository\TaskWorkflowRepository;
 
@@ -184,6 +185,20 @@ class IndexController extends AbstractController
     $taskTemplate = $repo->findOneByIdentifier($identifier);
 
     return $this->render('task-template.html.twig', [ 'taskTemplate' => $taskTemplate ]);
+  }
+
+  #[Route('/ui/task-types', name: 'getTaskTypes', methods: ['GET'])]
+  public function getTaskTypes(Request $request): Response
+  {
+    return $this->render('task-types.html.twig', [ 'navbar' => [ 'task-types' => 'active' ] ]);
+  }
+
+  #[Route('/ui/task-types/{identifier}', name: 'getTaskType', methods: ['GET'])]
+  public function getTaskType(string $identifier, TaskTypeService $service, Request $request): Response
+  {
+    $taskType = $service->findOneByIdentifier($identifier);
+
+    return $this->render('task-type.html.twig', [ 'taskType' => $taskType ]);
   }
 
   #[Route('/ui/indicators', name: 'getIndicators', methods: ['GET'])]

@@ -1,0 +1,18 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Task type{{ taskType.identifier }}{% endblock %}
+
+{% block body %}
+
+<dl>
+
+  <dt>Identifier</dt>
+  <dd>{{ taskType.identifier }}</dd>
+
+  {% if taskType.taskWorkflow is defined %}
+    <dt>Workflow</dt>
+    <dd><a href="/ui/task-workflows/{{ taskType.taskWorkflow.identifier }}">{{ taskType.taskWorkflow.identifier }}</a></dd>
+  {% endif %}
+</dl>
+
+{% endblock %}
