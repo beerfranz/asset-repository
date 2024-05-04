@@ -1,18 +1,21 @@
 var RogerForm = {
   id: '',
   initModal: function(options) {
-
-    if (options.hasOwnProperty('id'))
-      this.id = options.id;
-    else
-      this.id = Math.floor(Math.random() * 1000);
-
-    $('#modal-body').html(`<form id="${this.id}" method="${options.method}" action="${options.action}"></form>`);
+    $('#modal-body').html(this.getForm(options));
 
     options.fields.forEach(o => this.addField(o));
     $('#modal-body').append('<p class="txt-danger hidden" id="modal-form-error"></p>')
     this.addSubmitButton();
     $('#modal').modal('show');
+  },
+
+  getForm: function(options) {
+    if (options.hasOwnProperty('id'))
+      this.id = options.id;
+    else
+      this.id = Math.floor(Math.random() * 1000);
+
+    return `<form id="${this.id}" method="${options.method}" action="${options.action}"></form>`;
   },
 
   addField: function(options) {
@@ -61,20 +64,28 @@ var RogerForm = {
     else
       options.headers['Content-Type'] = 'application/ld+json';
 
+    if (!options.hasOwnProperty('success')) {
+      options.success = function(data) {
+        $('#modal').modal('hide');
+        $('#values').DataTable().draw();
+      };
+    }
+
+    if (!options.hasOwnProperty('error')) {
+      options.error = function(data) {
+        $('#modal-form-error').html('Unexpected error');
+        $('#modal-form-error').removeClass('hidden');
+      }
+    }
+
     $.ajax({
       url: options.url,
       method: options.method,
       data: JSON.stringify(options.data),
       dataType: 'json',
       headers: options.headers,
-      success: function(data) {
-        $('#modal').modal('hide');
-        $('#values').DataTable().draw();
-      },
-      error: function(data) {
-        $('#modal-form-error').html('Unexpected error');
-        $('#modal-form-error').removeClass('hidden');
-      }
+      success: options.success,
+      error: options.error,
     });
 
   },

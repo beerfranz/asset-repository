@@ -9,7 +9,8 @@ use App\Repository\InstanceRepository;
 use App\Repository\RiskManagerRepository;
 use App\Repository\RiskRepository;
 use App\Repository\IndicatorRepository;
-use App\Repository\TaskRepository;
+use App\Service\TaskService;
+use App\Service\TaskTypeService;
 use App\Repository\TaskTemplateRepository;
 use App\Repository\TaskWorkflowRepository;
 
@@ -164,11 +165,12 @@ class IndexController extends AbstractController
   }
 
   #[Route('/ui/tasks/{identifier}', name: 'getTask', methods: ['GET'])]
-  public function getTask(string $identifier, TaskRepository $repo, Request $request): Response
+  public function getTask(string $identifier, TaskService $service, Request $request): Response
   {
-    $task = $repo->findOneByIdentifier($identifier);
+    $task = $service->findOneByIdentifier($identifier);
+    $allowedNextStatuses = $service->possibleNextStatus($task);
 
-    return $this->render('task.html.twig', [ 'task' => $task ]);
+    return $this->render('task.html.twig', [ 'task' => $task, 'allowedNextStatuses' => $allowedNextStatuses ]);
   }
 
   #[Route('/ui/task-templates', name: 'getTaskTemplates', methods: ['GET'])]
@@ -183,6 +185,20 @@ class IndexController extends AbstractController
     $taskTemplate = $repo->findOneByIdentifier($identifier);
 
     return $this->render('task-template.html.twig', [ 'taskTemplate' => $taskTemplate ]);
+  }
+
+  #[Route('/ui/task-types', name: 'getTaskTypes', methods: ['GET'])]
+  public function getTaskTypes(Request $request): Response
+  {
+    return $this->render('task-types.html.twig', [ 'navbar' => [ 'task-types' => 'active' ] ]);
+  }
+
+  #[Route('/ui/task-types/{identifier}', name: 'getTaskType', methods: ['GET'])]
+  public function getTaskType(string $identifier, TaskTypeService $service, Request $request): Response
+  {
+    $taskType = $service->findOneByIdentifier($identifier);
+
+    return $this->render('task-type.html.twig', [ 'taskType' => $taskType ]);
   }
 
   #[Route('/ui/indicators', name: 'getIndicators', methods: ['GET'])]
