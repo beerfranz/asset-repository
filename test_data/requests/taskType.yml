@@ -4,3 +4,10 @@ request:
 
 data:
   workflowIdentifier: simple
+  attributes:
+    misc:
+      foo: bar
+      zoo:
+        type: link
+        value: https://google.com
+        title: google

@@ -39,9 +39,6 @@ class Task extends RogerEntity
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $owner = null;
 
-    #[ORM\OneToMany(mappedBy: 'task', targetEntity: TaskEvent::class)]
-    private Collection $taskEvents;
-
     #[ORM\ManyToOne(inversedBy: 'tasks', cascade: ['persist'])]
     private ?TaskTemplate $taskTemplate = null;
 
@@ -65,7 +62,6 @@ class Task extends RogerEntity
 
     public function __construct()
     {
-        $this->taskEvents = new ArrayCollection();
         $this->children = new ArrayCollection();
     }
 
@@ -142,36 +138,6 @@ class Task extends RogerEntity
     public function setOwner(?string $owner): static
     {
         $this->owner = $owner;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, TaskEvent>
-     */
-    public function getTaskEvents(): Collection
-    {
-        return $this->taskEvents;
-    }
-
-    public function addTaskEvent(TaskEvent $taskEvent): static
-    {
-        if (!$this->taskEvents->contains($taskEvent)) {
-            $this->taskEvents->add($taskEvent);
-            $taskEvent->setTask($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTaskEvent(TaskEvent $taskEvent): static
-    {
-        if ($this->taskEvents->removeElement($taskEvent)) {
-            // set the owning side to null (unless already changed)
-            if ($taskEvent->getTask() === $this) {
-                $taskEvent->setTask(null);
-            }
-        }
 
         return $this;
     }
