@@ -33,6 +33,19 @@ use Doctrine\Common\Collections\Collection;
 #[Get(
     security: "is_granted('ASSET_READ')",
 )]
+
+#[GetCollection(
+    uriTemplate: '/audits/subject-kinds/{subjectKind}/subjects/{subject}',
+    uriVariables: [ 'subjectKind', 'subject' ],
+)]
+#[GetCollection(
+    uriTemplate: '/audits/subject-kinds/{subjectKind}',
+    uriVariables: [ 'subjectKind' ],
+)]
+#[GetCollection(
+    uriTemplate: '/audits/subjects/{subject}',
+    uriVariables: [ 'subject' ],
+)]
 class Audit extends RogerApiResource
 {
     #[Groups(['Audits:read', 'Audit:read'])]

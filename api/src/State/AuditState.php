@@ -36,4 +36,18 @@ final class AuditState extends RogerState
 
         return $api;
     }
+
+    protected function getCollection($context)
+    {
+        if (isset($context['uri_variables']) && count($context['uri_variables']) > 0) {
+            foreach($context['uri_variables'] as $key => $value) {
+                $context['filters'][$key] = $value;
+            }
+        }
+
+        if (!isset($context['filters']['order']))
+            $context['filters']['order'] = [ 'id' => 'desc' ];
+
+        return $this->service->getCollection($context);
+    }
 }
