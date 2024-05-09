@@ -51,7 +51,11 @@ class TaskHandler extends RogerHandlerAbstract
           'identifier' => $messageIndicatorValue['identifier'],
         ],
         'relatedTo' => [
-          'indicatorValue' => '/indicators/' . $messageIndicator['identifier'] . '/values/' . $messageIndicatorValue['identifier'],
+          'indicatorValue' => [
+            'value' => '/indicators/' . $messageIndicator['identifier'] . '/values/' . $messageIndicatorValue['identifier'],
+            'kind' => 'link',
+            'title' => 'Indicator Value',
+          ]
         ]
       ];
 

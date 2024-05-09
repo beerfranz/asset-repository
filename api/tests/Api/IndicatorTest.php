@@ -97,7 +97,9 @@ class IndicatorTest extends Functional
       'title' => 'Indicators',
       'attributes' => [
         'relatedTo' => [
-          'indicatorValue' => '/indicators/test/values/2024-05',
+          'indicatorValue' => [
+            'value' => '/indicators/test/values/2024-05',
+          ]
         ]
       ],
     ];

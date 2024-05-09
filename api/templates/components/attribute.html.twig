@@ -32,6 +32,19 @@
       {% endif %}
     </td>
   </tr>
+{% elseif value['kind'] is defined %}
+  <tr>
+    <td>{{ attribute }}</td>
+    <td>
+      {% if value['kind'] == 'string' %}
+        {{ value['value'] }}
+      {% elseif value['kind'] == 'link' %}
+        <a href="{{ value['value'] }}">{{ value['title'] }}</a>
+      {% else %}
+        {{ value | json_encode }}
+      {% endif %}
+    </td>
+  </tr>
 {% elseif value is iterable and stringifyIterable is defined %}
   <tr>
     <td>{{ attribute }}</td>
