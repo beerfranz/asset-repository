@@ -50,6 +50,9 @@ trait RogerTestApiTrait {
 
     if (isset($context['withGetTest']) && $context['withGetTest'] === true)
     	$this->testGet($uri, $context);
+
+    if (isset($context['withAudit']) && $context['withAudit'] === true)
+    	$this->testAudit('create', $context);
 	}
 
 	protected function testPatch(string $uri, array $context) {
@@ -76,11 +79,11 @@ trait RogerTestApiTrait {
 	protected function calculateSimpleOutput(string $class, string $identifier, string $uri, array $input = []): array
 	{
 		return array_merge($input, [
-      '@context' => '/contexts/'. $class,
-      '@id' => $uri,
-      '@type' => $class,
-      'identifier' => $identifier,
-    ]);
+	      '@context' => '/contexts/'. $class,
+	      '@id' => $uri,
+	      '@type' => $class,
+	      'identifier' => $identifier,
+	    ]);
 	}
 
 	protected function getContextResponseStatus(array $context) {
@@ -88,6 +91,31 @@ trait RogerTestApiTrait {
 			return $context['responseStatus'];
 		else
 			return 200;
+	}
+
+	protected function testAudit(string $action, array $context) {
+		$this->processQueue();
+		
+		$auditContext = $context;
+		$auditContext['input'] = null;
+
+		$auditContext['output'] = [
+			'@context' => '/contexts/Audit',
+			'@id' => '/audits',
+			'@type' => 'hydra:Collection',
+			'hydra:member' => [
+				[
+		      'subjectKind' => $context['output']['@type'],
+		      'subject' => $context['output']['identifier'],
+		      'actor' => '1',
+		      'action' => $action,
+				]
+			]
+		];
+		$this->testGet(
+			'/audits',
+			$auditContext,
+		);
 	}
 
 }
