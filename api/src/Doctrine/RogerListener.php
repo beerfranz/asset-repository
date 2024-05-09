@@ -90,18 +90,30 @@ class RogerListener
         
     }
 
+    protected function getUser()
+    {
+        if ($this->user !== null && $this->user->getId())
+            return $this->user->getId();
+
+        return 'unknown';
+    }
+
     protected function logChange() {
-        $this->logger->info($this->action . ' entity ' . $this->entity::class . ' by user ' . $this->user->getId());
+        $this->logger->info($this->action . ' entity ' . $this->entity::class . ' by user ' . $this->getUser());
     }
 
     protected function sendMessage(array $context = []) {
         $context['action'] = $this->action;
         $context['class'] = $this->entity::class;
-        // $context['entity'] = $this->serializer->normalize($this->entity, 'array', [ 'Messenger' ]);
-        $context['entity'] = $this->entity->toArray();
-
         $class_array = explode('\\', $context['class']);
         $context['className'] = end($class_array);
+        // $context['entity'] = $this->serializer->normalize($this->entity, null);
+        $context['entity'] = $this->entity->toArray();
+        // $this->logger->error('entity :' . print_r($context['entity']));
+        // exit;
+        $context['entity'] = $this->entity->toArray();
+        $context['actor'] = $this->getUser();
+        $context['datetime'] = new \DateTimeImmutable();
 
         $messageClass = '\\App\\Message\\' . $context['className'] . 'Message';
         if (!class_exists($messageClass))

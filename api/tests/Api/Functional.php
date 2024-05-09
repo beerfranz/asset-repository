@@ -14,6 +14,8 @@ abstract class Functional extends ApiTestCase {
 
 	protected $entityManager;
 
+	protected $response;
+
 	protected function setUp(): void
   {
       $kernel = self::bootKernel();

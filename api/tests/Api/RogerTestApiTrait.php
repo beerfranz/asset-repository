@@ -11,7 +11,7 @@ trait RogerTestApiTrait {
 
 	protected function testPost(string $uri, array $context)
 	{
-		static::createClient()->request('POST', $uri,
+		$this->response = static::createClient()->request('POST', $uri,
       [
       	'json' => $context['input'],
       	'headers' => $context['headers'],
@@ -22,7 +22,7 @@ trait RogerTestApiTrait {
 	}
 
 	protected function testGet(string $uri, array $context) {
-		static::createClient()->request('GET', $uri,
+		$this->response = static::createClient()->request('GET', $uri,
       [ 'headers' => $context['headers'] ]);
 
     $this->assertResponseStatusCodeSame(200);
@@ -30,16 +30,21 @@ trait RogerTestApiTrait {
 	}
 
 	protected function testDelete(string $uri, array $context) {
-		static::createClient()->request('DELETE', $uri,
+		$this->response = static::createClient()->request('DELETE', $uri,
       [ 'headers' => $context['headers']
     ]);
     $this->assertResponseStatusCodeSame(204);
 
     $this->assertNotExists($uri, $context);
+
+    if (isset($context['withAudit']) && $context['withAudit'] === true) {
+    	$context['auditAction'] = 'remove';
+    	$this->testAudit($context);
+    }
 	}
 
 	protected function testPut(string $uri, array $context) {
-		static::createClient()->request('PUT', $uri,
+		$this->response = static::createClient()->request('PUT', $uri,
       [
       	'json' => $context['input'],
       	'headers' => $context['headers'],
@@ -50,10 +55,16 @@ trait RogerTestApiTrait {
 
     if (isset($context['withGetTest']) && $context['withGetTest'] === true)
     	$this->testGet($uri, $context);
+
+    if (isset($context['withAudit']) && $context['withAudit'] === true) {
+    	if (!isset($context['auditAction']))
+    		$context['auditAction'] = 'create';
+    	$this->testAudit($context);
+    }
 	}
 
 	protected function testPatch(string $uri, array $context) {
-		static::createClient()->request('PATCH', $uri,
+		$this->response = static::createClient()->request('PATCH', $uri,
       [
       	'json' => $context['input'],
       	'headers' => array_merge(['Content-Type' => 'application/merge-patch+json'], $context['headers']),
@@ -76,11 +87,11 @@ trait RogerTestApiTrait {
 	protected function calculateSimpleOutput(string $class, string $identifier, string $uri, array $input = []): array
 	{
 		return array_merge($input, [
-      '@context' => '/contexts/'. $class,
-      '@id' => $uri,
-      '@type' => $class,
-      'identifier' => $identifier,
-    ]);
+	      '@context' => '/contexts/'. $class,
+	      '@id' => $uri,
+	      '@type' => $class,
+	      'identifier' => $identifier,
+	    ]);
 	}
 
 	protected function getContextResponseStatus(array $context) {
@@ -88,6 +99,33 @@ trait RogerTestApiTrait {
 			return $context['responseStatus'];
 		else
 			return 200;
+	}
+
+	protected function testAudit(array $context) {
+		$this->processQueue();
+		
+		$auditContext = $context;
+		$auditContext['input'] = null;
+		$subjectKind = $context['output']['@type'];
+		$subject = $context['output']['identifier'];
+		$url = '/audits/subject-kinds/' . $subjectKind . '/subjects/' . $subject;
+		$data = [
+      'subjectKind' => $subjectKind,
+      'subject' => $subject,
+      'actor' => '1',
+      'action' => $context['auditAction'],
+		];
+
+		$auditContext['output'] = [
+			'@context' => '/contexts/Audit',
+			'@id' => $url,
+			'@type' => 'hydra:Collection',
+			'hydra:member' => [ $data ],
+		];
+		$this->testGet(
+			$url,
+			$auditContext,
+		);
 	}
 
 }

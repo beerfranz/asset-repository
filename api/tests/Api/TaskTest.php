@@ -27,9 +27,8 @@ class TaskTest extends Functional
       'headers' => $this->getAdminUser(),
       'input' => $input,
       'output' => $output,
+      'withAudit' => true,
     ]);
-
-
 
   }
 
