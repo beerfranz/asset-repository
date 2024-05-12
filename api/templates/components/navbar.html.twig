@@ -16,7 +16,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
             <li class="{{ navbar.dashboard|default('') }}"><a href="/ui/dashboard">Dashboard</a></li>
-            {% if is_granted('ROLE_ASSET_ADMIN') %}
+            {% if is_granted('ROLE_ASSET_ADMIN') and settingsService.isModuleActivated('architecture') == true %}
             <li class="dropdown {{ navbar.asset_definitions|default('') }} {{ navbar.environment_definitions|default('') }} {{ navbar.map|default('') }}">
               <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Architecture <span class="caret"></span>
@@ -56,6 +56,18 @@
             <li class="{{ navbar.sources|default('') }}"><a href="/ui/sources">Sources</a></li>
             <li class="{{ navbar.kinds|default('') }}"><a href="/ui/kinds">Kinds</a></li>
             <li class="{{ navbar.audits|default('') }}"><a href="/ui/audits">Audits</a></li>
+
+            {% if is_granted('ROLE_ASSET_ADMIN') %}
+              <li class="dropdown {{ navbar.settings|default('') }} {{ navbar.users|default('') }}">
+                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Admin <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li class="{{ navbar.settings|default('') }}"><a href="/ui/admin/settings">Settings</a></li>
+                  {# <li class="{{ navbar.users|default('') }}"><a href="/ui/admin/users">Users</a></li> #}
+                </ul>
+              </li>
+            {% endif %}
             {% endif %}
           </ul>
       </div>
