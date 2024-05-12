@@ -157,3 +157,7 @@ function renderFrequency(frequency) {
 
   return output;
 }
+
+function renderJson(json) {
+  return JSON.stringify(json);
+}

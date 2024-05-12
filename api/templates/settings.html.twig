@@ -1,0 +1,33 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Configurations{% endblock %}
+
+{% block body %}
+
+<div class="row">
+  <div class="col-md-12">
+    <table class="table" id="settings"></table>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+$(document).ready(function () {
+  var dataTableOpts = commonDataTableOpts();
+  dataTableOpts.ajax.url = '/settings';
+  dataTableOpts.columns = [ 
+    { data: 'identifier', title: 'Identifier' },
+    { data: 'value', title: 'Value', 'orderable': false, render: function(data) { return renderJson(data); } },
+  ];
+
+  rogerInit('settings', dataTableOpts);
+  
+});
+
+</script>
+
+{% endblock %}

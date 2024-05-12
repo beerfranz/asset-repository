@@ -7,9 +7,9 @@ use App\Repository\AuditRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AuditRepository::class)]
-#[Index(name: "subject_kind_idx", columns: ["subjectKind"])]
-#[Index(name: "subject_idx", columns: ["subject"])]
-#[Index(name: "actor_idx", columns: ["actor"])]
+#[ORM\Index(name: "audit_subject_kind_idx", columns: ["subject_kind"])]
+#[ORM\Index(name: "audit_subject_idx", columns: ["subject"])]
+#[ORM\Index(name: "audit_actor_idx", columns: ["actor"])]
 class Audit extends RogerEntity
 {
     #[ORM\Id]
