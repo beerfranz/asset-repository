@@ -4,6 +4,10 @@ namespace App\Repository;
 
 use App\Entity\IndicatorValue;
 use App\Entity\Indicator;
+
+use Beerfranz\RogerBundle\Repository\RogerRepositoryInterface;
+use Beerfranz\RogerBundle\Repository\RogerRepositoryTrait;
+
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

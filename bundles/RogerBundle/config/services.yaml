@@ -18,3 +18,18 @@ services:
     roger.state.facade:
         class: Beerfranz\RogerBundle\State\RogerStateFacade
     Beerfranz\RogerBundle\State\RogerStateFacade: '@roger.state.facade'
+
+    roger.listener.facade:
+        class: Beerfranz\RogerBundle\Doctrine\RogerListenerFacade
+    Beerfranz\RogerBundle\Doctrine\RogerListenerFacade: '@roger.listener.facade'
+
+    roger.repository.interface:
+        class: Beerfranz\RogerBundle\Repository\RogerRepositoryInterface
+    Beerfranz\RogerBundle\Repository\RogerRepositoryInterface: '@roger.repository.interface'
+
+    # roger.message.async:
+    #     class: Beerfranz\RogerBundle\Message\RogerMessageAsync
+    # Beerfranz\RogerBundle\Message\RogerMessageAsync: '@roger.message.async'
+
+    Beerfranz\RogerBundle\Doctrine\RogerListener:
+        tags: [doctrine.orm.entity_listener]

@@ -4,8 +4,8 @@ namespace App\MessageHandler;
 
 use App\Message\TaskNotification;
 use App\Message\IndicatorValueMessage;
-use App\Message\RogerAsyncMessage;
-use App\MessageHandler\RogerHandlerAbstract;
+use Beerfranz\RogerBundle\Message\RogerAsyncMessage;
+use Beerfranz\RogerBundle\MessageHandler\RogerHandlerAbstract;
 use App\Service\TaskService;
 
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

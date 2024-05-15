@@ -9,7 +9,8 @@ use App\Entity\IndicatorValue;
 use App\Service\IndicatorService;
 use App\Service\FrequencyService;
 
-use App\State\RogerStateFacade;
+use Beerfranz\RogerBundle\State\RogerStateFacade;
+use Beerfranz\RogerBundle\State\RogerState;
 
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;

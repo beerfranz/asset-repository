@@ -11,6 +11,9 @@ use App\Service\TaskWorkflowService;
 
 use ApiPlatform\Metadata\Operation;
 
+use Beerfranz\RogerBundle\State\RogerState;
+use Beerfranz\RogerBundle\State\RogerStateFacade;
+
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class TaskTemplateState extends RogerState
@@ -41,6 +44,10 @@ final class TaskTemplateState extends RogerState
         return $this->stateProvide($operation, $uriVariables, $context);
     }
 
+    /**
+     * @param $data
+     * @return T2
+     */
     public function process(mixed $api, Operation $operation, array $uriVariables = [], array $context = [])
     {
         if ($api instanceof TaskTemplateGenerateDto)

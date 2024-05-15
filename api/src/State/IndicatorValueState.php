@@ -8,7 +8,8 @@ use App\Entity\IndicatorValue as IndicatorValueEntity;
 use App\Service\IndicatorValueService;
 use App\Service\TriggerService;
 
-use App\State\RogerStateFacade;
+use Beerfranz\RogerBundle\State\RogerState;
+use Beerfranz\RogerBundle\State\RogerStateFacade;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 

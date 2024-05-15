@@ -7,6 +7,8 @@ use App\Entity\TaskTemplate;
 use App\Entity\TaskWorkflow;
 use App\Entity\TaskWorkflowStatus;
 
+use Beerfranz\RogerBundle\Service\RogerService;
+
 use Doctrine\ORM\EntityManagerInterface;
 
 use Psr\Log\LoggerInterface;

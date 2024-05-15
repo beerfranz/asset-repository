@@ -8,6 +8,9 @@ use App\Entity\TaskWorkflowStatus;
 
 use App\Service\TaskWorkflowService;
 
+use Beerfranz\RogerBundle\State\RogerState;
+use Beerfranz\RogerBundle\State\RogerStateFacade;
+
 final class TaskWorkflowState extends RogerState
 {
 

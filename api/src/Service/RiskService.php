@@ -8,6 +8,8 @@ use App\Entity\Asset;
 
 use App\Service\UserTemplate;
 
+use Beerfranz\RogerBundle\Service\RogerService;
+
 use Doctrine\ORM\EntityManagerInterface;
 
 use Psr\Log\LoggerInterface;

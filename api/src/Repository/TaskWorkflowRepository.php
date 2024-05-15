@@ -3,6 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\TaskWorkflow;
+
+use Beerfranz\RogerBundle\Repository\RogerRepositoryInterface;
+use Beerfranz\RogerBundle\Repository\RogerRepositoryTrait;
+
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

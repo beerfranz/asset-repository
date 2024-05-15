@@ -3,6 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\RiskRepository;
+
+use Beerfranz\RogerBundle\Entity\RogerEntity;
+
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 

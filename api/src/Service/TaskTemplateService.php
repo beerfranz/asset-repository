@@ -9,6 +9,8 @@ use App\Entity\TaskType;
 
 use App\Service\TaskService;
 
+use Beerfranz\RogerBundle\Service\RogerService;
+
 use Doctrine\ORM\EntityManagerInterface;
 
 use Psr\Log\LoggerInterface;

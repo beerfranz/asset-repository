@@ -5,6 +5,8 @@ namespace App\Service;
 use App\Entity\TaskType;
 use App\Entity\TaskWorkflow;
 
+use Beerfranz\RogerBundle\Service\RogerService;
+
 use Doctrine\ORM\EntityManagerInterface;
 
 use Psr\Log\LoggerInterface;

@@ -4,7 +4,8 @@ namespace App\Service;
 
 use App\Entity\Indicator;
 use App\Entity\IndicatorValue;
-use App\Entity\RogerEntityInterface;
+use Beerfranz\RogerBundle\Entity\RogerEntityInterface;
+use Beerfranz\RogerBundle\Service\RogerService;
 use App\Message\IndicatorValueMessage;
 use App\Message\RogerAsyncMessage;
 

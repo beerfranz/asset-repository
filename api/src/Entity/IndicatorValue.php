@@ -2,8 +2,11 @@
 
 namespace App\Entity;
 
-use App\Doctrine\RogerListener;
+use Beerfranz\RogerBundle\Doctrine\RogerListener;
 use App\Repository\IndicatorValueRepository;
+
+use Beerfranz\RogerBundle\Entity\RogerEntity;
+
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\EntityListeners([RogerListener::class])]

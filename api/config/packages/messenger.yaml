@@ -12,8 +12,8 @@ framework:
         routing:
             # Route your messages to the transports
             # 'App\Message\YourMessage': async
-            'App\Message\RogerAsyncMessage': async
-            'App\Message\RogerSyncMessage': sync
+            'Beerfranz\RogerBundle\Message\RogerAsyncMessage': async
+            'Beerfranz\RogerBundle\Message\RogerSyncMessage': sync
 
 when@test:
    framework:

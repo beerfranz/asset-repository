@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Entity\RogerEntity;
+use Beerfranz\RogerBundle\Entity\RogerEntity;;
 
 use App\Repository\SettingRepository;
 use Doctrine\ORM\Mapping as ORM;

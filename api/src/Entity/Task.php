@@ -3,7 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\TaskRepository;
-use App\Doctrine\RogerListener;
+use Beerfranz\RogerBundle\Doctrine\RogerListener;
+
+use Beerfranz\RogerBundle\Entity\RogerEntity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
