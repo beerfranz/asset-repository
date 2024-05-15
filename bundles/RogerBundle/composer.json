@@ -1,0 +1,21 @@
+{
+	"name": "beerfranz/roger-bundle",
+	"type": "symfony-bundle",
+	"version": "1.0.0",
+	"require": {
+		"api-platform/core": "^3.1",
+		"php": ">=8.1",
+		"symfony/http-kernel": ">=6.2"
+	},
+	"license": "MIT",
+	"autoload": {
+		"psr-4": {
+			"Beerfranz\\RogerBundle\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Beerfranz\\RogerBundle\\Tests\\": "tests/"
+		}
+	}
+}
