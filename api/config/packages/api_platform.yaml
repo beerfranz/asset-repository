@@ -11,7 +11,12 @@ api_platform:
             mime_types: ['application/json']
         # html:
         #     mime_types: ['text/html']
-    patch_formats: ['application/merge-patch+json']
+    patch_formats:
+        jsonld:
+            mime_types: ['application/merge-patch+json']
+        json:
+            mime_types: ['application/merge-patch+json']
+
     # Good cache defaults for REST APIs
     defaults:
         stateless: true
