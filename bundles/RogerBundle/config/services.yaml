@@ -27,9 +27,5 @@ services:
         class: Beerfranz\RogerBundle\Repository\RogerRepositoryInterface
     Beerfranz\RogerBundle\Repository\RogerRepositoryInterface: '@roger.repository.interface'
 
-    # roger.message.async:
-    #     class: Beerfranz\RogerBundle\Message\RogerMessageAsync
-    # Beerfranz\RogerBundle\Message\RogerMessageAsync: '@roger.message.async'
-
     Beerfranz\RogerBundle\Doctrine\RogerListener:
         tags: [doctrine.orm.entity_listener]

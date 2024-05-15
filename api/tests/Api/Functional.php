@@ -2,8 +2,8 @@
 
 namespace App\Tests\Api;
 
-use App\Tests\Api\RogerTestMessageTrait;
-use App\Tests\Api\RogerTestApiTrait;
+use Beerfranz\RogerBundle\Tests\RogerTestMessageTrait;
+use Beerfranz\RogerBundle\Tests\RogerTestApiTrait;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use Zenstruck\Foundry\Test\Factories;
