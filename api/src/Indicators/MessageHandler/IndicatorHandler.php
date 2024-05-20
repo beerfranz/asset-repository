@@ -1,12 +1,12 @@
 <?php
 
-namespace App\MessageHandler;
+namespace App\Indicators\MessageHandler;
 
 use App\Message\TaskMessage;
 use Beerfranz\RogerBundle\Message\RogerAsyncMessage;
 use App\Message\IndicatorValueMessage;
-use App\Service\IndicatorService;
-use App\Service\IndicatorValueService;
+use App\Indicators\Service\IndicatorService;
+use App\Indicators\Service\IndicatorValueService;
 use Beerfranz\RogerBundle\MessageHandler\RogerHandlerAbstract;
 
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

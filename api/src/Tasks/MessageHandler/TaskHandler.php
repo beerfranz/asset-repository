@@ -1,6 +1,6 @@
 <?php
 
-namespace App\MessageHandler;
+namespace App\Tasks\MessageHandler;
 
 use App\Message\TaskNotification;
 use App\Message\IndicatorValueMessage;
