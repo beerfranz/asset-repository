@@ -2,7 +2,7 @@
 
 namespace App\ApiResource;
 
-use App\State\TaskTemplateState;
+use App\Tasks\State\TaskTemplateState;
 use App\Entity\TaskTemplate as TaskTemplateEntity;
 
 use Beerfranz\RogerBundle\ApiResource\RogerApiResource;

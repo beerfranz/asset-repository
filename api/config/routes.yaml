@@ -3,3 +3,10 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+tasks:
+    resource:
+        path: ../src/Tasks/Controller
+        namespace: App\Tasks\Controller
+    type: attribute
+    # prefix: /ui/tasks

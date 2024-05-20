@@ -2,7 +2,7 @@
 
 namespace App\ApiResource;
 
-use App\State\TaskTypeState;
+use App\Tasks\State\TaskTypeState;
 
 use Beerfranz\RogerBundle\ApiResource\RogerApiResource;
 
