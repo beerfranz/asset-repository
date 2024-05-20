@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Command;
+namespace App\Tasks\Command;
 
-use App\Service\TaskService;
+use App\Tasks\Service\TaskService;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

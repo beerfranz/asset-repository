@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repository;
+namespace App\Tasks\Repository;
 
-use App\Entity\TaskTemplate;
+use App\Tasks\Entity\TaskTemplate;
 
 use Beerfranz\RogerBundle\Repository\RogerRepositoryInterface;
 use Beerfranz\RogerBundle\Repository\RogerRepositoryTrait;
@@ -21,42 +21,42 @@ use Doctrine\ORM\Query\ResultSetMapping;
  */
 class TaskTemplateRepository extends ServiceEntityRepository implements RogerRepositoryInterface
 {
-    use RogerRepositoryTrait;
+	use RogerRepositoryTrait;
 
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, TaskTemplate::class);
-    }
+	public function __construct(ManagerRegistry $registry)
+	{
+		parent::__construct($registry, TaskTemplate::class);
+	}
 
-    public function getFrequencyToUpdate(): array
-    {
-        $qb = $this->createQueryBuilder('t');
+	public function getFrequencyToUpdate(): array
+	{
+		$qb = $this->createQueryBuilder('t');
 
-        return $qb
-                    ->where($qb->expr()->isNotNull("t.frequency"))
-                    ->getQuery()
-                    ->getResult();
-    }
+		return $qb
+					->where($qb->expr()->isNotNull("t.frequency"))
+					->getQuery()
+					->getResult();
+	}
 
-    public function getTaskToGenerate(): array
-    {
-        $rsm = new ResultSetMapping();
-        $rsm->addScalarResult('id', 'id');
-        $result = $this->getEntityManager()->createNativeQuery("SELECT id FROM task_template WHERE cast(frequency->'nextIterationAt'->>'date' as timestamp) < now()", $rsm)
-           ->getResult()
-        ;
-        return $result;
-    }
+	public function getTaskToGenerate(): array
+	{
+		$rsm = new ResultSetMapping();
+		$rsm->addScalarResult('id', 'id');
+		$result = $this->getEntityManager()->createNativeQuery("SELECT id FROM task_template WHERE cast(frequency->'nextIterationAt'->>'date' as timestamp) < now()", $rsm)
+		   ->getResult()
+		;
+		return $result;
+	}
 
-    public function findChildren(TaskTemplate $taskTemplate): array
-    {
-        return $this->createQueryBuilder('t')
-           ->andWhere('t.parent = :val')
-           ->setParameter('val', $taskTemplate)
-           ->getQuery()
-           ->getResult()
-        ;
-    }
+	public function findChildren(TaskTemplate $taskTemplate): array
+	{
+		return $this->createQueryBuilder('t')
+		   ->andWhere('t.parent = :val')
+		   ->setParameter('val', $taskTemplate)
+		   ->getQuery()
+		   ->getResult()
+		;
+	}
 
 //    /**
 //     * @return TaskTemplate[] Returns an array of TaskTemplate objects

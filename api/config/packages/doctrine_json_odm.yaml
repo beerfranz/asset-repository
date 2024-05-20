@@ -2,3 +2,4 @@ dunglas_doctrine_json_odm:
   type_map:
     frequency: App\Entity\Frequency
     trigger: App\Entity\Trigger
+    App\Entity\TaskWorkflowStatus: App\Tasks\Entity\TaskWorkflowStatus

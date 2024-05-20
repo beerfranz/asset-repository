@@ -1,9 +1,8 @@
 <?php
 
-namespace App\ApiResource;
+namespace App\Tasks\ApiResource;
 
-use App\State\TaskState;
-use App\Entity\Task as TaskEntity;
+use App\Tasks\State\TaskState;
 
 use Beerfranz\RogerBundle\ApiResource\RogerApiResource;
 

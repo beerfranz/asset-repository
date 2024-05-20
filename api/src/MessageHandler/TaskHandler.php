@@ -6,7 +6,7 @@ use App\Message\TaskNotification;
 use App\Message\IndicatorValueMessage;
 use Beerfranz\RogerBundle\Message\RogerAsyncMessage;
 use Beerfranz\RogerBundle\MessageHandler\RogerHandlerAbstract;
-use App\Service\TaskService;
+use App\Tasks\Service\TaskService;
 
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Psr\Log\LoggerInterface;

@@ -16,6 +16,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
+            Tasks:
+                is_bundle: false
+                type: attribute
+                dir: '%kernel.project_dir%/src/Tasks/Entity'
+                prefix: 'App\Tasks\Entity'
+                alias: Tasks
 
 when@test:
     doctrine:

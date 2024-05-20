@@ -1,8 +1,8 @@
 <?php
 
-namespace App\ApiResource;
+namespace App\Tasks\ApiResource;
 
-use App\State\TaskWorkflowState;
+use App\Tasks\State\TaskWorkflowState;
 
 use Beerfranz\RogerBundle\ApiResource\RogerApiResource;
 
@@ -23,32 +23,32 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 #[ApiResource(
-    description: 'Task workflow',
-    processor: TaskWorkflowState::class,
-    provider: TaskWorkflowState::class,
-    normalizationContext: ['groups' => ['TaskWorkflow:read']],
-    denormalizationContext: ['groups' => ['TaskWorkflow:write']],
+	description: 'Task workflow',
+	processor: TaskWorkflowState::class,
+	provider: TaskWorkflowState::class,
+	normalizationContext: ['groups' => ['TaskWorkflow:read']],
+	denormalizationContext: ['groups' => ['TaskWorkflow:write']],
 )]
 #[GetCollection(
-    security: "is_granted('ASSET_READ')",
-    normalizationContext: ['groups' => ['TaskWorkflows:read']],
+	security: "is_granted('ASSET_READ')",
+	normalizationContext: ['groups' => ['TaskWorkflows:read']],
 )]
 #[Get(
-    security: "is_granted('ASSET_READ')",
+	security: "is_granted('ASSET_READ')",
 )]
 #[Post(security: "is_granted('ASSET_WRITE')")]
 #[Put(security: "is_granted('ASSET_WRITE')")]
 #[Delete(security: "is_granted('ASSET_WRITE')")]
 class TaskWorkflow extends RogerApiResource
 {
-    #[Groups(['TaskWorkflows:read', 'TaskWorkflow:read', 'TaskWorkflow:write'])]
-    #[ApiProperty(identifier: true)]
-    public $identifier;
+	#[Groups(['TaskWorkflows:read', 'TaskWorkflow:read', 'TaskWorkflow:write'])]
+	#[ApiProperty(identifier: true)]
+	public $identifier;
 
-    #[Groups(['TaskWorkflows:read', 'TaskWorkflow:read', 'TaskWorkflow:write'])]
-    #[ApiProperty(
-        openapiContext: [ "type" => "object" ]
-    )]
-    public ?array $statuses = [];
+	#[Groups(['TaskWorkflows:read', 'TaskWorkflow:read', 'TaskWorkflow:write'])]
+	#[ApiProperty(
+		openapiContext: [ "type" => "object" ]
+	)]
+	public ?array $statuses = [];
 
 }
