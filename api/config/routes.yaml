@@ -10,3 +10,14 @@ tasks:
         namespace: App\Tasks\Controller
     type: attribute
     # prefix: /ui/tasks
+risks:
+    resource:
+        path: ../src/Risks/Controller
+        namespace: App\Risks\Controller
+    type: attribute
+
+indicators:
+    resource:
+        path: ../src/Indicators/Controller
+        namespace: App\Indicators\Controller
+    type: attribute

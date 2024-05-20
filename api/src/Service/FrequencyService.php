@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Frequency;
-use App\Entity\Indicator;
+use App\Indicators\Entity\Indicator;
 use App\Tasks\Entity\TaskTemplate;
 
 use Doctrine\ORM\EntityManagerInterface;
