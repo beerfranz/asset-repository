@@ -28,6 +28,11 @@ api_platform:
         pagination_client_enabled: true
         pagination_client_items_per_page: true
 
+    mapping:
+        paths:
+        - '%kernel.project_dir%/src/Entity'
+        - '%kernel.project_dir%/src/ApiResource'
+        - '%kernel.project_dir%/src/Tasks/ApiResource'
 
     oauth:
         # To enable or disable OAuth.

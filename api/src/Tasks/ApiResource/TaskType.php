@@ -1,6 +1,6 @@
 <?php
 
-namespace App\ApiResource;
+namespace App\Tasks\ApiResource;
 
 use App\Tasks\State\TaskTypeState;
 
@@ -23,29 +23,29 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 #[ApiResource(
-    description: 'Task type',
-    processor: TaskTypeState::class,
-    provider: TaskTypeState::class,
-    normalizationContext: ['groups' => ['TaskType:read']],
-    denormalizationContext: ['groups' => ['TaskType:write']],
+	description: 'Task type',
+	processor: TaskTypeState::class,
+	provider: TaskTypeState::class,
+	normalizationContext: ['groups' => ['TaskType:read']],
+	denormalizationContext: ['groups' => ['TaskType:write']],
 )]
 #[GetCollection(
-    security: "is_granted('ASSET_READ')",
-    normalizationContext: ['groups' => ['TaskTypes:read']],
+	security: "is_granted('ASSET_READ')",
+	normalizationContext: ['groups' => ['TaskTypes:read']],
 )]
 #[Get(
-    security: "is_granted('ASSET_READ')",
+	security: "is_granted('ASSET_READ')",
 )]
 #[Post(security: "is_granted('ASSET_WRITE')")]
 #[Put(security: "is_granted('ASSET_WRITE')")]
 #[Delete(security: "is_granted('ASSET_WRITE')")]
 class TaskType extends RogerApiResource
 {
-    #[Groups(['TaskTypes:read', 'TaskType:read', 'TaskType:write'])]
-    #[ApiProperty(identifier: true)]
-    public $identifier;
+	#[Groups(['TaskTypes:read', 'TaskType:read', 'TaskType:write'])]
+	#[ApiProperty(identifier: true)]
+	public $identifier;
 
-    #[Groups(['TaskTypes:read', 'TaskType:read', 'TaskType:write'])]
-    public $workflowIdentifier;
+	#[Groups(['TaskTypes:read', 'TaskType:read', 'TaskType:write'])]
+	public $workflowIdentifier;
 
 }

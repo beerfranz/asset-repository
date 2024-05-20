@@ -6,7 +6,7 @@ use App\State\IndicatorState;
 use App\Entity\Indicator as IndicatorEntity;
 use App\Entity\Frequency;
 
-use App\ApiResource\TaskTemplate;
+use App\Tasks\ApiResource\TaskTemplate;
 
 use Beerfranz\RogerBundle\ApiResource\RogerApiResource;
 

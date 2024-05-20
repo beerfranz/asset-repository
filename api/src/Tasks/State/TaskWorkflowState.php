@@ -2,7 +2,7 @@
 
 namespace App\Tasks\State;
 
-use App\ApiResource\TaskWorkflow as TaskWorkflowApi;
+use App\Tasks\ApiResource\TaskWorkflow as TaskWorkflowApi;
 use App\Entity\TaskWorkflow as TaskWorkflowEntity;
 use App\Entity\TaskWorkflowStatus;
 

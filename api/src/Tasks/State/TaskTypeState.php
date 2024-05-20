@@ -2,7 +2,7 @@
 
 namespace App\Tasks\State;
 
-use App\ApiResource\TaskType as TaskTypeApi;
+use App\Tasks\ApiResource\TaskType as TaskTypeApi;
 use App\Entity\TaskType as TaskTypeEntity;
 
 use App\Tasks\Service\TaskTypeService;

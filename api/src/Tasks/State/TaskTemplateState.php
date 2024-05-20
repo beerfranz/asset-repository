@@ -2,8 +2,8 @@
 
 namespace App\Tasks\State;
 
-use App\ApiResource\TaskTemplate as TaskTemplateApi;
-use App\ApiResource\TaskTemplateGenerateDto;
+use App\Tasks\ApiResource\TaskTemplate as TaskTemplateApi;
+use App\Tasks\ApiResource\TaskTemplateGenerateDto;
 use App\Entity\TaskTemplate as TaskTemplateEntity;
 use App\Tasks\Service\TaskTemplateService;
 use App\Service\FrequencyService;
