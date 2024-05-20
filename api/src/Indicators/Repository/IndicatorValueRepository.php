@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repository;
+namespace App\Indicators\Repository;
 
-use App\Entity\IndicatorValue;
-use App\Entity\Indicator;
+use App\Indicators\Entity\IndicatorValue;
+use App\Indicators\Entity\Indicator;
 
 use Beerfranz\RogerBundle\Repository\RogerRepositoryInterface;
 use Beerfranz\RogerBundle\Repository\RogerRepositoryTrait;
@@ -21,36 +21,36 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class IndicatorValueRepository extends ServiceEntityRepository implements RogerRepositoryInterface
 {
-    use RogerRepositoryTrait;
-    
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, IndicatorValue::class);
-    }
+	use RogerRepositoryTrait;
+	
+	public function __construct(ManagerRegistry $registry)
+	{
+		parent::__construct($registry, IndicatorValue::class);
+	}
 
-    public function findOneByIndicatorAndIdentifier(Indicator $indicator, $valueIdentifier)
-    {
-        return $this->createQueryBuilder('s')
-           ->andWhere('s.identifier = :valueIdentifier')
-           ->setParameter('valueIdentifier', $valueIdentifier)
-           ->andWhere('s.indicator = :indicator')
-           ->setParameter('indicator', $indicator)
-           ->getQuery()
-           ->getOneOrNullResult()
-        ;
-    }
+	public function findOneByIndicatorAndIdentifier(Indicator $indicator, $valueIdentifier)
+	{
+		return $this->createQueryBuilder('s')
+		   ->andWhere('s.identifier = :valueIdentifier')
+		   ->setParameter('valueIdentifier', $valueIdentifier)
+		   ->andWhere('s.indicator = :indicator')
+		   ->setParameter('indicator', $indicator)
+		   ->getQuery()
+		   ->getOneOrNullResult()
+		;
+	}
 
-    public function findIndicatorSample(Indicator $indicator): array
-    {
-        return $this->createQueryBuilder('s')
-           ->andWhere('s.indicator = :indicator')
-           ->setParameter('indicator', $indicator)
-           ->setMaxResults(3)
-           ->addOrderBy('s.identifier', 'DESC')
-           ->getQuery()
-           ->getResult()
-        ;
-    }
+	public function findIndicatorSample(Indicator $indicator): array
+	{
+		return $this->createQueryBuilder('s')
+		   ->andWhere('s.indicator = :indicator')
+		   ->setParameter('indicator', $indicator)
+		   ->setMaxResults(3)
+		   ->addOrderBy('s.identifier', 'DESC')
+		   ->getQuery()
+		   ->getResult()
+		;
+	}
 
 //    /**
 //     * @return IndicatorValue[] Returns an array of IndicatorValue objects

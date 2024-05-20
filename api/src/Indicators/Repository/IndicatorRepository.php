@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repository;
+namespace App\Indicators\Repository;
 
-use App\Entity\Indicator;
+use App\Indicators\Entity\Indicator;
 
 use Beerfranz\RogerBundle\Repository\RogerRepositoryInterface;
 use Beerfranz\RogerBundle\Repository\RogerRepositoryTrait;
@@ -20,22 +20,22 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class IndicatorRepository extends ServiceEntityRepository implements RogerRepositoryInterface
 {
-    use RogerRepositoryTrait;
+	use RogerRepositoryTrait;
 
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Indicator::class);
-    }
+	public function __construct(ManagerRegistry $registry)
+	{
+		parent::__construct($registry, Indicator::class);
+	}
 
-    public function getFrequencyToUpdate(): array
-    {
-        $qb = $this->createQueryBuilder('i');
+	public function getFrequencyToUpdate(): array
+	{
+		$qb = $this->createQueryBuilder('i');
 
-        return $qb
-                    ->where($qb->expr()->isNotNull("i.frequency"))
-                    ->getQuery()
-                    ->getResult();
-    }
+		return $qb
+					->where($qb->expr()->isNotNull("i.frequency"))
+					->getQuery()
+					->getResult();
+	}
 
 //    /**
 //     * @return Indicator[] Returns an array of Indicator objects

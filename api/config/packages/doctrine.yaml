@@ -28,6 +28,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Risks/Entity'
                 prefix: 'App\Risks\Entity'
                 alias: Risks
+            Indicators:
+                is_bundle: false
+                type: attribute
+                dir: '%kernel.project_dir%/src/Indicators/Entity'
+                prefix: 'App\Indicators\Entity'
+                alias: Indicators
 
 when@test:
     doctrine:
