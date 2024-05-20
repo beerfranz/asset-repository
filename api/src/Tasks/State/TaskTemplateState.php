@@ -4,7 +4,7 @@ namespace App\Tasks\State;
 
 use App\Tasks\ApiResource\TaskTemplate as TaskTemplateApi;
 use App\Tasks\ApiResource\TaskTemplateGenerateDto;
-use App\Entity\TaskTemplate as TaskTemplateEntity;
+use App\Tasks\Entity\TaskTemplate as TaskTemplateEntity;
 use App\Tasks\Service\TaskTemplateService;
 use App\Service\FrequencyService;
 use App\Tasks\Service\TaskWorkflowService;

@@ -4,7 +4,7 @@ namespace App\Service;
 
 use App\Entity\Frequency;
 use App\Entity\Indicator;
-use App\Entity\TaskTemplate;
+use App\Tasks\Entity\TaskTemplate;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Scheduler\Trigger\CronExpressionTrigger;

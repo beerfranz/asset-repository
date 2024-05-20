@@ -3,9 +3,9 @@
 namespace App\Tasks\Service;
 
 use App\Entity\Frequency;
-use App\Entity\Task;
-use App\Entity\TaskType;
-use App\Entity\TaskTemplate;
+use App\Tasks\Entity\Task;
+use App\Tasks\Entity\TaskType;
+use App\Tasks\Entity\TaskTemplate;
 use Beerfranz\RogerBundle\Entity\RogerEntityInterface;
 use App\Message\TaskMessage;
 use App\Service\FrequencyService;

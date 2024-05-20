@@ -5,8 +5,8 @@ namespace App\Tasks\Controller;
 use App\Service\AuditService;
 use App\Tasks\Service\TaskService;
 use App\Tasks\Service\TaskTypeService;
-use App\Repository\TaskTemplateRepository;
-use App\Repository\TaskWorkflowRepository;
+use App\Tasks\Repository\TaskTemplateRepository;
+use App\Tasks\Repository\TaskWorkflowRepository;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

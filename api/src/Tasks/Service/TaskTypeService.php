@@ -2,8 +2,8 @@
 
 namespace App\Tasks\Service;
 
-use App\Entity\TaskType;
-use App\Entity\TaskWorkflow;
+use App\Tasks\Entity\TaskType;
+use App\Tasks\Entity\TaskWorkflow;
 
 use Beerfranz\RogerBundle\Service\RogerService;
 

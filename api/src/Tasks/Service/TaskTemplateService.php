@@ -2,10 +2,10 @@
 
 namespace App\Tasks\Service;
 
-use App\Entity\Task;
-use App\Entity\TaskTemplate;
-use App\Entity\TaskWorkflow;
-use App\Entity\TaskType;
+use App\Tasks\Entity\Task;
+use App\Tasks\Entity\TaskTemplate;
+use App\Tasks\Entity\TaskWorkflow;
+use App\Tasks\Entity\TaskType;
 
 use App\Tasks\Service\TaskService;
 

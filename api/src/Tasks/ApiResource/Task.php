@@ -3,7 +3,6 @@
 namespace App\Tasks\ApiResource;
 
 use App\Tasks\State\TaskState;
-use App\Entity\Task as TaskEntity;
 
 use Beerfranz\RogerBundle\ApiResource\RogerApiResource;
 

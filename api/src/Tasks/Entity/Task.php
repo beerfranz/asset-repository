@@ -1,8 +1,11 @@
 <?php
 
-namespace App\Entity;
+namespace App\Tasks\Entity;
 
-use App\Repository\TaskRepository;
+use App\Tasks\Entity\TaskTemplate;
+use App\Tasks\Entity\TaskType;
+
+use App\Tasks\Repository\TaskRepository;
 use Beerfranz\RogerBundle\Doctrine\RogerListener;
 
 use Beerfranz\RogerBundle\Entity\RogerEntity;

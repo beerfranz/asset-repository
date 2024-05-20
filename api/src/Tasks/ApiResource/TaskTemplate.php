@@ -4,7 +4,6 @@ namespace App\Tasks\ApiResource;
 
 use App\Tasks\State\TaskTemplateState;
 use App\Tasks\ApiResource\TaskTemplateGenerateDto;
-use App\Entity\TaskTemplate as TaskTemplateEntity;
 
 use Beerfranz\RogerBundle\ApiResource\RogerApiResource;
 

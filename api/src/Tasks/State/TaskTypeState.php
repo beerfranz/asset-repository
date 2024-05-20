@@ -3,7 +3,7 @@
 namespace App\Tasks\State;
 
 use App\Tasks\ApiResource\TaskType as TaskTypeApi;
-use App\Entity\TaskType as TaskTypeEntity;
+use App\Tasks\Entity\TaskType as TaskTypeEntity;
 
 use App\Tasks\Service\TaskTypeService;
 
