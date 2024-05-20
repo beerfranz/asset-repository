@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repository;
+namespace App\Risks\Repository;
 
-use App\Entity\Risk;
-use App\Entity\RiskManager;
+use App\Risks\Entity\Risk;
+use App\Risks\Entity\RiskManager;
 
 use Beerfranz\RogerBundle\Repository\RogerRepositoryInterface;
 use Beerfranz\RogerBundle\Repository\RogerRepositoryTrait;
@@ -21,12 +21,12 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class RiskRepository extends ServiceEntityRepository implements RogerRepositoryInterface
 {
-    use RogerRepositoryTrait;
-    
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Risk::class);
-    }
+	use RogerRepositoryTrait;
+	
+	public function __construct(ManagerRegistry $registry)
+	{
+		parent::__construct($registry, Risk::class);
+	}
 
 //    /**
 //     * @return Risk[] Returns an array of Risk objects

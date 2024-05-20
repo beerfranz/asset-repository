@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Type\AssetAttributeType;
-
+use App\Risks\Entity\Risk;
 use App\Filter\AutocompleteFilter;
 
 use ApiPlatform\Metadata\ApiResource;

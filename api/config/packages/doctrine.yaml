@@ -22,6 +22,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Tasks/Entity'
                 prefix: 'App\Tasks\Entity'
                 alias: Tasks
+            Risks:
+                is_bundle: false
+                type: attribute
+                dir: '%kernel.project_dir%/src/Risks/Entity'
+                prefix: 'App\Risks\Entity'
+                alias: Risks
 
 when@test:
     doctrine:
