@@ -6,6 +6,9 @@ use App\ApiResource\Task as TaskApi;
 use App\Entity\Task as TaskEntity;
 use App\Service\TaskService;
 
+use Beerfranz\RogerBundle\State\RogerState;
+use Beerfranz\RogerBundle\State\RogerStateFacade;
+
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class TaskState extends RogerState

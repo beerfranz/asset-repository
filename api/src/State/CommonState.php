@@ -7,7 +7,7 @@ use App\Entity\Source;
 use App\Entity\Version;
 use App\Entity\Kind;
 
-use App\Repository\RogerRepositoryInterface;
+use Beerfranz\RogerBundle\Repository\RogerRepositoryInterface;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Collections\Criteria;

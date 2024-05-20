@@ -1,6 +1,6 @@
 <?php
 
-namespace App\ApiResource;
+namespace Beerfranz\RogerBundle\ApiResource;
 
 interface RogerApiResourceInterface {
 

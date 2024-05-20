@@ -3,10 +3,10 @@
 namespace App\MessageHandler;
 
 use App\Entity\Audit;
-use App\Message\RogerAsyncMessage;
+use Beerfranz\RogerBundle\Message\RogerAsyncMessage;
 
 use App\Service\AuditService;
-use App\MessageHandler\RogerHandlerAbstract;
+use Beerfranz\RogerBundle\MessageHandler\RogerHandlerAbstract;
 
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Psr\Log\LoggerInterface;

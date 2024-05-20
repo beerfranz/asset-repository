@@ -2,7 +2,7 @@
 
 namespace App\Filter;
 
-use App\Repository\RogerRepositoryTrait;
+use Beerfranz\RogerBundle\Repository\RogerRepositoryTrait;
 
 use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;

@@ -4,6 +4,10 @@ namespace App\Repository;
 
 use App\Entity\Asset;
 use App\Entity\Source;
+
+use Beerfranz\RogerBundle\Repository\RogerRepositoryInterface;
+use Beerfranz\RogerBundle\Repository\RogerRepositoryTrait;
+
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\Pagination\Paginator;

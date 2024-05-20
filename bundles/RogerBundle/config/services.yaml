@@ -1,0 +1,31 @@
+parameters:
+    # the id is not a class, so it won't be used for autowiring
+    # app.rot13.transformer:
+    #     class: App\Util\Rot13Transformer
+    #     # ...
+
+    # # but this fixes it!
+    # # the "app.rot13.transformer" service will be injected when
+    # # an App\Util\Rot13Transformer type-hint is detected
+    # App\Util\Rot13Transformer: '@app.rot13.transformer'
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    roger.state.facade:
+        class: Beerfranz\RogerBundle\State\RogerStateFacade
+    Beerfranz\RogerBundle\State\RogerStateFacade: '@roger.state.facade'
+
+    roger.listener.facade:
+        class: Beerfranz\RogerBundle\Doctrine\RogerListenerFacade
+    Beerfranz\RogerBundle\Doctrine\RogerListenerFacade: '@roger.listener.facade'
+
+    roger.repository.interface:
+        class: Beerfranz\RogerBundle\Repository\RogerRepositoryInterface
+    Beerfranz\RogerBundle\Repository\RogerRepositoryInterface: '@roger.repository.interface'
+
+    Beerfranz\RogerBundle\Doctrine\RogerListener:
+        tags: [doctrine.orm.entity_listener]

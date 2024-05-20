@@ -6,6 +6,9 @@ use App\ApiResource\Setting as SettingApi;
 use App\Entity\Setting as SettingEntity;
 use App\Service\SettingService;
 
+use Beerfranz\RogerBundle\State\RogerState;
+use Beerfranz\RogerBundle\State\RogerStateFacade;
+
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class SettingState extends RogerState

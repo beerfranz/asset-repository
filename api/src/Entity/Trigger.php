@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Beerfranz\RogerBundle\Entity\RogerEntity;
+
 class Trigger extends RogerEntity {
 
   const ALLOWED_LEVELS = [ 'info', 'success', 'warning', 'danger' ];

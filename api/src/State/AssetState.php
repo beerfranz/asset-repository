@@ -91,6 +91,7 @@ final class AssetState extends CommonState implements ProcessorInterface, Provid
                     $this->delete($asset);
                 }
             }
+            return $data;
         } else {
             if ($operation instanceof Delete) {
                 $this->delete($data);
@@ -101,6 +102,8 @@ final class AssetState extends CommonState implements ProcessorInterface, Provid
                 $asset = $this->processOneAsset((array) $data);
 
                 $data->id = $asset->getId();
+
+                return $data;
             }
             
         }

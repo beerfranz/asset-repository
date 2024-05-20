@@ -3,11 +3,11 @@
 namespace App\MessageHandler;
 
 use App\Message\TaskMessage;
-use App\Message\RogerAsyncMessage;
+use Beerfranz\RogerBundle\Message\RogerAsyncMessage;
 use App\Message\IndicatorValueMessage;
 use App\Service\IndicatorService;
 use App\Service\IndicatorValueService;
-use App\MessageHandler\RogerHandlerAbstract;
+use Beerfranz\RogerBundle\MessageHandler\RogerHandlerAbstract;
 
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Psr\Log\LoggerInterface;

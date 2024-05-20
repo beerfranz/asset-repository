@@ -23,9 +23,10 @@
         </testsuite>
     </testsuites>
 
-    <coverage processUncoveredFiles="true">
+    <coverage processUncoveredFiles="false">
         <include>
             <directory suffix=".php">src</directory>
+            <directory suffix=".php">../bundles</directory>
         </include>
     </coverage>
 

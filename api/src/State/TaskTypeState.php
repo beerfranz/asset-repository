@@ -7,6 +7,9 @@ use App\Entity\TaskType as TaskTypeEntity;
 
 use App\Service\TaskTypeService;
 
+use Beerfranz\RogerBundle\State\RogerState;
+use Beerfranz\RogerBundle\State\RogerStateFacade;
+
 final class TaskTypeState extends RogerState
 {
 

@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Beerfranz\RogerBundle\Entity\RogerEntity;
+
 class TaskWorkflowStatus extends RogerEntity {
 
   protected string $status = 'todo';

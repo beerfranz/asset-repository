@@ -6,6 +6,9 @@ use App\ApiResource\Audit as AuditApi;
 use App\Entity\Audit as AuditEntity;
 use App\Service\AuditService;
 
+use Beerfranz\RogerBundle\State\RogerState;
+use Beerfranz\RogerBundle\State\RogerStateFacade;
+
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class AuditState extends RogerState

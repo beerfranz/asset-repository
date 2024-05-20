@@ -6,9 +6,11 @@ use App\Entity\Frequency;
 use App\Entity\Task;
 use App\Entity\TaskType;
 use App\Entity\TaskTemplate;
-use App\Entity\RogerEntityInterface;
+use Beerfranz\RogerBundle\Entity\RogerEntityInterface;
 use App\Message\TaskMessage;
 use App\Service\FrequencyService;
+
+use Beerfranz\RogerBundle\Service\RogerService;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Scheduler\Trigger\CronExpressionTrigger;

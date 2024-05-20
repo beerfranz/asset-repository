@@ -4,6 +4,8 @@ namespace App\Service;
 
 use App\Entity\Audit;
 
+use Beerfranz\RogerBundle\Service\RogerService;
+
 use Doctrine\ORM\EntityManagerInterface;
 
 use Psr\Log\LoggerInterface;

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\MessageHandler;
+namespace Beerfranz\RogerBundle\MessageHandler;
 
-use App\MessageHandler\RogerHandlerTrait;
+use Beerfranz\RogerBundle\MessageHandler\RogerHandlerTrait;
 
 abstract class RogerHandlerAbstract {
 

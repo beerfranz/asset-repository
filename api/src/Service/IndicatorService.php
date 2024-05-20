@@ -5,6 +5,8 @@ namespace App\Service;
 use App\Entity\Indicator;
 use App\Entity\IndicatorValue;
 
+use Beerfranz\RogerBundle\Service\RogerService;
+
 use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

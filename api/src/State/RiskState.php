@@ -6,7 +6,9 @@ use App\ApiResource\Risk as RiskApi;
 use App\Entity\Risk as RiskEntity;
 
 use App\Service\RiskService;
-use App\State\RogerStateFacade;
+
+use Beerfranz\RogerBundle\State\RogerState;
+use Beerfranz\RogerBundle\State\RogerStateFacade;
 
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;

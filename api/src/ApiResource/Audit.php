@@ -5,6 +5,8 @@ namespace App\ApiResource;
 use App\State\AuditState;
 use App\Entity\Audit as AuditEntity;
 
+use Beerfranz\RogerBundle\ApiResource\RogerApiResource;
+
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;

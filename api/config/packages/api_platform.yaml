@@ -11,6 +11,12 @@ api_platform:
             mime_types: ['application/json']
         # html:
         #     mime_types: ['text/html']
+    patch_formats:
+        jsonld:
+            mime_types: ['application/merge-patch+json']
+        json:
+            mime_types: ['application/merge-patch+json']
+
     # Good cache defaults for REST APIs
     defaults:
         stateless: true
@@ -21,3 +27,26 @@ api_platform:
         pagination_maximum_items_per_page: 100
         pagination_client_enabled: true
         pagination_client_items_per_page: true
+
+
+    oauth:
+        # To enable or disable OAuth.
+        enabled: false
+        # The OAuth client ID.
+        clientId: ''
+        # The OAuth client secret.
+        clientSecret: ''
+        # The OAuth type.
+        type: 'oauth2'
+        # The OAuth flow grant type.
+        flow: 'application'
+        # The OAuth token URL. Make sure to check the specification tokenUrl is not needed for an implicit flow.
+        tokenUrl: ''
+        # The OAuth authentication URL.
+        authorizationUrl: ''
+        # The OAuth scopes.
+        scopes: []
+
+    swagger:
+        swagger_ui_extra_configuration:
+            filter: true

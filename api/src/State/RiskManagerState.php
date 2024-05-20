@@ -7,7 +7,8 @@ use App\Entity\RiskManager as RiskManagerEntity;
 
 use App\Service\RiskManagerService;
 
-use App\State\RogerStateFacade;
+use Beerfranz\RogerBundle\State\RogerState;
+use Beerfranz\RogerBundle\State\RogerStateFacade;
 
 final class RiskManagerState extends RogerState
 {
