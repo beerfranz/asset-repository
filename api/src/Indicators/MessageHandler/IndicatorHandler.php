@@ -16,67 +16,67 @@ use Psr\Log\LoggerInterface;
 class IndicatorHandler extends RogerHandlerAbstract
 {
 
-  public function __construct(
-    protected IndicatorService $service,
-    protected IndicatorValueService $valueService,
-    protected LoggerInterface $logger,
-  )
-  {
+	public function __construct(
+		protected IndicatorService $service,
+		protected IndicatorValueService $valueService,
+		protected LoggerInterface $logger,
+	)
+	{
 
-  }
+	}
 
-  #[AsMessageHandler]
-  public function taskMessage(TaskMessage $message)
-  {
-    $this->handlerName = __METHOD__;
-    $this->messageClass = $message::class;
+	#[AsMessageHandler]
+	public function taskMessage(TaskMessage $message)
+	{
+		$this->handlerName = __METHOD__;
+		$this->messageClass = $message::class;
 
-    $event = $message->getEvent();
-    $context = $message->getContext();
+		$event = $message->getEvent();
+		$context = $message->getContext();
 
-    $this->logReceiveMessage();
+		$this->logReceiveMessage();
 
-    if ($this->isAboutEntityNames($context, [ 'Task' ])) {
+		if ($this->isAboutEntityNames($context, [ 'Task' ])) {
 
-      if ($this->isTaskDone($context)) {
+			if ($this->isTaskDone($context)) {
 
-        if (
-          isset($context['entity']['attributes']['indicator']['identifier']) &&
-          isset($context['entity']['attributes']['indicatorValue']['identifier']) &&
-          isset($context['entity']['attributes']['indicatorValue']['value'])
-        ) {
+				if (
+					isset($context['entity']['attributes']['indicator']['identifier']) &&
+					isset($context['entity']['attributes']['indicatorValue']['identifier']) &&
+					isset($context['entity']['attributes']['indicatorValue']['value'])
+				) {
 
-          $this->logProcessingMessage();
+					$this->logProcessingMessage();
 
-          $indicatorIdentifier = $context['entity']['attributes']['indicator']['identifier'];
-          $indicatorValueIdentifier = $context['entity']['attributes']['indicatorValue']['identifier'];
+					$indicatorIdentifier = $context['entity']['attributes']['indicator']['identifier'];
+					$indicatorValueIdentifier = $context['entity']['attributes']['indicatorValue']['identifier'];
 
-          $indicatorValue = $this->valueService->findOneByIdentifiers([ 'indicatorIdentifier' => $indicatorIdentifier, 'identifier' => $indicatorValueIdentifier ]);
-          $indicatorValue->setValue($context['entity']['attributes']['indicatorValue']['value']);
-          $indicatorValue->setIsValidated(true);
-          $this->valueService->persistEntity($indicatorValue);
-        } else
-          $this->logIgnoringMessage('context not compete');
-      } else
-        $this->logIgnoringMessage('task not done');
-    } else {
-      $this->logIgnoringMessage('not about entity Task');
-    }
-  
-  }
+					$indicatorValue = $this->valueService->findOneByIdentifiers([ 'indicatorIdentifier' => $indicatorIdentifier, 'identifier' => $indicatorValueIdentifier ]);
+					$indicatorValue->setValue($context['entity']['attributes']['indicatorValue']['value']);
+					$indicatorValue->setIsValidated(true);
+					$this->valueService->persistEntity($indicatorValue);
+				} else
+					$this->logIgnoringMessage('context not compete');
+			} else
+				$this->logIgnoringMessage('task not done');
+		} else {
+			$this->logIgnoringMessage('not about entity Task');
+		}
+	
+	}
 
-  protected function isTaskStatusChanged(array $context) {
-    if (isset($context['diffs']['status']))
-      return true;
+	protected function isTaskStatusChanged(array $context) {
+		if (isset($context['diffs']['status']))
+			return true;
 
-    return false;
-  }
+		return false;
+	}
 
-  protected function isTaskDone(array $context) {
-    if (isset($context['entity']['isDone']) && $context['entity']['isDone'] == 1)
-      return true;
+	protected function isTaskDone(array $context) {
+		if (isset($context['entity']['isDone']) && $context['entity']['isDone'] == 1)
+			return true;
 
-    return false;
-  }
+		return false;
+	}
 
 }

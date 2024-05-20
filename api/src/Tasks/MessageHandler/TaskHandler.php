@@ -15,64 +15,64 @@ use Psr\Log\LoggerInterface;
 class TaskHandler extends RogerHandlerAbstract
 {
 
-  public function __construct(
-    protected TaskService $service,
-    protected LoggerInterface $logger,
-  )
-  {
+	public function __construct(
+		protected TaskService $service,
+		protected LoggerInterface $logger,
+	)
+	{
 
-  }
+	}
 
-  #[AsMessageHandler]
-  public function indicatorValueMessage(IndicatorValueMessage $message)
-  {
-    $this->handlerName = __METHOD__;
-    $this->messageClass = $message::class;
+	#[AsMessageHandler]
+	public function indicatorValueMessage(IndicatorValueMessage $message)
+	{
+		$this->handlerName = __METHOD__;
+		$this->messageClass = $message::class;
 
-    $this->logReceiveMessage();
+		$this->logReceiveMessage();
 
-    $event = $message->getEvent();
-    $context = $message->getContext();
+		$event = $message->getEvent();
+		$context = $message->getContext();
 
-    if ($this->isAboutEntityNames($context, [ 'IndicatorValue' ]) && isset($context['entity']['indicator']['taskTemplateIdentifier'])) {
-      $this->logProcessingMessage();
-      $messageIndicatorValue = $context['entity'];
-      $messageIndicator = $messageIndicatorValue['indicator'];
-      $messageTaskTemplateIdentifier = $messageIndicator['taskTemplateIdentifier'];
+		if ($this->isAboutEntityNames($context, [ 'IndicatorValue' ]) && isset($context['entity']['indicator']['taskTemplateIdentifier'])) {
+			$this->logProcessingMessage();
+			$messageIndicatorValue = $context['entity'];
+			$messageIndicator = $messageIndicatorValue['indicator'];
+			$messageTaskTemplateIdentifier = $messageIndicator['taskTemplateIdentifier'];
 
-      $taskTemplate = $this->service->findOneTaskTemplateByIdentifier($messageTaskTemplateIdentifier);
+			$taskTemplate = $this->service->findOneTaskTemplateByIdentifier($messageTaskTemplateIdentifier);
 
-      $properties = [];
-      $properties['attributes'] = [
-        'indicator' => [
-          'identifier' => $messageIndicator['identifier'],
-        ],
-        'indicatorValue' => [
-          'identifier' => $messageIndicatorValue['identifier'],
-        ],
-        'relatedTo' => [
-          'indicatorValue' => [
-            'value' => '/indicators/' . $messageIndicator['identifier'] . '/values/' . $messageIndicatorValue['identifier'],
-            'kind' => 'link',
-            'title' => 'Indicator Value',
-          ]
-        ]
-      ];
+			$properties = [];
+			$properties['attributes'] = [
+				'indicator' => [
+					'identifier' => $messageIndicator['identifier'],
+				],
+				'indicatorValue' => [
+					'identifier' => $messageIndicatorValue['identifier'],
+				],
+				'relatedTo' => [
+					'indicatorValue' => [
+						'value' => '/indicators/' . $messageIndicator['identifier'] . '/values/' . $messageIndicatorValue['identifier'],
+						'kind' => 'link',
+						'title' => 'Indicator Value',
+					]
+				]
+			];
 
-      try {
-        $task = $this->service->generateTaskFromTaskTemplate(
-          $taskTemplate,
-          $messageIndicator['identifier'] . '_' . $messageIndicatorValue['identifier'],
-          null,
-          $properties,
-        );
-      } catch (\Exception $e) {
-        $this->logger->error('Failed to generate task for indicator value ' . $messageIndicator['identifier'] . '_' . $messageIndicatorValue['identifier']);
-        throw $e;
-      }
-    } else {
-      $this->logIgnoringMessage('not about entity IndicatorValue');
-    }
-  }
+			try {
+				$task = $this->service->generateTaskFromTaskTemplate(
+					$taskTemplate,
+					$messageIndicator['identifier'] . '_' . $messageIndicatorValue['identifier'],
+					null,
+					$properties,
+				);
+			} catch (\Exception $e) {
+				$this->logger->error('Failed to generate task for indicator value ' . $messageIndicator['identifier'] . '_' . $messageIndicatorValue['identifier']);
+				throw $e;
+			}
+		} else {
+			$this->logIgnoringMessage('not about entity IndicatorValue');
+		}
+	}
 
 }
