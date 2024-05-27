@@ -6,6 +6,7 @@ use App\Tasks\Repository\TaskTemplateRepository;
 
 use App\Tasks\Entity\Task;
 use App\Tasks\Entity\TaskType;
+use App\Tasks\Entity\TaskTag;
 
 use Beerfranz\RogerBundle\Entity\RogerEntity;
 
@@ -53,10 +54,17 @@ class TaskTemplate extends RogerEntity
 	#[ORM\Column(nullable: true)]
 	private ?array $attributes = null;
 
+	/**
+	 * @var Collection<int, TaskTag>
+	 */
+	#[ORM\ManyToMany(targetEntity: TaskTag::class, inversedBy: 'taskTemplates', cascade: ['persist'])]
+	private Collection $tags;
+
 	public function __construct()
 	{
 		$this->tasks = new ArrayCollection();
 		$this->children = new ArrayCollection();
+		$this->tags = new ArrayCollection();
 	}
 
 	public function getId(): ?int
@@ -216,6 +224,30 @@ class TaskTemplate extends RogerEntity
 	public function setAttributes(?array $attributes): static
 	{
 		$this->attributes = $attributes;
+
+		return $this;
+	}
+
+	/**
+	 * @return Collection<int, TaskTag>
+	 */
+	public function getTags(): Collection
+	{
+		return $this->tags;
+	}
+
+	public function addTag(TaskTag $tag): static
+	{
+		if (!$this->tags->contains($tag)) {
+			$this->tags->add($tag);
+		}
+
+		return $this;
+	}
+
+	public function removeTag(TaskTag $tag): static
+	{
+		$this->tags->removeElement($tag);
 
 		return $this;
 	}

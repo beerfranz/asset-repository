@@ -5,6 +5,7 @@ namespace App\Tasks\ApiResource;
 use App\Tasks\State\TaskTemplateState;
 use App\Tasks\ApiResource\TaskTemplateGenerateDto;
 
+use App\Tasks\Entity\TaskTag;
 use Beerfranz\RogerBundle\ApiResource\RogerApiResource;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -69,7 +70,7 @@ class TaskTemplate extends RogerApiResource
 	)]
 	public ?array $frequency = [];
 
-	#[Groups(['TaskTemplates:read', 'TaskTemplate:read'])]
+	#[Groups(['TaskTemplate:read'])]
 	#[ApiProperty(
 		openapiContext: [ "type" => "object" ]
 	)]
@@ -92,4 +93,11 @@ class TaskTemplate extends RogerApiResource
 
 	#[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
 	public $typeIdentifier;
+
+	#[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
+	#[ApiProperty(
+		openapiContext: [ "type" => "object" ]
+	)]
+	public ?array $tags = [];
+
 }

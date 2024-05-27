@@ -72,6 +72,7 @@ class TaskTemplateTest extends Functional
     $input = [
       'title' => 'test title',
       'description' => 'test description',
+      'tags' => [ 'priority' => [ 'value' => 'low', 'color' => 'black' ]],
     ];
 
     $output = array_merge($input, [

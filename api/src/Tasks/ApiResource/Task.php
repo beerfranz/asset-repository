@@ -86,4 +86,10 @@ class Task extends RogerApiResource
     #[Groups(['Task:read'])]
     public $allowedNextStatuses;
 
+    #[Groups(['Tasks:read', 'Task:read', 'Task:write'])]
+    #[ApiProperty(
+        openapiContext: [ "type" => "object" ]
+    )]
+    public ?array $tags = [];
+
 }
