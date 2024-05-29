@@ -1,7 +1,8 @@
 <?php
 
-namespace App\ApiResource;
+namespace App\Assets\ApiResource;
 
+use App\Assets\ApiResource\AssetDefinitionBatchDto;
 use App\State\AssetDefinitionState;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -20,23 +21,23 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 #[ApiResource(
-    description: 'Asset definitions',
-    processor: AssetDefinitionState::class,
-    provider: AssetDefinitionState::class,
-    denormalizationContext: ['groups' => ['Asset:write']],
+	description: 'Asset definitions',
+	processor: AssetDefinitionState::class,
+	provider: AssetDefinitionState::class,
+	denormalizationContext: ['groups' => ['Asset:write']],
 )]
 #[Put(name: 'put_asset_definition_by_source', uriTemplate: '/sources/{sourceId}/asset_definitions', uriVariables: [ 'sourceId' ], 
-    security: "is_granted('ASSET_WRITE')", input: AssetDefinitionBatchDto::class, output: AssetDefinitionBatchDto::class,)]
+	security: "is_granted('ASSET_WRITE')", input: AssetDefinitionBatchDto::class, output: AssetDefinitionBatchDto::class,)]
 #[Post(name: 'post_asset_definition_by_source', uriTemplate: '/sources/{sourceId}/asset_definitions', uriVariables: [ 'sourceId' ] ,
-    security: "is_granted('ASSET_WRITE')", input: AssetDefinitionBatchDto::class, output: AssetDefinitionBatchDto::class)]
+	security: "is_granted('ASSET_WRITE')", input: AssetDefinitionBatchDto::class, output: AssetDefinitionBatchDto::class)]
 class AssetDefinition
 {
-    #[Groups(['Asset:write'])]
-    public $assetDefinitions;
+	#[Groups(['Asset:write'])]
+	public $assetDefinitions;
 
-    #[Groups(['Asset:write'])]
-    public $source = null;
+	#[Groups(['Asset:write'])]
+	public $source = null;
 
-    #[Groups(['Asset:write'])]
-    public $owner = null;
+	#[Groups(['Asset:write'])]
+	public $owner = null;
 }

@@ -8,7 +8,7 @@ use App\Entity\Owner;
 use App\Entity\Source;
 use App\Entity\EnvironmentDefinition;
 
-use App\ApiResource\BatchAssetDefinition;
+use App\Assets\ApiResource\BatchAssetDefinition;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\Metadata\Put;

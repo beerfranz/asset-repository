@@ -1,6 +1,6 @@
 <?php
 
-namespace App\ApiResource;
+namespace App\Assets\ApiResource;
 
 use App\State\SourceState;
 
@@ -25,34 +25,34 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 #[ApiResource(
-    description: 'Sources',
-    provider: SourceState::class,
-    normalizationContext: ['groups' => ['Source:read']],
-    denormalizationContext: ['groups' => ['Source:write']],
+	description: 'Sources',
+	provider: SourceState::class,
+	normalizationContext: ['groups' => ['Source:read']],
+	denormalizationContext: ['groups' => ['Source:write']],
 )]
 #[GetCollection(security: "is_granted('ASSET_READ')")]
 #[Get(security: "is_granted('ASSET_READ')")]
 #[ApiFilter(GroupFilter::class, arguments: ['parameterName' => 'groups', 'overrideDefaultGroups' => true, 'whitelist' => ['Source:name']])]
 class Source
 {
-    #[Groups(['Source:read'])]
-    public $id;
+	#[Groups(['Source:read'])]
+	public $id;
 
-    #[Groups(['Source:read', 'AssetDefinition:read', 'Source:name'])]
-    #[ApiProperty(identifier: true)]
-    #[ApiFilter(AutocompleteFilter::class)]
-    public $name;
+	#[Groups(['Source:read', 'AssetDefinition:read', 'Source:name'])]
+	#[ApiProperty(identifier: true)]
+	#[ApiFilter(AutocompleteFilter::class)]
+	public $name;
 
-    #[Groups(['Source:read'])]
-    public array $assetDefinitions = [];
+	#[Groups(['Source:read'])]
+	public array $assetDefinitions = [];
 
-    #[Groups(['Source:read'])]
-    public array $assets = [];
+	#[Groups(['Source:read'])]
+	public array $assets = [];
 
-    #[Groups(['Source:read'])]
-    public array $instances = [];
+	#[Groups(['Source:read'])]
+	public array $instances = [];
 
-    public function getId() {
-        return $this->name;
-    }
+	public function getId() {
+		return $this->name;
+	}
 }

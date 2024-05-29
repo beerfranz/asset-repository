@@ -3,7 +3,7 @@
 namespace App\State;
 
 use App\Entity\Source;
-use App\ApiResource\Source as SourceDto;
+use App\Assets\ApiResource\Source as SourceDto;
 
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;

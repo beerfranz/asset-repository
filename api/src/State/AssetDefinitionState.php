@@ -8,7 +8,7 @@ use App\Entity\EnvironmentDefinition;
 use App\Entity\Source;
 use App\Entity\Owner;
 use App\ApiResource\Version as VersionDto;
-use App\ApiResource\AssetDefinitionBatchDto;
+use App\Assets\ApiResource\AssetDefinitionBatchDto;
 
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;

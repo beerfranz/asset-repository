@@ -5,8 +5,8 @@ namespace App\State;
 use App\Entity\Asset;
 use App\Entity\Instance;
 use App\Entity\Source;
-use App\ApiResource\Instance as InstanceDto;
-use App\ApiResource\InstanceBatchDto;
+use App\Assets\ApiResource\Instance as InstanceDto;
+use App\Assets\ApiResource\InstanceBatchDto;
 use App\Service\InstanceReconciliation;
 use App\Service\InstanceConformity;
 

@@ -6,8 +6,8 @@ use App\Entity\Asset;
 use App\Entity\Instance;
 use App\Entity\Owner;
 use App\Entity\Source;
-use App\ApiResource\Asset as AssetDto;
-use App\ApiResource\AssetBatchDto;
+use App\Assets\ApiResource\Asset as AssetDto;
+use App\Assets\ApiResource\AssetBatchDto;
 
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;
