@@ -2,7 +2,7 @@
 
 namespace App\Assets\ApiResource;
 
-use App\State\SourceState;
+use App\Assets\State\SourceState;
 
 use App\Filter\AutocompleteFilter;
 

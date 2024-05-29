@@ -3,7 +3,7 @@
 namespace App\Assets\ApiResource;
 
 use App\Assets\ApiResource\AssetDefinitionBatchDto;
-use App\State\AssetDefinitionState;
+use App\Assets\State\AssetDefinitionState;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;

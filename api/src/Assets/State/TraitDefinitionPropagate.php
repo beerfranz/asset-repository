@@ -1,6 +1,6 @@
 <?php
 
-namespace App\State;
+namespace App\Assets\State;
 
 use App\Entity\Asset;
 use App\Entity\AssetDefinition;

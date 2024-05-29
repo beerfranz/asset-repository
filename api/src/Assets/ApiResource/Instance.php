@@ -3,7 +3,7 @@
 namespace App\Assets\ApiResource;
 
 use App\Assets\ApiResource\InstanceBatchDto;
-use App\State\InstanceState;
+use App\Assets\State\InstanceState;
 use App\Entity\AssetAudit;
 
 use ApiPlatform\Metadata\ApiResource;

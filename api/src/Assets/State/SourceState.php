@@ -1,9 +1,10 @@
 <?php
 
-namespace App\State;
+namespace App\Assets\State;
 
 use App\Entity\Source;
 use App\Assets\ApiResource\Source as SourceDto;
+use App\State\CommonState;
 
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;
@@ -23,20 +24,20 @@ use Psr\Log\LoggerInterface;
 final class SourceState extends CommonState implements ProviderInterface
 {
 
-    // public function __construct(private ProviderInterface $itemProvider)
-    // {
-    // }
+	// public function __construct(private ProviderInterface $itemProvider)
+	// {
+	// }
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
-    {
-        // var_dump($context);exit;
-        $repo = $this->entityManager->getRepository(Source::class);
+	public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
+	{
+		// var_dump($context);exit;
+		$repo = $this->entityManager->getRepository(Source::class);
 
-        if ($operation instanceof CollectionOperationInterface)
-        {
-            return $this->getCollection($repo, $context);
-        }
+		if ($operation instanceof CollectionOperationInterface)
+		{
+			return $this->getCollection($repo, $context);
+		}
 
-        return $repo->findOneByName(null, $uriVariables['name']);
-    }
+		return $repo->findOneByName(null, $uriVariables['name']);
+	}
 }
