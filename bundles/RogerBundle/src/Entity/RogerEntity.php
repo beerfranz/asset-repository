@@ -4,6 +4,7 @@ namespace Beerfranz\RogerBundle\Entity;
 
 use JsonSerializable;
 
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
@@ -16,7 +17,13 @@ abstract class RogerEntity implements RogerEntityInterface, JsonSerializable {
 	}
 
 	public function __toString() {
-		return get_class($this) . '#' . $this->getIdentifier();
+		if (method_exists($this, 'getIdentifier')) {
+			$identifier = $this->getIdentifier();
+		} else {
+			$identifier = $this->getId();
+		}
+
+		return get_class($this) . '#' . $identifier;
 	}
 	
 	public function hydrator(array $data = []): self
@@ -93,6 +100,11 @@ abstract class RogerEntity implements RogerEntityInterface, JsonSerializable {
 	public function toArray(): array
 	{
 		return $this->getSerializer()->normalize($this, 'array');
+	}
+
+	static function generateUuid(): string
+	{
+		return Uuid::v7()->__toString();
 	}
 
 }

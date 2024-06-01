@@ -1,0 +1,35 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Test plans{% endblock %}
+
+{% block body %}
+
+<div class="row">
+	<div class="col-md-12">
+		<table class="table" id="test-plans"></table>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+$(document).ready(function () {
+	var dataTableOpts = commonDataTableOpts();
+	dataTableOpts.ajax.url = '/assessments/plans';
+	dataTableOpts.columns = [ 
+		{ data: 'identifier', title: 'Identifier', render: function(data, type, row, meta){ return '<a href="/ui/assessments/plans/' + data + '">' + data + '</a>'} },
+		{ data: 'title', title: 'Title' },
+		{ data: 'asset', title: 'Asset' },
+		{ data: 'taskCount', title: 'Tasks' },
+	];
+
+	rogerInit('test-plans', dataTableOpts);
+
+});
+
+</script>
+
+{% endblock %}

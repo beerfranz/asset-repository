@@ -128,7 +128,7 @@ abstract class RogerState implements ProcessorInterface, ProviderInterface, Roge
 
 	protected function processOneEntity(RogerApiResourceInterface $api): RogerEntityInterface
 	{
-
+		$entity = null;
 		$identifier = $api->__get('identifier');
 
 		if ($identifier !== null) {

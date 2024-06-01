@@ -1,0 +1,56 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Test templates{% endblock %}
+
+{% block body %}
+
+<div class="row">
+	<div class="col-md-12">
+		<table class="table" id="test-templates"></table>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+function renderAssessmentTemplateActions(options) {
+  let actions = '';
+  if (options.assetsCount > 0) {
+    actions += `<a role="button" onClick="generateAssessmentPlanForm('${options.identifier}');">${RogerUtils.iconShare({ title: 'Generate plan' })}</a>`;
+  }
+
+  return actions;
+}
+
+$(document).ready(function () {
+	var dataTableOpts = commonDataTableOpts();
+	dataTableOpts.ajax.url = '/assessments/templates';
+	dataTableOpts.columns = [ 
+		{ data: 'identifier', title: 'Identifier', render: function(data, type, row, meta){ return '<a href="/ui/assessments/templates/' + data + '">' + data + '</a>'} },
+		{ data: 'title', title: 'Title' },
+		{ data: 'assetsCount', title: 'Assets' },
+		{ data: 'taskTemplatesCount', title: 'Task templates' },
+		{ data: '', title: 'Actions', orderable: false, render: function(data, type, row, meta){ return renderAssessmentTemplateActions(row); } }
+	];
+
+	rogerInit('test-templates', dataTableOpts);
+
+});
+
+function generateAssessmentPlanForm(templateIdentifier) {
+	var method = 'POST';
+	var action = '/assessments/templates/' + templateIdentifier + '/generate-plan';
+	var fields = [
+		{ name: 'assets', label: 'Assets' },
+	];
+
+	RogerForm.initModal({ method: method, action: action, fields: fields });
+}
+
+
+</script>
+
+{% endblock %}

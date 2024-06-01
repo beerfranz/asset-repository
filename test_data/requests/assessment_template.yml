@@ -1,0 +1,11 @@
+request:
+  method: PUT
+  path: /assessments/templates/test
+
+data:
+  title: Test template
+  assets:
+    - DevServer
+  taskTemplates:
+    - QA-server
+  

@@ -1,0 +1,48 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Assessment template {{ template.identifier }}{% endblock %}
+
+{% block body %}
+
+
+<div class="row">
+	<div class="col-md-12">
+		<ul>
+			<li>Title: {{ template.title }}</li>
+		</ul>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<h3>Assets</h3>
+		<table class="table" id="template-assets">
+			<tr><th>Identifier</th></tr>
+			{% for asset in template.assets %}
+				<tr><td>{{ asset.identifier }}</td></tr>
+			{% endfor %}
+		</table>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<h3>Tasks templates</h3>
+		<table class="table" id="template-tasks">
+			<tr><th>Identifier</th><th>Title</th></tr>
+			{% for taskTemplate in template.taskTemplates %}
+				<tr><td>{{ taskTemplate.identifier }}</td><td>{{ taskTemplate.title }}</td></tr>
+			{% endfor %}
+		</table>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Assessment plan {{ plan.identifier }}{% endblock %}
+
+{% block body %}
+
+
+<div class="row">
+	<div class="col-md-12">
+		<ul>
+			<li>Title: {{ plan.title }}</li>
+			<li>Asset: {{ plan.asset.identifier }}</li>
+		</ul>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<h3>Tasks</h3>
+		<table class="table" id="plan-tasks">
+			<tr><th>Identifier</th><th>Title</th></tr>
+			{% for task in plan.tasks %}
+				<tr><td>{{ task.identifier }}</td><td>{{ task.title }}</td></tr>
+			{% endfor %}
+		</table>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+</script>
+
+{% endblock %}

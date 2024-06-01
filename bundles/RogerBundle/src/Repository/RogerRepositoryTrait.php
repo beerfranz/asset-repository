@@ -115,8 +115,13 @@ trait RogerRepositoryTrait {
 			}
 		} else {
 			$field = $rootAlias . '.' . $filter;
-			$queryBuilder->andWhere($field . ' = :' . $filter)
+
+			if ($value === '') {
+				$queryBuilder->andWhere($field . ' is NULL');
+			} else {
+				$queryBuilder->andWhere($field . ' = :' . $filter)
 						 ->setParameter($filter, $value);
+			}
 		}
 	}
 
