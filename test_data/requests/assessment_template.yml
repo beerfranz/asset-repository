@@ -6,6 +6,7 @@ data:
   title: Test template
   assets:
     - DevServer
+    - front-prod-main
   taskTemplates:
     - QA-server
   
