@@ -5,6 +5,8 @@ namespace App\Assessments\Controller;
 use App\Assessments\Repository\AssessmentTemplateRepository;
 use App\Assessments\Repository\AssessmentPlanRepository;
 
+use App\Assessments\Repository\AssessmentSequenceRepository;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -38,6 +40,13 @@ class AssessmentController extends AbstractController
 	{
 		$template = $repo->findOneByIdentifier($identifier);
 		return $this->render('@assessments/template.html.twig', [ 'template' => $template, 'navbar' => [ 'assessment_templates' => 'active' ]]);
+	}
+
+	#[Route('/seqs', name: 'getAssessmentSequence', methods: ['GET'])]
+	public function getAssessmentSequence(AssessmentSequenceRepository $repo, Request $request): Response
+	{
+		$seq = $repo->increment();
+		var_dump($seq->getSequenceNumber()); exit;
 	}
 
 }

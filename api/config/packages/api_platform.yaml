@@ -26,8 +26,8 @@ api_platform:
         pagination_client_enabled: true
         pagination_client_items_per_page: true
 
-    # extra_properties:
-    #     standard_put: true
+        extra_properties:
+            standard_put: true
 
     mapping:
         paths:

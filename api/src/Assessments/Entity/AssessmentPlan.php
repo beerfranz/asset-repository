@@ -2,7 +2,10 @@
 
 namespace App\Assessments\Entity;
 
+use App\Assessments\Entity\AssessmentSequence;
 use App\Assessments\Repository\AssessmentPlanRepository;
+use App\Assessments\Doctrine\PlanListener;
+
 use App\Entity\Asset;
 use App\Tasks\Entity\Task;
 
@@ -11,18 +14,18 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Beerfranz\RogerBundle\Entity\RogerEntity;
+use Beerfranz\RogerBundle\Entity\RogerIdTrait;
 use Beerfranz\RogerBundle\Entity\RogerIdentifierTrait;
 use Beerfranz\RogerBundle\Entity\RogerTitleTrait;
 
 #[ORM\Entity(repositoryClass: AssessmentPlanRepository::class)]
-class AssessmentPlan extends RogerEntity
+#[ORM\EntityListeners([PlanListener::class])]
+class AssessmentPlan extends RogerEntity // implements RogerSequence
 {
-	#[ORM\Id]
-	#[ORM\GeneratedValue(strategy: "SEQUENCE")]
-	#[ORM\Column]
-	private ?int $id = null;
+	use RogerIdTrait;
 
 	use RogerIdentifierTrait;
+
 	use RogerTitleTrait;
 
 	/**
@@ -37,12 +40,14 @@ class AssessmentPlan extends RogerEntity
 	public function __construct()
 	{
 		$this->tasks = new ArrayCollection();
-		$this->identifier = self::generateUuid();
 	}
 
-	public function getId(): ?int
-	{
-		return $this->id;
+	public function getSequenceClass() {
+		return AssessmentSequence::class;
+	}
+
+	public function getSequencedProperties() {
+		return [ 'identifier' => [ 'prefix' => 'a-' ], 'title' => [] ];
 	}
 
 	/**

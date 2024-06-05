@@ -35,10 +35,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[Put(security: "is_granted('ASSET_WRITE')")]
 #[Patch(security: "is_granted('ASSET_WRITE')")]
 #[Delete(security: "is_granted('ASSET_WRITE')")]
-#[Put(
+#[Post(
 	name: 'generate_assessment_plan_from_template',
-	uriTemplate: '/templates/{identifier}/generate/{planIdentifier}',
-	uriVariables: [ 'identifier', 'planIdentifier' ] ,
+	uriTemplate: '/templates/{identifier}/generate-plan',
+	uriVariables: [ 'identifier' ] ,
 	security: "is_granted('ASSET_WRITE')",
 	normalizationContext: [ 'groups' => [ 'AssessmentTemplateGenerate' ]],
 	denormalizationContext: [ 'groups' => [ 'AssessmentTemplateGenerate' ]],

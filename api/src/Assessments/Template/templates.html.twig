@@ -19,7 +19,7 @@
 function renderAssessmentTemplateActions(options) {
   let actions = '';
   if (options.assetsCount > 0) {
-    actions += `<a role="button" onClick="generateAssessmentPlanForm('${options.identifier}');">${RogerUtils.iconShare({ title: 'Generate plan' })}</a>`;
+    actions += `<a role="button" onClick="generateAssessmentPlanForm('${options.identifier}', ['${options.assets.join('\',\'')}']);">${RogerUtils.iconShare({ title: 'Generate plan' })}</a>`;
   }
 
   return actions;
@@ -40,11 +40,12 @@ $(document).ready(function () {
 
 });
 
-function generateAssessmentPlanForm(templateIdentifier) {
+function generateAssessmentPlanForm(templateIdentifier, assets) {
 	var method = 'POST';
 	var action = '/assessments/templates/' + templateIdentifier + '/generate-plan';
 	var fields = [
-		{ name: 'assets', label: 'Assets' },
+		{ name: 'identifier', label: 'Identifier' },
+		{ name: 'assets', label: 'Assets', type: 'multicheckbox', options: assets.map((str, index) => ({ value: str, label: str})) },
 	];
 
 	RogerForm.initModal({ method: method, action: action, fields: fields });

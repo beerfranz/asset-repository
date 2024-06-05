@@ -21,7 +21,15 @@ use Doctrine\ORM\Mapping as ORM;
 class TaskTag extends RogerEntity
 {
 
-	use RogerIdTrait;
+	#[ORM\Id]
+	#[ORM\GeneratedValue(strategy: "SEQUENCE")]
+	#[ORM\Column]
+	protected ?int $id = null;
+
+	public function getId(): ?int
+	{
+		return $this->id;
+	}
 
 	use RogerTagEntityTrait;
 

@@ -3,9 +3,12 @@
 namespace App\Assessments\State;
 
 use App\Assessments\ApiResource\Template as TemplateApi;
+use App\Assessments\ApiResource\GeneratePlan;
+
 use App\Assessments\Entity\AssessmentTemplate as TemplateEntity;
 
 use App\Assessments\Service\TemplateService;
+use ApiPlatform\Metadata\Operation;
 
 use Beerfranz\RogerBundle\State\RogerState;
 use Beerfranz\RogerBundle\State\RogerStateFacade;
@@ -23,6 +26,39 @@ final class TemplateState extends RogerState
 	public function newApi(): TemplateApi
 	{
 		return new TemplateApi();
+	}
+
+	public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
+	{
+		$operationInputs = $operation->getInput();
+		if (isset($operationInputs['name']) && $operationInputs['name'] === 'GeneratePlan')
+			return new GeneratePlan();
+		
+		return $this->stateProvide($operation, $uriVariables, $context);
+	}
+
+	/**
+	 * @param $data
+	 * @return T2
+	 */
+	public function process(mixed $api, Operation $operation, array $uriVariables = [], array $context = [])
+	{
+		if ($api instanceof GeneratePlan)
+		{
+			$templateIdentifier = $uriVariables['identifier'];
+
+			$template = $this->getEntityByIdentifier($templateIdentifier);
+
+			$plans = [];
+			foreach ($api->__get('assets') as $assetIdentifier) {
+				$plan = $this->service->generatePlanFromTemplate($template, $assetIdentifier);
+				$plans[] = $plan->getIdentifier();
+			}
+
+			return [ 'plans' => $plans ];
+		}
+		
+		return $this->stateProcess($api, $operation, $uriVariables, $context);
 	}
 
 	public function fromApiToEntity($api, $entity): TemplateEntity

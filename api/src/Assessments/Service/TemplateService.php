@@ -3,8 +3,9 @@
 namespace App\Assessments\Service;
 
 use App\Assessments\Entity\AssessmentTemplate;
-
+use App\Assessments\Entity\AssessmentPlan;
 use App\Tasks\Entity\TaskTemplate;
+use App\Tasks\Service\TaskService;
 use App\Entity\Asset;
 
 use Beerfranz\RogerBundle\Service\RogerService;
@@ -22,6 +23,7 @@ class TemplateService extends RogerService
 	public function __construct(
 		EntityManagerInterface $entityManager,
 		LoggerInterface $logger,
+		protected TaskService $taskService,
 	) {
 		parent::__construct($entityManager, $logger, AssessmentTemplate::class);
 
@@ -45,6 +47,33 @@ class TemplateService extends RogerService
 	public function findOneTaskTemplateByIdentifier(string $identifier): ?TaskTemplate
 	{
 		return $this->taskTemplateRepo->findOneByIdentifier($identifier);
+	}
+
+	public function generatePlanFromTemplate(AssessmentTemplate $template, string $assetIdentifier): AssessmentPlan
+	{
+		$asset = $this->findOneAssetByIdentifier($assetIdentifier);
+
+		if ($asset === null)
+			throw new \Exception('Cannot generate plan without asset (asset identifier: ' . $assetIdentifier .').');
+
+		$plan = new AssessmentPlan([
+			// 'identifier' => $identifier,
+			'title' => $template->getTitle(),
+		]);
+
+		$plan->setAsset($asset);
+
+		// foreach ($template->getTaskTemplates() as $taskTemplate) {
+
+		// 	$task = $this->taskService->generateTaskFromTaskTemplate($taskTemplate, null, null, []);
+
+		// 	$plan->addTask($task);
+		// }
+
+		$this->persistEntity($plan);
+
+		return $plan;
+		
 	}
 
 }

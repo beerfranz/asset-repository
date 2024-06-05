@@ -109,7 +109,7 @@ class TaskService extends RogerService
 		}
 
 		if ($parent !== null) {
-			$task->setParegenerateTaskFromTaskTemplatent($parent);
+			$task->setParent($parent);
 		}
 		
 		// $this->entityManager->persist($task);
