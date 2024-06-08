@@ -22,24 +22,46 @@ class AssessmentTemplate extends RogerEntity
 
 	use RogerIdTrait;
 
-	use RogerIdentifierTrait;
+	#[Groups(['AssessmentTemplate:messenger'])]
+	#[ORM\Column(length: 255, unique: true, nullable: false)]
+	private ?string $identifier = null;
+
+	public function getIdentifier(): ?string
+	{
+		return $this->identifier;
+	}
+
+	public function setIdentifier(string $identifier): self
+	{
+		$this->identifier = $identifier;
+
+		return $this;
+	}
 
 	use RogerTitleTrait;
 
 	/**
 	 * @var Collection<int, TaskTemplate>
 	 */
+	#[Groups(['AssessmentTemplate:messenger'])]
 	#[ORM\ManyToMany(targetEntity: TaskTemplate::class)]
 	private Collection $taskTemplates;
 
 	/**
 	 * @var Collection<int, Asset>
 	 */
+	#[Groups(['AssessmentTemplate:messenger'])]
 	#[ORM\ManyToMany(targetEntity: Asset::class)]
 	private Collection $assets;
 
+	#[Groups(['AssessmentTemplate:messenger'])]
 	#[ORM\Column(nullable: true)]
 	private ?array $rules = null;
+
+	public function getMessengerSerializationGroup(): string
+	{
+		return 'AssessmentTemplate:messenger';
+	}
 
 	public function __construct()
 	{

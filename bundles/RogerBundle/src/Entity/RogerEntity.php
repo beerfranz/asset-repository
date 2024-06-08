@@ -2,12 +2,17 @@
 
 namespace Beerfranz\RogerBundle\Entity;
 
+use Beerfranz\RogerBundle\Message\RogerAsyncMessage;
+
 use JsonSerializable;
 
 use Symfony\Component\Uid\Uuid;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
+use Symfony\Component\Serializer\Mapping\Loader\AttributeLoader;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
 abstract class RogerEntity implements RogerEntityInterface, JsonSerializable {
@@ -35,14 +40,18 @@ abstract class RogerEntity implements RogerEntityInterface, JsonSerializable {
 		return $this;
 	}
 	
-	protected function getSerializer(): Serializer
+	protected function __getSerializer(): Serializer
 	{
+
+		$classMetadataFactory = new ClassMetadataFactory(new AttributeLoader());
+
 		$defaultContext = [
-			AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (object $object, string $format, array $context): string {
+			AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (object $object, ?string $format, ?array $context): string {
 				return $object->getId();
 			},
 		];
-		$normalizers = [new DateTimeNormalizer, new ObjectNormalizer(null, null, null, null, null, null, $defaultContext)];
+		// public function __construct(?ClassMetadataFactoryInterface $classMetadataFactory = null, ?NameConverterInterface $nameConverter = null, ?PropertyAccessorInterface $propertyAccessor = null, ?PropertyTypeExtractorInterface $propertyTypeExtractor = null, ?ClassDiscriminatorResolverInterface $classDiscriminatorResolver = null, ?callable $objectClassResolver = null, array $defaultContext = [], ?PropertyInfoExtractorInterface $propertyInfoExtractor = null)
+		$normalizers = [new DateTimeNormalizer, new ObjectNormalizer($classMetadataFactory, null, null, null, null, null, $defaultContext)];
 		$serializer = new Serializer($normalizers, []);
 
 		return $serializer;
@@ -97,14 +106,34 @@ abstract class RogerEntity implements RogerEntityInterface, JsonSerializable {
 		return $result;
 	}
 
-	public function toArray(): array
+	public function toArray($context = []): array
 	{
-		return $this->getSerializer()->normalize($this, 'array');
+		return $this->__getSerializer()->normalize($this, null, $context);
 	}
 
 	static function generateUuid(): string
 	{
 		return Uuid::v7()->__toString();
+	}
+
+	public function getMessengerSerializationGroup(): ?string
+	{
+		return null;
+	}
+
+	public function getMessengerClass(): string
+	{
+		return RogerAsyncMessage::class;
+	}
+
+	public function getSequenceClass(): ?string
+	{
+		return null;
+	}
+
+	public function getSequencedProperties(): array
+	{
+		return [];
 	}
 
 }

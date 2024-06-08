@@ -15,6 +15,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+
 #[ORM\Entity(repositoryClass: TaskTemplateRepository::class)]
 #[ORM\UniqueConstraint(columns:["identifier"])]
 class TaskTemplate extends RogerEntity
@@ -25,6 +28,7 @@ class TaskTemplate extends RogerEntity
 	private ?int $id = null;
 
 	#[ORM\Column(length: 255)]
+	#[Groups(['Task'])]
 	private ?string $identifier = null;
 
 	#[ORM\Column(length: 255, nullable: true)]
@@ -43,12 +47,14 @@ class TaskTemplate extends RogerEntity
 	private ?array $frequency = null;
 
 	#[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children', cascade: ['persist'])]
+	#[MaxDepth(1)]
 	private ?self $parent = null;
 
 	#[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
 	private Collection $children;
 
 	#[ORM\ManyToOne(inversedBy: 'taskTemplates')]
+	#[Groups(['Task'])]
 	private ?TaskType $taskType = null;
 
 	#[ORM\Column(nullable: true)]

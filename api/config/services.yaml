@@ -30,5 +30,3 @@ services:
         tags: [doctrine.orm.entity_listener]
     App\Doctrine\RogerListener:
         tags: [doctrine.orm.entity_listener]
-    App\Assessments\Doctrine\PlanListener:
-        tags: [doctrine.orm.entity_listener]

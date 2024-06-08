@@ -10,6 +10,8 @@ use App\Tasks\Repository\TaskTypeRepository;
 
 use Beerfranz\RogerBundle\Entity\RogerEntity;
 
+use Symfony\Component\Serializer\Annotation\Groups;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -23,9 +25,11 @@ class TaskType extends RogerEntity
 	private ?int $id = null;
 
 	#[ORM\Column(length: 255)]
+	#[Groups(['Task'])]
 	private ?string $identifier = null;
 
 	#[ORM\ManyToOne(inversedBy: 'taskTypes', cascade: ['persist'])]
+	#[Groups(['Task'])]
 	private ?TaskWorkflow $taskWorkflow = null;
 
 	#[ORM\OneToMany(mappedBy: 'taskType', targetEntity: TaskTemplate::class)]

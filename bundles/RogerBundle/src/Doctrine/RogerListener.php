@@ -16,7 +16,7 @@ use Doctrine\ORM\Event\PreRemoveEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Serializer;
 
 class RogerListener
 {
@@ -41,13 +41,43 @@ class RogerListener
 		$this->bus = $this->facade->getBus();
 	}
 
+	public function prePersist(RogerEntity $entity, PrePersistEventArgs $event)
+	{
+		if ($entity->getSequenceClass() !== null)
+			$this->setSequencedProperties($entity, $event->getObjectManager());
+
+	}
+
+	protected function setSequencedProperties(RogerEntity $entity, $entityManager)
+	{
+		$seqRepo = $entityManager->getRepository($entity->getSequenceClass());
+
+		$props = [];
+		foreach($entity->getSequencedProperties() as $prop => $attr) {
+			if ($entity->__get($prop) === null)
+				$props[$prop] = $attr;
+		}
+
+		if (count($props) > 0) {
+			$newSeq = $seqRepo->increment(1);
+
+			foreach($props as $prop => $attr) {
+				$value = $newSeq;
+				if (isset($attr['prefix']))
+					$value = $attr['prefix'] . $value;
+
+				$entity->__set($prop, $value);
+			}
+		}
+	}
+
 	public function postPersist(RogerEntity $entity, PostPersistEventArgs $event)
 	{
 		$entityManager = $event->getObjectManager();
 		
 		$this->action = 'create';
 		$this->entity = $entity;
-		$this->diff = $this->serializer->normalize($entity, null);
+		$this->diff = $this->serializeEntity($this->entity);
 
 		$this->logChange();
 		$this->sendMessage();
@@ -56,7 +86,7 @@ class RogerListener
 	public function postRemove(RogerEntity $entity, PostRemoveEventArgs $event)
 	{
 		$entityManager = $event->getObjectManager();
-		$diff = $this->serializer->normalize($event->getObject(), null);
+		$diff = $this->serializeEntity($event->getObject());
 
 		$this->action = 'remove';
 		$this->diff = $diff;
@@ -104,19 +134,28 @@ class RogerListener
 		$context['class'] = $this->entity::class;
 		$class_array = explode('\\', $context['class']);
 		$context['className'] = end($class_array);
-		// $context['entity'] = $this->serializer->normalize($this->entity, null);
-		$context['entity'] = $this->entity->toArray();
-		// $this->logger->error('entity :' . print_r($context['entity']));
-		// exit;
-		$context['entity'] = $this->entity->toArray();
+		$context['entity'] = $this->serializeEntity($this->entity);
 		$context['actor'] = $this->getUser();
 		$context['datetime'] = new \DateTimeImmutable();
 
-		$messageClass = '\\App\\Message\\' . $context['className'] . 'Message';
-		if (!class_exists($messageClass))
-			$messageClass = '\\Beerfranz\\RogerBundle\\Message\\RogerAsyncMessage';
+		// $messageClass = '\\App\\Message\\' . $context['className'] . 'Message';
+		// if (!class_exists($messageClass))
+		// 	$messageClass = '\\Beerfranz\\RogerBundle\\Message\\RogerAsyncMessage';
+
+		$messageClass = $this->entity->getMessengerClass();
 
 		$this->logger->info('Dispatch message ' . $messageClass . ': ' . $this->action . ' ' . $this->entity::class);
 		$this->bus->dispatch(new $messageClass($this->action, $context));
+	}
+
+	protected function serializeEntity(RogerEntity $entity)
+	{
+		$context = [];
+		$group = $entity->getMessengerSerializationGroup();
+		if ($group !== null) {
+			$context['groups'] = [ $group ];
+		}
+
+		return $entity->toArray($context);
 	}
 }

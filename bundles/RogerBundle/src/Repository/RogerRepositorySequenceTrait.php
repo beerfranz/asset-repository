@@ -19,7 +19,13 @@ trait RogerRepositorySequenceTrait {
         $stmt->bindValue('id', $seqId);
         $stmt->bindValue('increment', $increment);
         $result = $stmt->executeQuery();
-        return $result->fetch()['sequence_number'];
+
+        $seq = $result->fetchNumeric();
+
+        if ($seq === false)
+        	return 1;
+        
+        return $seq[0];
 	}
 
 }

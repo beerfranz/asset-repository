@@ -5,6 +5,7 @@ namespace App\Tasks\Entity;
 use App\Tasks\Entity\TaskTemplate;
 use App\Tasks\Entity\TaskType;
 use App\Tasks\Entity\TaskTag;
+use App\Message\TaskMessage;
 
 use App\Tasks\Repository\TaskRepository;
 use Beerfranz\RogerBundle\Doctrine\RogerListener;
@@ -16,6 +17,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 #[ORM\UniqueConstraint(columns:["identifier"])]
 #[ORM\Index(name: "isDone_idx", fields: ["isDone"])]
@@ -25,51 +29,75 @@ class Task extends RogerEntity
 	#[ORM\Id]
 	#[ORM\GeneratedValue]
 	#[ORM\Column]
+	#[Groups(['Task'])]
 	private ?int $id = null;
 
 	#[ORM\Column(length: 255)]
+	#[Groups(['Task'])]
 	private ?string $title = null;
 
 	#[ORM\Column(type: Types::TEXT, nullable: true)]
+	#[Groups(['Task'])]
 	private ?string $description = null;
 
 	#[ORM\Column]
+	#[Groups(['Task'])]
 	private ?bool $isDone = false;
 
 	#[ORM\Column]
+	#[Groups(['Task'])]
 	private ?\DateTimeImmutable $createdAt = null;
 
 	#[ORM\Column(length: 255, nullable: true)]
+	#[Groups(['Task'])]
 	private ?string $assignedTo = null;
 
 	#[ORM\Column(length: 255, nullable: true)]
+	#[Groups(['Task'])]
 	private ?string $owner = null;
 
 	#[ORM\ManyToOne(inversedBy: 'tasks', cascade: ['persist'])]
+	#[Groups(['Task'])]
 	private ?TaskTemplate $taskTemplate = null;
 
 	#[ORM\Column(length: 255)]
+	#[Groups(['Task', 'AssessmentPlan'])]
 	private ?string $identifier = null;
 
 	#[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
+	#[MaxDepth(1)]
+	#[Groups(['Task'])]
 	private ?self $parent = null;
 
 	#[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
 	private Collection $children;
 
 	#[ORM\Column(nullable: true, length: 255)]
+	#[Groups(['Task'])]
 	private ?string $status = null;
 
 	#[ORM\ManyToOne(inversedBy: 'tasks', cascade: ['persist'])]
+	#[Groups(['Task'])]
 	private ?TaskType $taskType = null;
 
 	#[ORM\Column(nullable: true)]
+	#[Groups(['Task'])]
 	private ?array $attributes = null;
 
 	public function __construct()
 	{
 		$this->children = new ArrayCollection();
 		$this->tags = new ArrayCollection();
+	}
+
+	public function getMessengerSerializationGroup(): ?string
+	{
+		return 'Task';
+	}
+
+	public function getMessengerClass(): string
+	{
+		return TaskMessage::class;
 	}
 
 	public function getId(): ?int

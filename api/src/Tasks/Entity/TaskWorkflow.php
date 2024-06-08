@@ -8,6 +8,8 @@ use App\Tasks\Repository\TaskWorkflowRepository;
 
 use Beerfranz\RogerBundle\Entity\RogerEntity;
 
+use Symfony\Component\Serializer\Annotation\Groups;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -22,9 +24,11 @@ class TaskWorkflow extends RogerEntity
 	private ?int $id = null;
 
 	#[ORM\Column(length: 255)]
+	#[Groups(['Task'])]
 	private ?string $identifier = null;
 
 	#[ORM\Column(type: 'json_document')]
+	#[Groups(['Task'])]
 	private array $workflow = [];
 
 	#[ORM\OneToMany(mappedBy: 'taskWorkflow', targetEntity: TaskType::class)]
