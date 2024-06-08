@@ -2,7 +2,7 @@
 
 namespace App\Assets\Entity;
 
-use App\Filter\AutocompleteFilter;
+use Beerfranz\RogerBundle\Filter\AutocompleteFilter;
 
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;

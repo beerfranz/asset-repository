@@ -2,7 +2,7 @@
 
 namespace App\Tasks\ApiResource;
 
-use App\Filter\AutocompleteFilter;
+use Beerfranz\RogerBundle\Filter\AutocompleteFilter;
 
 use App\Tasks\State\TaskTemplateState;
 use App\Tasks\ApiResource\TaskTemplateGenerateDto;

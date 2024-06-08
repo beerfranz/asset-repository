@@ -7,7 +7,7 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Serializer\Filter\GroupFilter;
 
-use App\Filter\AutocompleteFilter;
+use Beerfranz\RogerBundle\Filter\AutocompleteFilter;
 use App\Assets\Repository\KindRepository;
 
 use Doctrine\Common\Collections\ArrayCollection;

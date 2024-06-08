@@ -4,7 +4,7 @@ namespace App\Assets\Entity;
 
 use App\Type\AssetAttributeType;
 use App\Risks\Entity\Risk;
-use App\Filter\AutocompleteFilter;
+use Beerfranz\RogerBundle\Filter\AutocompleteFilter;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
