@@ -52,6 +52,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Assets/Entity'
                 prefix: 'App\Assets\Entity'
                 alias: Assets
+            Setting:
+                is_bundle: false
+                type: attribute
+                dir: '%kernel.project_dir%/src/Setting/Entity'
+                prefix: 'App\Setting\Entity'
+                alias: Setting
 
 when@test:
     doctrine:

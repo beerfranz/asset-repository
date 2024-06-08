@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repository;
+namespace App\Setting\Repository;
 
-use App\Entity\Setting;
+use App\Setting\Entity\Setting;
 
 use Beerfranz\RogerBundle\Repository\RogerRepositoryInterface;
 use Beerfranz\RogerBundle\Repository\RogerRepositoryTrait;

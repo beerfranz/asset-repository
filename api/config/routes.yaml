@@ -35,6 +35,12 @@ assets:
         namespace: App\Assets\Controller
     type: attribute
 
+setting:
+    resource:
+        path: ../src/Setting/Controller
+        namespace: App\Setting\Controller
+    type: attribute
+
 # audits:
 #     resource:
 #         path: ../src/Audits/Controller

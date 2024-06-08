@@ -1,9 +1,10 @@
 twig:
     default_path: '%kernel.project_dir%/templates'
     globals:
-        settingsService: '@App\Service\SettingService'
+        settingsService: '@App\Setting\Service\SettingService'
     paths:
         '%kernel.project_dir%/src/Assessments/Template': 'assessments'
+        '%kernel.project_dir%/src/Setting/Template': 'setting'
 
 when@test:
     twig:

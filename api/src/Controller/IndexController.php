@@ -44,9 +44,4 @@ class IndexController extends AbstractController
     ] ]);
   }
 
-  #[Route('/ui/admin/settings', name: 'getSettingss', methods: ['GET'])]
-  public function getSettingss(Request $request): Response
-  {
-    return $this->render('settings.html.twig', [ 'navbar' => [ 'settings' => 'active' ] ]);
-  }
 }

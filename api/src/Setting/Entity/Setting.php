@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Entity;
+namespace App\Setting\Entity;
 
 use Beerfranz\RogerBundle\Entity\RogerEntity;;
 
-use App\Repository\SettingRepository;
+use App\Setting\Repository\SettingRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SettingRepository::class)]
