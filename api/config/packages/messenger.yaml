@@ -29,8 +29,11 @@ when@test:
                 # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
                 async:
                     dsn: 'test://'
+                    serializer: messenger.transport.symfony_serializer # not used by this transport
                 failed:
                     dsn: 'test://'
+                    serializer: messenger.transport.symfony_serializer # not used by this transport
                 sync:
                     dsn: 'test://'
+                    serializer: messenger.transport.symfony_serializer # not used by this transport
                 # async: 'in-memory://'
