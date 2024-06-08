@@ -4,7 +4,7 @@ namespace App\Tests\Api;
 
 use App\Tests\Api\Functional;
 
-use App\Service\SettingService;
+use App\Setting\Service\SettingService;
 
 class SettingTest extends Functional
 {

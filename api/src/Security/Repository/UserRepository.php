@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repository;
+namespace App\Security\Repository;
 
-use App\Entity\User;
+use App\Security\Entity\User;
 
 use Beerfranz\RogerBundle\Repository\RogerRepositoryInterface;
 use Beerfranz\RogerBundle\Repository\RogerRepositoryTrait;

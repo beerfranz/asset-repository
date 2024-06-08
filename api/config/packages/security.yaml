@@ -6,7 +6,7 @@ security:
     providers:
         users:
             entity:
-                class: 'App\Entity\User'
+                class: 'App\Security\Entity\User'
                 property: 'email'
     firewalls:
         dev:
@@ -16,8 +16,8 @@ security:
             lazy: true
             provider: users
             custom_authenticators:
-                - Beerfranz\ServiceBundle\Security\HeaderAuthenticator
-                - Beerfranz\ServiceBundle\Security\JwtAuthenticator
+                - App\Security\Authenticator\HeaderAuthenticator
+                - App\Security\Authenticator\JwtAuthenticator
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
