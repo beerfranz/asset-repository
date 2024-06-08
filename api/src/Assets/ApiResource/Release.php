@@ -1,8 +1,8 @@
 <?php
 
-namespace App\ApiResource;
+namespace App\Assets\ApiResource;
 
-use App\State\VersionState;
+use App\Assets\State\VersionState;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
@@ -22,11 +22,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 #[ApiResource(
-    description: 'Versions',
-    processor: VersionState::class,
-    provider: VersionState::class,
-    normalizationContext: ['groups' => ['Version:read']],
-    denormalizationContext: ['groups' => ['Version:write']],
+	description: 'Versions',
+	processor: VersionState::class,
+	provider: VersionState::class,
+	normalizationContext: ['groups' => ['Version:read']],
+	denormalizationContext: ['groups' => ['Version:write']],
 )]
 #[GetCollection(security: "is_granted('ASSET_READ')")]
 #[Get(security: "is_granted('ASSET_READ')")]
@@ -34,21 +34,21 @@ use Doctrine\Common\Collections\Collection;
 #[Put(security: "is_granted('ASSET_WRITE')")]
 class Release
 {
-    #[Groups(['Version:read'])]
-    public $id;
+	#[Groups(['Version:read'])]
+	public $id;
 
-    #[Groups(['Version:read', 'Version:write', 'AssetDefinition:read'])]
-    #[ApiProperty(identifier: true)]
-    public $identifier;
+	#[Groups(['Version:read', 'Version:write', 'AssetDefinition:read'])]
+	#[ApiProperty(identifier: true)]
+	public $identifier;
 
-    #[Groups(['Version:read', 'Version:write'])]
-    public $name;
+	#[Groups(['Version:read', 'Version:write'])]
+	public $name;
 
-    #[Groups(['Version:read', 'Version:write'])]
-    public $versions;
+	#[Groups(['Version:read', 'Version:write'])]
+	public $versions;
 
-    public function getId() {
-        return $this->identifier;
-    }
+	public function getId() {
+		return $this->identifier;
+	}
 
 }

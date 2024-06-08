@@ -1,8 +1,8 @@
 <?php
 
-namespace App\ApiResource;
+namespace App\Assets\ApiResource;
 
-use App\State\EnvironmentState;
+use App\Assets\State\EnvironmentState;
 use App\Filter\AutocompleteFilter;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -24,11 +24,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 #[ApiResource(
-    description: 'Environment',
-    processor: EnvironmentState::class,
-    provider: EnvironmentState::class,
-    normalizationContext: ['groups' => ['Environment:read']],
-    denormalizationContext: ['groups' => ['Environment:write']],
+	description: 'Environment',
+	processor: EnvironmentState::class,
+	provider: EnvironmentState::class,
+	normalizationContext: ['groups' => ['Environment:read']],
+	denormalizationContext: ['groups' => ['Environment:write']],
 )]
 #[GetCollection(security: "is_granted('ASSET_READ')")]
 #[Get(security: "is_granted('ASSET_READ')")]
@@ -37,20 +37,20 @@ use Doctrine\Common\Collections\Collection;
 #[ApiFilter(AutocompleteFilter::class, properties: [ 'identifier'])]
 class Environment
 {
-    #[Groups(['Environment:read'])]
-    public $id;
+	#[Groups(['Environment:read'])]
+	public $id;
 
-    #[Groups(['Environment:read', 'Environment:write', 'AssetDefinition:read'])]
-    #[ApiProperty(identifier: true)]
-    public $identifier;
+	#[Groups(['Environment:read', 'Environment:write', 'AssetDefinition:read'])]
+	#[ApiProperty(identifier: true)]
+	public $identifier;
 
-    #[Groups(['Environment:read', 'Environment:write'])]
-    public $name;
+	#[Groups(['Environment:read', 'Environment:write'])]
+	public $name;
 
-    #[Groups(['Environment:read'])]
-    public array $assets = [];
+	#[Groups(['Environment:read'])]
+	public array $assets = [];
 
-    public function getId() {
-        return $this->identifier;
-    }
+	public function getId() {
+		return $this->identifier;
+	}
 }
