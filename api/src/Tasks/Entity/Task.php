@@ -5,7 +5,7 @@ namespace App\Tasks\Entity;
 use App\Tasks\Entity\TaskTemplate;
 use App\Tasks\Entity\TaskType;
 use App\Tasks\Entity\TaskTag;
-use App\Message\TaskMessage;
+use App\Tasks\Message\TaskMessage;
 
 use App\Tasks\Repository\TaskRepository;
 use Beerfranz\RogerBundle\Doctrine\RogerListener;

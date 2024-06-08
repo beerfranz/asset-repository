@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Message;
+namespace App\Tasks\Message;
 
 use Beerfranz\RogerBundle\Message\RogerAsyncMessage;
 

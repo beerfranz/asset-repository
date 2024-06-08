@@ -2,9 +2,9 @@
 
 namespace App\Indicators\MessageHandler;
 
-use App\Message\TaskMessage;
+use App\Tasks\Message\TaskMessage;
 use Beerfranz\RogerBundle\Message\RogerAsyncMessage;
-use App\Message\IndicatorValueMessage;
+use App\Indicators\Message\IndicatorValueMessage;
 use App\Indicators\Service\IndicatorService;
 use App\Indicators\Service\IndicatorValueService;
 use Beerfranz\RogerBundle\MessageHandler\RogerHandlerAbstract;
