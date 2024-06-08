@@ -34,8 +34,6 @@ class AuditHandler extends RogerHandlerAbstract
 
     $this->logReceiveMessage();
 
-    // $this->logger->error('new audit message:' . print_r($context));
-
     $data = [];
     if ($context['action'] === 'create')
       $data = $context['entity'];
@@ -54,12 +52,15 @@ class AuditHandler extends RogerHandlerAbstract
     else
       $subject = 'unknown';
 
+    if (is_string($context['datetime']))
+      $context['datetime'] = new \DateTimeImmutable($context['datetime']);
+
     $audit = new Audit([
       'actor' => $context['actor'],
       'subject' => $subject,
       'subjectKind' => $context['className'],
       'action' => $context['action'],
-      'datetime' => new \DateTimeImmutable($context['datetime']),
+      'datetime' => $context['datetime'],
       'data' => $data,
     ]);
 
