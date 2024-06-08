@@ -138,11 +138,11 @@ class RogerListener
 		$context['actor'] = $this->getUser();
 		$context['datetime'] = new \DateTimeImmutable();
 
-		// $messageClass = '\\App\\Message\\' . $context['className'] . 'Message';
-		// if (!class_exists($messageClass))
-		// 	$messageClass = '\\Beerfranz\\RogerBundle\\Message\\RogerAsyncMessage';
+		$messageClass = '\\App\\Message\\' . $context['className'] . 'Message';
+		if (!class_exists($messageClass))
+			$messageClass = '\\Beerfranz\\RogerBundle\\Message\\RogerAsyncMessage';
 
-		$messageClass = $this->entity->getMessengerClass();
+		// $messageClass = $this->entity->getMessengerClass();
 
 		$this->logger->info('Dispatch message ' . $messageClass . ': ' . $this->action . ' ' . $this->entity::class);
 		$this->bus->dispatch(new $messageClass($this->action, $context));
