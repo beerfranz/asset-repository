@@ -1,10 +1,10 @@
 <?php
 
-namespace App\State;
+namespace App\Audits\State;
 
-use App\ApiResource\Audit as AuditApi;
-use App\Entity\Audit as AuditEntity;
-use App\Service\AuditService;
+use App\Audits\ApiResource\Audit as AuditApi;
+use App\Audits\Entity\Audit as AuditEntity;
+use App\Audits\Service\AuditService;
 
 use Beerfranz\RogerBundle\State\RogerState;
 use Beerfranz\RogerBundle\State\RogerStateFacade;

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\ApiResource;
+namespace App\Audits\ApiResource;
 
-use App\State\AuditState;
-use App\Entity\Audit as AuditEntity;
+use App\Audits\State\AuditState;
+use App\Audits\Entity\Audit as AuditEntity;
 
 use Beerfranz\RogerBundle\ApiResource\RogerApiResource;
 

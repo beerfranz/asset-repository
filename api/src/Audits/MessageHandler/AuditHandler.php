@@ -1,11 +1,11 @@
 <?php
 
-namespace App\MessageHandler;
+namespace App\Audits\MessageHandler;
 
-use App\Entity\Audit;
+use App\Audits\Entity\Audit;
 use Beerfranz\RogerBundle\Message\RogerAsyncMessage;
 
-use App\Service\AuditService;
+use App\Audits\Service\AuditService;
 use Beerfranz\RogerBundle\MessageHandler\RogerHandlerAbstract;
 
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

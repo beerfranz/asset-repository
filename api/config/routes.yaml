@@ -34,3 +34,9 @@ assets:
         path: ../src/Assets/Controller
         namespace: App\Assets\Controller
     type: attribute
+
+# audits:
+#     resource:
+#         path: ../src/Audits/Controller
+#         namespace: App\Audits\Controller
+#     type: attribute

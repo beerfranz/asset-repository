@@ -38,6 +38,7 @@ api_platform:
         - '%kernel.project_dir%/src/Indicators/ApiResource'
         - '%kernel.project_dir%/src/Assets/ApiResource'
         - '%kernel.project_dir%/src/Assessments/ApiResource'
+        - '%kernel.project_dir%/src/Audits/ApiResource'
 
     oauth:
         # To enable or disable OAuth.

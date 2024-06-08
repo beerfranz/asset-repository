@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Service;
+namespace App\Audits\Service;
 
-use App\Entity\Audit;
+use App\Audits\Entity\Audit;
 
 use Beerfranz\RogerBundle\Service\RogerService;
 

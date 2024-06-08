@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repository;
+namespace App\Audits\Repository;
 
-use App\Entity\Audit;
+use App\Audits\Entity\Audit;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

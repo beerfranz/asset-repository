@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Entity;
+namespace App\Audits\Entity;
 
 use Beerfranz\RogerBundle\Entity\RogerEntity;
-use App\Repository\AuditRepository;
+use App\Audits\Repository\AuditRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AuditRepository::class)]
