@@ -2,9 +2,9 @@
 
 namespace App\Assets\State;
 
-use App\Assets\Entity\Source;
-use App\Assets\ApiResource\Source as SourceDto;
-use App\Assets\State\CommonState;
+use App\Assets\Entity\Version;
+use App\Assets\Entity\Owner;
+use App\Assets\ApiResource\Version as VersionDto;
 
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;
@@ -21,23 +21,28 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Psr\Log\LoggerInterface;
 
-final class SourceState extends CommonState implements ProviderInterface
+final class VersionState extends CommonState implements ProcessorInterface, ProviderInterface
 {
-
-	// public function __construct(private ProviderInterface $itemProvider)
-	// {
-	// }
-
 	public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
 	{
-		// var_dump($context);exit;
-		$repo = $this->entityManager->getRepository(Source::class);
+		$repo = $this->entityManager->getRepository(Version::class);
 
 		if ($operation instanceof CollectionOperationInterface)
 		{
 			return $this->getCollection($repo, $context);
 		}
 
-		return $repo->findOneByName(null, $uriVariables['name']);
+		return $repo->findOneByAssetDefinitionAndName(null, $uriVariables['name']);
+	}
+	
+	/**
+	 * @param BatchAssetDto $data
+	 * @return T2
+	 */
+	public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
+	{
+		$repo = $this->entityManager->getRepository(Version::class);
+
+		return false;
 	}
 }

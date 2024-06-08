@@ -2,8 +2,8 @@
 
 namespace App\Assets\Service;
 
-use App\Entity\Asset;
-use App\Entity\Instance;
+use App\Assets\Entity\Asset;
+use App\Assets\Entity\Instance;
 
 use App\Service\UserTemplate;
 

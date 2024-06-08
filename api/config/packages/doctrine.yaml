@@ -46,6 +46,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Audits/Entity'
                 prefix: 'App\Audits\Entity'
                 alias: Audits
+            Assets:
+                is_bundle: false
+                type: attribute
+                dir: '%kernel.project_dir%/src/Assets/Entity'
+                prefix: 'App\Assets\Entity'
+                alias: Assets
 
 when@test:
     doctrine:

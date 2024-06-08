@@ -6,7 +6,7 @@ use App\Assessments\Entity\AssessmentTemplate;
 use App\Assessments\Entity\AssessmentPlan;
 use App\Tasks\Entity\TaskTemplate;
 use App\Tasks\Service\TaskService;
-use App\Entity\Asset;
+use App\Assets\Entity\Asset;
 
 use Beerfranz\RogerBundle\Service\RogerService;
 

@@ -4,7 +4,7 @@ namespace App\Risks\Service;
 
 use App\Risks\Entity\Risk;
 use App\Risks\Entity\RiskManager;
-use App\Entity\Asset;
+use App\Assets\Entity\Asset;
 
 use App\Service\UserTemplate;
 

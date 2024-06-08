@@ -2,7 +2,7 @@
 
 namespace App\Assessments\Entity;
 
-use App\Entity\Asset;
+use App\Assets\Entity\Asset;
 use App\Assessments\ApiResource\GeneratePlan;
 
 use App\Assessments\Repository\AssessmentTemplateRepository;

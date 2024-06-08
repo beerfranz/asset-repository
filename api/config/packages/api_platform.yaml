@@ -37,6 +37,7 @@ api_platform:
         - '%kernel.project_dir%/src/Risks/ApiResource'
         - '%kernel.project_dir%/src/Indicators/ApiResource'
         - '%kernel.project_dir%/src/Assets/ApiResource'
+        - '%kernel.project_dir%/src/Assets/Entity'
         - '%kernel.project_dir%/src/Assessments/ApiResource'
         - '%kernel.project_dir%/src/Audits/ApiResource'
 

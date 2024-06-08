@@ -2,14 +2,14 @@
 
 namespace App\Assets\State;
 
-use App\Entity\AssetDefinition;
-use App\Entity\AssetDefinitionRelation;
-use App\Entity\Owner;
-use App\Entity\Source;
-use App\Entity\EnvironmentDefinition;
+use App\Assets\Entity\AssetDefinition;
+use App\Assets\Entity\AssetDefinitionRelation;
+use App\Assets\Entity\Owner;
+use App\Assets\Entity\Source;
+use App\Assets\Entity\EnvironmentDefinition;
 
 use App\Assets\ApiResource\BatchAssetDefinition;
-use App\State\CommonState;
+use App\Assets\State\CommonState;
 use App\Assets\State\TraitDefinitionPropagate;
 use App\Assets\State\AssetDefinitionState;
 

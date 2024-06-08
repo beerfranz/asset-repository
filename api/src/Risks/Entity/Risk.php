@@ -4,7 +4,7 @@ namespace App\Risks\Entity;
 
 use App\Risks\Repository\RiskRepository;
 use App\Risks\Entity\RiskManager;
-use App\Entity\Asset;
+use App\Assets\Entity\Asset;
 
 use Beerfranz\RogerBundle\Entity\RogerEntity;
 
