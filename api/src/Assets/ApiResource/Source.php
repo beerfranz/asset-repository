@@ -4,7 +4,7 @@ namespace App\Assets\ApiResource;
 
 use App\Assets\State\SourceState;
 
-use App\Filter\AutocompleteFilter;
+use Beerfranz\RogerBundle\Filter\AutocompleteFilter;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;

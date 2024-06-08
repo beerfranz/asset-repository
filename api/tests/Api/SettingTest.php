@@ -6,8 +6,6 @@ use App\Tests\Api\Functional;
 
 use App\Service\SettingService;
 
-use App\Message\IndicatorValueMessage;
-
 class SettingTest extends Functional
 {
 

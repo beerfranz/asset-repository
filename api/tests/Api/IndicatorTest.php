@@ -5,8 +5,6 @@ namespace App\Tests\Api;
 use App\Tests\Api\Functional;
 // use App\Tests\Factory\AssetFactory;
 
-use App\Message\IndicatorValueMessage;
-
 class IndicatorTest extends Functional
 {
 

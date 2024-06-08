@@ -6,7 +6,7 @@ use App\Assessments\Entity\AssessmentSequence;
 use App\Assessments\Repository\AssessmentPlanRepository;
 use App\Assessments\Doctrine\PlanListener;
 
-use App\Entity\Asset;
+use App\Assets\Entity\Asset;
 use App\Tasks\Entity\Task;
 
 use Doctrine\Common\Collections\ArrayCollection;

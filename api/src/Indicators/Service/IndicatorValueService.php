@@ -6,8 +6,7 @@ use App\Indicators\Entity\Indicator;
 use App\Indicators\Entity\IndicatorValue;
 use Beerfranz\RogerBundle\Entity\RogerEntityInterface;
 use Beerfranz\RogerBundle\Service\RogerService;
-use App\Message\IndicatorValueMessage;
-use App\Message\RogerAsyncMessage;
+use App\Indicators\Message\IndicatorValueMessage;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;

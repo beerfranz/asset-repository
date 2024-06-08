@@ -2,10 +2,10 @@
 
 namespace App\Assets\Controller;
 
-use App\Repository\AssetRepository;
-use App\Repository\AssetDefinitionRepository;
-use App\Repository\AssetAuditRepository;
-use App\Repository\InstanceRepository;
+use App\Assets\Repository\AssetRepository;
+use App\Assets\Repository\AssetDefinitionRepository;
+use App\Assets\Repository\AssetAuditRepository;
+use App\Assets\Repository\InstanceRepository;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -78,5 +78,29 @@ class AssetController extends AbstractController
 	public function getMap(Request $request): Response
 	{
 		return $this->render('map.html.twig', [ 'navbar' => [ 'map' => 'active' ] ]);
+	}
+
+	#[Route('/ui/environment_definitions', name: 'getEnvironmentDefinitions', methods: ['GET'])]
+	public function getEnvironmentDefinitions(Request $request): Response
+	{
+		return $this->render('environment-definitions.html.twig', [ 'navbar' => [ 'environment_definitions' => 'active' ] ]);
+	}
+
+	#[Route('/ui/audits', name: 'getAudits', methods: ['GET'])]
+	public function getAudits(Request $request): Response
+	{
+		return $this->render('audits.html.twig', [ 'navbar' => [ 'audits' => 'active' ] ]);
+	}
+
+	#[Route('/ui/versions', name: 'getVersions', methods: ['GET'])]
+	public function getVersions(Request $request): Response
+	{
+		return $this->render('versions.html.twig', [ 'navbar' => [ 'versions' => 'active' ] ]);
+	}
+
+	#[Route('/ui/environments', name: 'getEnvironments', methods: ['GET'])]
+	public function getEnvironments(Request $request): Response
+	{
+		return $this->render('environments.html.twig', [ 'navbar' => [ 'environments' => 'active' ] ]);
 	}
 }

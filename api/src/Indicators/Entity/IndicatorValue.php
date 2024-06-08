@@ -3,7 +3,7 @@
 namespace App\Indicators\Entity;
 
 use App\Indicators\Entity\Indicator;
-use App\Message\IndicatorValueMessage;
+use App\Indicators\Message\IndicatorValueMessage;
 
 use Beerfranz\RogerBundle\Doctrine\RogerListener;
 use App\Indicators\Repository\IndicatorValueRepository;

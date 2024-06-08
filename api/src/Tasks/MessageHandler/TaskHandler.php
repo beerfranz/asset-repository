@@ -2,8 +2,7 @@
 
 namespace App\Tasks\MessageHandler;
 
-use App\Message\TaskNotification;
-use App\Message\IndicatorValueMessage;
+use App\Indicators\Message\IndicatorValueMessage;
 use Beerfranz\RogerBundle\Message\RogerAsyncMessage;
 use Beerfranz\RogerBundle\MessageHandler\RogerHandlerAbstract;
 use App\Tasks\Service\TaskService;

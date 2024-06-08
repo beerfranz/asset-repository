@@ -2,7 +2,7 @@
 
 namespace App\Tasks\Controller;
 
-use App\Service\AuditService;
+use App\Audits\Service\AuditService;
 use App\Tasks\Service\TaskService;
 use App\Tasks\Service\TaskTypeService;
 use App\Tasks\Repository\TaskTemplateRepository;

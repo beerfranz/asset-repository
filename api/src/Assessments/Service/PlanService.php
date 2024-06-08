@@ -6,7 +6,7 @@ use App\Assessments\Entity\AssessmentPlan;
 use App\Assessments\Entity\AssessmentSequence;
 
 use App\Tasks\Entity\Task;
-use App\Entity\Asset;
+use App\Assets\Entity\Asset;
 
 use Beerfranz\RogerBundle\Service\RogerService;
 

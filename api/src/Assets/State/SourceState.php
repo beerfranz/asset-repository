@@ -2,9 +2,9 @@
 
 namespace App\Assets\State;
 
-use App\Entity\Source;
+use App\Assets\Entity\Source;
 use App\Assets\ApiResource\Source as SourceDto;
-use App\State\CommonState;
+use App\Assets\State\CommonState;
 
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;

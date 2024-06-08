@@ -37,6 +37,7 @@ services:
     volumes:
       - ./api:/srv/app
       - ./api/docker/php/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
+      - ./bundles:/srv/bundles
     command: [ "php", "bin/console", "messenger:consume", "async" ] # for production: add restart and "--limit=10", "--time-limit=60"
 
   # pwa:

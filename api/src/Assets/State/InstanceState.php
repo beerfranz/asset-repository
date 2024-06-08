@@ -2,15 +2,15 @@
 
 namespace App\Assets\State;
 
-use App\Entity\Asset;
-use App\Entity\Instance;
-use App\Entity\Source;
+use App\Assets\Entity\Asset;
+use App\Assets\Entity\Instance;
+use App\Assets\Entity\Source;
 use App\Assets\ApiResource\Instance as InstanceDto;
 use App\Assets\ApiResource\InstanceBatchDto;
 use App\Assets\Service\InstanceReconciliation;
 use App\Assets\Service\InstanceConformity;
 
-use App\State\CommonState;
+use App\Assets\State\CommonState;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\Metadata\Put;

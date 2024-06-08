@@ -2,13 +2,13 @@
 
 namespace App\Assets\State;
 
-use App\Entity\Asset;
-use App\Entity\Instance;
-use App\Entity\Owner;
-use App\Entity\Source;
+use App\Assets\Entity\Asset;
+use App\Assets\Entity\Instance;
+use App\Assets\Entity\Owner;
+use App\Assets\Entity\Source;
 use App\Assets\ApiResource\Asset as AssetDto;
 use App\Assets\ApiResource\AssetBatchDto;
-use App\State\CommonState;
+use App\Assets\State\CommonState;
 
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;

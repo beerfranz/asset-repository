@@ -2,14 +2,14 @@
 
 namespace App\Assets\State;
 
-use App\Entity\AssetDefinition;
-use App\Entity\AssetDefinitionRelation;
-use App\Entity\EnvironmentDefinition;
-use App\Entity\Source;
-use App\Entity\Owner;
-use App\ApiResource\Version as VersionDto;
+use App\Assets\Entity\AssetDefinition;
+use App\Assets\Entity\AssetDefinitionRelation;
+use App\Assets\Entity\EnvironmentDefinition;
+use App\Assets\Entity\Source;
+use App\Assets\Entity\Owner;
+use App\Assets\ApiResource\Version as VersionDto;
 use App\Assets\ApiResource\AssetDefinitionBatchDto;
-use App\State\CommonState;
+use App\Assets\State\CommonState;
 use App\Assets\State\TraitDefinitionPropagate;
 
 use ApiPlatform\Metadata\CollectionOperationInterface;

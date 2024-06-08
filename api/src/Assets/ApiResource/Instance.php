@@ -4,7 +4,7 @@ namespace App\Assets\ApiResource;
 
 use App\Assets\ApiResource\InstanceBatchDto;
 use App\Assets\State\InstanceState;
-use App\Entity\AssetAudit;
+use App\Assets\Entity\AssetAudit;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;

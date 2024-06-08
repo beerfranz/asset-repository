@@ -5,7 +5,7 @@ namespace App\Tests\Api;
 use App\Tests\Api\Functional;
 use App\Tests\Factory\AssetFactory;
 
-use App\Entity\AssetType;
+use App\Assets\Entity\AssetType;
 
 class AssetBatchTest extends Functional
 {
