@@ -59,7 +59,7 @@ class AuditHandler extends RogerHandlerAbstract
       'subject' => $subject,
       'subjectKind' => $context['className'],
       'action' => $context['action'],
-      'datetime' => $context['datetime'],
+      'datetime' => new \DateTimeImmutable($context['datetime']),
       'data' => $data,
     ]);
 
