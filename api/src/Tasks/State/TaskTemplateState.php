@@ -68,7 +68,11 @@ final class TaskTemplateState extends RogerState
 		if ($entity->getIdentifier() === null)
 			$entity->setIdentifier($api->__get('identifier'));
 
-		$entity = $api->fromApiToEntity($entity);
+		$entity->hydrator([
+			'title' => $api->title,
+			'description' => $api->description,
+			'frequency' => $api->frequency,
+		]);
 
 		if ($entity->getFrequency() !== [])
 			$entity = $this->frequencyService->calculateNextIteration($entity);
@@ -80,19 +84,41 @@ final class TaskTemplateState extends RogerState
 
 		$entity->setParent($this->service->findOneByIdentifier($api->__get('parentIdentifier')));
 		$entity->setTaskType($this->service->findOneTaskTypeByIdentifier($api->__get('typeIdentifier')));
+
+		foreach ($api->tags as $name => $opts) {
+			$entity->addTag($this->service->getTag($name, $opts));
+		}
 		
 		return $entity;
 	}
 
 	public function fromEntityToApi($entity, $api): TaskTemplateApi
 	{
-		$this->simpleFromEntityToApi($entity, $api);
+		$api->hydrator([
+			'identifier' => $entity->getIdentifier(),
+			'title' => $entity->getTitle(),
+			'description' => $entity->getDescription(),
+			'frequency' => $entity->getFrequency(),
+		]);
+
+		try {
+			$api->__set('workflow', $entity->getTaskType()->getTaskWorkflow()->getWorkflow());
+		} catch(\Error $e) {}
 
 		if (null !== $entity->getParent())
 			$api->parentIdentifier = $entity->getParent()->getIdentifier();
 
 		if (null !== $entity->getTaskType())
 			$api->typeIdentifier = $entity->getTaskType()->getIdentifier();
+
+		$tags = [];
+		try {
+			foreach ($entity->getTags() as $tag) {
+				$tags[$tag->getName()] = [ 'value' => $tag->getValue(), 'color' => $tag->getColor() ];
+			}
+		} catch(\Error $e) {}
+
+		$api->__set('tags', $tags);
 
 		return $api;
 	}

@@ -8,9 +8,13 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 trait RogerRepositoryTrait {
 
+	protected function getQueryBuilder() {
+		return $this->createQueryBuilder('s');
+	}
+
 	public function rogerFindBy(array $criteria, array $orderBy = null, $limit = null, $offset = null, $paginator = false): array|Paginator
 	{
-		$q = $this->createQueryBuilder('s')
+		$q = $this->getQueryBuilder()
 			->setMaxResults($limit)
 			->setFirstResult($offset)
 		;
@@ -111,8 +115,13 @@ trait RogerRepositoryTrait {
 			}
 		} else {
 			$field = $rootAlias . '.' . $filter;
-			$queryBuilder->andWhere($field . ' = :' . $filter)
+
+			if ($value === '') {
+				$queryBuilder->andWhere($field . ' is NULL');
+			} else {
+				$queryBuilder->andWhere($field . ' = :' . $filter)
 						 ->setParameter($filter, $value);
+			}
 		}
 	}
 

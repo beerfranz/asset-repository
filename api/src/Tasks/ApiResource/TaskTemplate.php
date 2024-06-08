@@ -2,9 +2,12 @@
 
 namespace App\Tasks\ApiResource;
 
+use App\Filter\AutocompleteFilter;
+
 use App\Tasks\State\TaskTemplateState;
 use App\Tasks\ApiResource\TaskTemplateGenerateDto;
 
+use App\Tasks\Entity\TaskTag;
 use Beerfranz\RogerBundle\ApiResource\RogerApiResource;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -15,6 +18,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Serializer\Filter\GroupFilter;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -24,6 +28,8 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
+#[ApiFilter(GroupFilter::class, arguments: ['parameterName' => 'groups', 'overrideDefaultGroups' => true, 'whitelist' => ['Type:identifier']])]
+#[ApiFilter(AutocompleteFilter::class, properties: [ 'type.identifier'])]
 #[ApiResource(
 	description: 'Task template',
 	processor: TaskTemplateState::class,
@@ -69,7 +75,7 @@ class TaskTemplate extends RogerApiResource
 	)]
 	public ?array $frequency = [];
 
-	#[Groups(['TaskTemplates:read', 'TaskTemplate:read'])]
+	#[Groups(['TaskTemplate:read'])]
 	#[ApiProperty(
 		openapiContext: [ "type" => "object" ]
 	)]
@@ -92,4 +98,11 @@ class TaskTemplate extends RogerApiResource
 
 	#[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
 	public $typeIdentifier;
+
+	#[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
+	#[ApiProperty(
+		openapiContext: [ "type" => "object" ]
+	)]
+	public ?array $tags = [];
+
 }

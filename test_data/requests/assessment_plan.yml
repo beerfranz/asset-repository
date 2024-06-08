@@ -1,0 +1,9 @@
+request:
+  method: PUT
+  path: /assessments/plans/test
+
+data:
+  title: Test plan
+  asset: DevServer
+  tasks :
+    - t-1

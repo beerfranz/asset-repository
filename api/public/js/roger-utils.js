@@ -10,6 +10,10 @@ var RogerUtils = {
 		return this.icon({...options, ...{ icon: 'glyphicon-pencil' }});
 	},
 
+	iconShare: function(options) {
+		return this.icon({...options, ...{ icon: 'glyphicon-share' }});
+	},
+
 	icon: function(options) {
 		if (!options.hasOwnProperty('icon'))
 			options.icon = 'glyphicon-ok';

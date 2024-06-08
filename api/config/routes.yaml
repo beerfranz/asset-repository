@@ -21,3 +21,16 @@ indicators:
         path: ../src/Indicators/Controller
         namespace: App\Indicators\Controller
     type: attribute
+
+assessments:
+    resource:
+        path: ../src/Assessments/Controller
+        namespace: App\Assessments\Controller
+    prefix: /ui/assessments
+    type: attribute
+
+assets:
+    resource:
+        path: ../src/Assets/Controller
+        namespace: App\Assets\Controller
+    type: attribute

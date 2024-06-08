@@ -3,6 +3,8 @@
 namespace App\Indicators\Entity;
 
 use App\Indicators\Entity\Indicator;
+use App\Message\IndicatorValueMessage;
+
 use Beerfranz\RogerBundle\Doctrine\RogerListener;
 use App\Indicators\Repository\IndicatorValueRepository;
 
@@ -47,6 +49,11 @@ class IndicatorValue extends RogerEntity
 	public function getId(): ?int
 	{
 		return $this->id;
+	}
+
+	public function getMessengerClass(): string
+	{
+		return IndicatorValueMessage::class;
 	}
 
 	public function getDatetime(): ?\DateTimeImmutable

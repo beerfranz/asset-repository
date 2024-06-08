@@ -11,6 +11,8 @@ use App\Message\TaskMessage;
 use App\Service\FrequencyService;
 use App\Service\UserTemplate;
 
+use App\Tasks\Service\TaskTagService;
+
 use Beerfranz\RogerBundle\Service\RogerService;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,6 +33,7 @@ class TaskService extends RogerService
 		LoggerInterface $logger,
 		FrequencyService $frequencyService,
 		UserTemplate $userTemplateService,
+		protected TaskTagService $taskTagService,
 	) {
 		parent::__construct($entityManager, $logger, Task::class);
 
@@ -90,6 +93,9 @@ class TaskService extends RogerService
 		$task->setTitle($taskTemplate->getTitle());
 		$task->setDescription($taskTemplate->getDescription());
 		$task->setTaskType($taskTemplate->getTaskType());
+		foreach($taskTemplate->getTags() as $tag) {
+			$task->addTag($tag);
+		}
 
 		foreach($properties as $property => $values) {
 			if ($property === 'attributes') {
@@ -103,7 +109,7 @@ class TaskService extends RogerService
 		}
 
 		if ($parent !== null) {
-			$task->setParegenerateTaskFromTaskTemplatent($parent);
+			$task->setParent($parent);
 		}
 		
 		// $this->entityManager->persist($task);
@@ -248,6 +254,11 @@ class TaskService extends RogerService
 	public function findOneTaskTemplateByIdentifier($identifier): TaskTemplate|null
 	{
 		return $this->taskTemplateRepo->findOneByIdentifier($identifier);
+	}
+
+	public function getTag($name, $opts = [])
+	{
+		return $this->taskTagService->getTag($name, $opts);
 	}
 
 }

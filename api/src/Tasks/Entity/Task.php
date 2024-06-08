@@ -4,6 +4,8 @@ namespace App\Tasks\Entity;
 
 use App\Tasks\Entity\TaskTemplate;
 use App\Tasks\Entity\TaskType;
+use App\Tasks\Entity\TaskTag;
+use App\Message\TaskMessage;
 
 use App\Tasks\Repository\TaskRepository;
 use Beerfranz\RogerBundle\Doctrine\RogerListener;
@@ -15,237 +17,296 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 #[ORM\UniqueConstraint(columns:["identifier"])]
 #[ORM\Index(name: "isDone_idx", fields: ["isDone"])]
 #[ORM\EntityListeners([RogerListener::class])]
 class Task extends RogerEntity
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+	#[ORM\Id]
+	#[ORM\GeneratedValue]
+	#[ORM\Column]
+	#[Groups(['Task'])]
+	private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $title = null;
+	#[ORM\Column(length: 255)]
+	#[Groups(['Task'])]
+	private ?string $title = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
+	#[ORM\Column(type: Types::TEXT, nullable: true)]
+	#[Groups(['Task'])]
+	private ?string $description = null;
 
-    #[ORM\Column]
-    private ?bool $isDone = false;
+	#[ORM\Column]
+	#[Groups(['Task'])]
+	private ?bool $isDone = false;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+	#[ORM\Column]
+	#[Groups(['Task'])]
+	private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $assignedTo = null;
+	#[ORM\Column(length: 255, nullable: true)]
+	#[Groups(['Task'])]
+	private ?string $assignedTo = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $owner = null;
+	#[ORM\Column(length: 255, nullable: true)]
+	#[Groups(['Task'])]
+	private ?string $owner = null;
 
-    #[ORM\ManyToOne(inversedBy: 'tasks', cascade: ['persist'])]
-    private ?TaskTemplate $taskTemplate = null;
+	#[ORM\ManyToOne(inversedBy: 'tasks', cascade: ['persist'])]
+	#[Groups(['Task'])]
+	private ?TaskTemplate $taskTemplate = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $identifier = null;
+	#[ORM\Column(length: 255)]
+	#[Groups(['Task', 'AssessmentPlan'])]
+	private ?string $identifier = null;
 
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
-    private ?self $parent = null;
+	#[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
+	#[MaxDepth(1)]
+	#[Groups(['Task'])]
+	private ?self $parent = null;
 
-    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
-    private Collection $children;
+	#[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
+	private Collection $children;
 
-    #[ORM\Column(nullable: true, length: 255)]
-    private ?string $status = null;
+	#[ORM\Column(nullable: true, length: 255)]
+	#[Groups(['Task'])]
+	private ?string $status = null;
 
-    #[ORM\ManyToOne(inversedBy: 'tasks', cascade: ['persist'])]
-    private ?TaskType $taskType = null;
+	#[ORM\ManyToOne(inversedBy: 'tasks', cascade: ['persist'])]
+	#[Groups(['Task'])]
+	private ?TaskType $taskType = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?array $attributes = null;
+	#[ORM\Column(nullable: true)]
+	#[Groups(['Task'])]
+	private ?array $attributes = null;
 
-    public function __construct()
-    {
-        $this->children = new ArrayCollection();
-    }
+	public function __construct()
+	{
+		$this->children = new ArrayCollection();
+		$this->tags = new ArrayCollection();
+	}
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+	public function getMessengerSerializationGroup(): ?string
+	{
+		return 'Task';
+	}
 
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
+	public function getMessengerClass(): string
+	{
+		return TaskMessage::class;
+	}
 
-    public function setTitle(string $title): static
-    {
-        $this->title = $title;
+	public function getId(): ?int
+	{
+		return $this->id;
+	}
 
-        return $this;
-    }
+	public function getTitle(): ?string
+	{
+		return $this->title;
+	}
 
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
+	public function setTitle(string $title): static
+	{
+		$this->title = $title;
 
-    public function setDescription(?string $description): static
-    {
-        $this->description = $description;
+		return $this;
+	}
 
-        return $this;
-    }
+	public function getDescription(): ?string
+	{
+		return $this->description;
+	}
 
-    public function isIsDone(): ?bool
-    {
-        return $this->isDone;
-    }
+	public function setDescription(?string $description): static
+	{
+		$this->description = $description;
 
-    public function setIsDone(bool $isDone): static
-    {
-        $this->isDone = $isDone;
+		return $this;
+	}
 
-        return $this;
-    }
+	public function isIsDone(): ?bool
+	{
+		return $this->isDone;
+	}
 
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
+	public function setIsDone(bool $isDone): static
+	{
+		$this->isDone = $isDone;
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
+		return $this;
+	}
 
-        return $this;
-    }
+	public function getCreatedAt(): ?\DateTimeImmutable
+	{
+		return $this->createdAt;
+	}
 
-    public function getAssignedTo(): ?string
-    {
-        return $this->assignedTo;
-    }
+	public function setCreatedAt(\DateTimeImmutable $createdAt): static
+	{
+		$this->createdAt = $createdAt;
 
-    public function setAssignedTo(?string $assignedTo): static
-    {
-        $this->assignedTo = $assignedTo;
+		return $this;
+	}
 
-        return $this;
-    }
+	public function getAssignedTo(): ?string
+	{
+		return $this->assignedTo;
+	}
 
-    public function getOwner(): ?string
-    {
-        return $this->owner;
-    }
+	public function setAssignedTo(?string $assignedTo): static
+	{
+		$this->assignedTo = $assignedTo;
 
-    public function setOwner(?string $owner): static
-    {
-        $this->owner = $owner;
+		return $this;
+	}
 
-        return $this;
-    }
+	public function getOwner(): ?string
+	{
+		return $this->owner;
+	}
 
-    public function getTaskTemplate(): ?TaskTemplate
-    {
-        return $this->taskTemplate;
-    }
+	public function setOwner(?string $owner): static
+	{
+		$this->owner = $owner;
 
-    public function setTaskTemplate(?TaskTemplate $taskTemplate): static
-    {
-        $this->taskTemplate = $taskTemplate;
+		return $this;
+	}
 
-        return $this;
-    }
+	public function getTaskTemplate(): ?TaskTemplate
+	{
+		return $this->taskTemplate;
+	}
 
-    public function getIdentifier(): ?string
-    {
-        return $this->identifier;
-    }
+	public function setTaskTemplate(?TaskTemplate $taskTemplate): static
+	{
+		$this->taskTemplate = $taskTemplate;
 
-    public function setIdentifier(string $identifier): static
-    {
-        $this->identifier = $identifier;
+		return $this;
+	}
 
-        return $this;
-    }
+	public function getIdentifier(): ?string
+	{
+		return $this->identifier;
+	}
 
-    public function getParent(): ?self
-    {
-        return $this->parent;
-    }
+	public function setIdentifier(string $identifier): static
+	{
+		$this->identifier = $identifier;
 
-    public function setParent(?self $parent): static
-    {
-        $this->parent = $parent;
+		return $this;
+	}
 
-        return $this;
-    }
+	public function getParent(): ?self
+	{
+		return $this->parent;
+	}
 
-    /**
-     * @return Collection<int, self>
-     */
-    public function getChildren(): Collection
-    {
-        return $this->children;
-    }
+	public function setParent(?self $parent): static
+	{
+		$this->parent = $parent;
 
-    public function addChild(self $child): static
-    {
-        if (!$this->children->contains($child)) {
-            $this->children->add($child);
-            $child->setParent($this);
-        }
+		return $this;
+	}
 
-        return $this;
-    }
+	/**
+	 * @return Collection<int, self>
+	 */
+	public function getChildren(): Collection
+	{
+		return $this->children;
+	}
 
-    public function removeChild(self $child): static
-    {
-        if ($this->children->removeElement($child)) {
-            // set the owning side to null (unless already changed)
-            if ($child->getParent() === $this) {
-                $child->setParent(null);
-            }
-        }
+	public function addChild(self $child): static
+	{
+		if (!$this->children->contains($child)) {
+			$this->children->add($child);
+			$child->setParent($this);
+		}
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
+	public function removeChild(self $child): static
+	{
+		if ($this->children->removeElement($child)) {
+			// set the owning side to null (unless already changed)
+			if ($child->getParent() === $this) {
+				$child->setParent(null);
+			}
+		}
 
-    public function setStatus(string $status): static
-    {
-        $this->status = $status;
+		return $this;
+	}
 
-        return $this;
-    }
+	public function getStatus(): ?string
+	{
+		return $this->status;
+	}
 
-    public function getTaskType(): ?TaskType
-    {
-        return $this->taskType;
-    }
+	public function setStatus(string $status): static
+	{
+		$this->status = $status;
 
-    public function setTaskType(?TaskType $taskType): static
-    {
-        $this->taskType = $taskType;
+		return $this;
+	}
 
-        return $this;
-    }
+	public function getTaskType(): ?TaskType
+	{
+		return $this->taskType;
+	}
 
-    public function getAttributes(): ?array
-    {
-        return $this->attributes;
-    }
+	public function setTaskType(?TaskType $taskType): static
+	{
+		$this->taskType = $taskType;
 
-    public function setAttributes(?array $attributes): static
-    {
-        $this->attributes = $attributes;
+		return $this;
+	}
 
-        return $this;
-    }
+	public function getAttributes(): ?array
+	{
+		return $this->attributes;
+	}
+
+	public function setAttributes(?array $attributes): static
+	{
+		$this->attributes = $attributes;
+
+		return $this;
+	}
+
+	
+	/**
+	 * @var Collection<int, TaskTag>
+	 */
+	#[ORM\ManyToMany(targetEntity: TaskTag::class, inversedBy: 'tasks')]
+	private Collection $tags;
+
+	/**
+	 * @return Collection<int, TaskTag>
+	 */
+	public function getTags(): Collection
+	{
+		return $this->tags;
+	}
+
+	public function addTag(TaskTag $tag): static
+	{
+		if (!$this->tags->contains($tag)) {
+			$this->tags->add($tag);
+		}
+
+		return $this;
+	}
+
+	public function removeTag(TaskTag $tag): static
+	{
+		$this->tags->removeElement($tag);
+
+		return $this;
+	}
 }

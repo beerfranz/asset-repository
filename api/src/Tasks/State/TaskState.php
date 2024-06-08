@@ -58,12 +58,24 @@ final class TaskState extends RogerState
 				$entity->setStatus($this->service->getDefaultStatus($entity->getTaskTemplate()));
 		}
 
+		foreach ($api->tags as $name => $opts) {
+			$entity->addTag($this->service->getTag($name, $opts));
+		}
+
 		return $entity;
 	}
 
 	public function fromEntityToApi($entity, $api): TaskApi
 	{
 		$this->simpleFromEntityToApi($entity, $api);
+
+		$tags = [];
+		try {
+			foreach ($entity->getTags() as $tag) {
+				$tags[$tag->getName()] = [ 'value' => $tag->getValue(), 'color' => $tag->getColor() ];
+			}
+		} catch(\Error $e) {}
+		$api->__set('tags', $tags);
 
 		$api->__set('allowedNextStatuses', $this->service->possibleNextStatus($entity));
 

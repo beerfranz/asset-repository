@@ -61,7 +61,7 @@ class Asset
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['Asset:read', 'Asset:write', 'Asset:identifier', 'Instance:read'])]
+    #[Groups(['Asset:read', 'Asset:write', 'Asset:identifier', 'Instance:read', 'AssessmentPlan'])]
     private ?string $identifier = null;
 
     #[ORM\Column(nullable: true)]

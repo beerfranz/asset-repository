@@ -9,3 +9,7 @@ data:
   frequency: 
     description: monthly
     crontab: '0 0 1 * *'
+  tags:
+    priority: 
+      value: low
+      color: black

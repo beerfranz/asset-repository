@@ -9,7 +9,7 @@ class RogerApiResource extends RogerEntity implements RogerApiResourceInterface
 
 	public function fromEntityToApi($entity)
 	{
-		$normalizedEntity = $this->getSerializer()->normalize($entity, 'array');
+		$normalizedEntity = $this->__getSerializer()->normalize($entity, 'array');
 		$this->hydrator($normalizedEntity);
 
 		return $this;
@@ -17,7 +17,7 @@ class RogerApiResource extends RogerEntity implements RogerApiResourceInterface
 
 	public function fromApiToEntity($entity)
 	{
-		$entity->hydrator($this->getSerializer()->normalize($this, 'array'));
+		$entity->hydrator($this->__getSerializer()->normalize($this, 'array'));
 
 		return $entity;
 	}

@@ -8,6 +8,7 @@ use App\Tasks\Entity\TaskWorkflow;
 use App\Tasks\Entity\TaskType;
 
 use App\Tasks\Service\TaskService;
+use App\Tasks\Service\TaskTagService;
 
 use Beerfranz\RogerBundle\Service\RogerService;
 
@@ -24,6 +25,7 @@ class TaskTemplateService extends RogerService
 		EntityManagerInterface $entityManager,
 		LoggerInterface $logger,
 		protected TaskService $taskService,
+		protected TaskTagService $taskTagService,
 	) {
 		parent::__construct($entityManager, $logger, TaskTemplate::class);
 
@@ -45,6 +47,11 @@ class TaskTemplateService extends RogerService
 	public function generateTaskFromTaskTemplate(TaskTemplate $taskTemplate, $identifier): Task
 	{
 		return $this->taskService->generateTaskFromTaskTemplate($taskTemplate, $identifier);
+	}
+
+	public function getTag($name, $opts = [])
+	{
+		return $this->taskTagService->getTag($name, $opts);
 	}
 
 }

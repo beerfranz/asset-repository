@@ -40,6 +40,7 @@
                 <li class="{{ navbar.indicators|default('') }}"><a href="/ui/indicators">Indicators</a></li>
               </ul>
             </li>
+            {% endif %}
             <li class="{{ navbar.instances|default('') }}"><a href="/ui/instances">Instances</a></li>
             <li class="dropdown {{ navbar.tasks|default('') }} {{ navbar.task_templates|default('') }} {{ navbar.task_workflows|default('') }} {{ navbar.task_types|default('') }}">
               <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -52,6 +53,7 @@
                 <li class="{{ navbar.task_workflows|default('') }}"><a href="/ui/task-workflows">Task workflows</a></li>
               </ul>
             </li>
+            {% include '@assessments/navbar.html.twig' %}
             <li class="{{ navbar.versions|default('') }}"><a href="/ui/versions">Versions</a></li>
             <li class="{{ navbar.sources|default('') }}"><a href="/ui/sources">Sources</a></li>
             <li class="{{ navbar.kinds|default('') }}"><a href="/ui/kinds">Kinds</a></li>
@@ -68,7 +70,7 @@
                 </ul>
               </li>
             {% endif %}
-            {% endif %}
+            
           </ul>
       </div>
     </nav>

@@ -22,11 +22,12 @@ api_platform:
         stateless: true
         cache_headers:
             vary: ['Content-Type', 'Authorization', 'Origin']
-        extra_properties:
-            standard_put: true
         pagination_maximum_items_per_page: 100
         pagination_client_enabled: true
         pagination_client_items_per_page: true
+
+        extra_properties:
+            standard_put: true
 
     mapping:
         paths:
@@ -35,6 +36,8 @@ api_platform:
         - '%kernel.project_dir%/src/Tasks/ApiResource'
         - '%kernel.project_dir%/src/Risks/ApiResource'
         - '%kernel.project_dir%/src/Indicators/ApiResource'
+        - '%kernel.project_dir%/src/Assets/ApiResource'
+        - '%kernel.project_dir%/src/Assessments/ApiResource'
 
     oauth:
         # To enable or disable OAuth.
