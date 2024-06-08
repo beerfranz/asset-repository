@@ -20,60 +20,60 @@ use Psr\Log\LoggerInterface;
 
 final class EnvironmentState extends CommonState implements ProcessorInterface, ProviderInterface
 {
-    protected $environmentRepo;
+	protected $environmentRepo;
 
-    public function __construct(
-        EntityManagerInterface $entityManager,
-        RequestStack $request,
-        LoggerInterface $logger,
-        Security $security,
-    ) {
-        parent::__construct($entityManager, $request, $logger, $security);
-        $this->environmentRepo = $entityManager->getRepository(Environment::class);
-    }
+	public function __construct(
+		EntityManagerInterface $entityManager,
+		RequestStack $request,
+		LoggerInterface $logger,
+		Security $security,
+	) {
+		parent::__construct($entityManager, $request, $logger, $security);
+		$this->environmentRepo = $entityManager->getRepository(Environment::class);
+	}
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
-    {
-        if ($operation instanceof CollectionOperationInterface)
-        {
-            return $this->getCollection($this->environmentRepo, $context);
-        }
+	public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
+	{
+		if ($operation instanceof CollectionOperationInterface)
+		{
+			return $this->getCollection($this->environmentRepo, $context);
+		}
 
-        return $this->environmentRepo->findOneByIdentifier(null, $uriVariables['identifier']);
-    }
-    
-    /**
-     * @param $data
-     * @return T2
-     */
-    public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
-    {
+		return $this->environmentRepo->findOneByIdentifier(null, $uriVariables['identifier']);
+	}
+	
+	/**
+	 * @param $data
+	 * @return T2
+	 */
+	public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
+	{
 
-        $user = $this->security->getUser();
+		$user = $this->security->getUser();
 
-        $this->processOneEnvironment($data);
-    }
+		$this->processOneEnvironment($data);
+	}
 
-    protected function processOneEnvironment($data): Asset
-    {
-        $identifier = $data['identifier'];
+	protected function processOneEnvironment($data): Asset
+	{
+		$identifier = $data['identifier'];
 
-        $environment = $this->environmentRepo->findOneByIdentifier($identifier);
+		$environment = $this->environmentRepo->findOneByIdentifier($identifier);
 
-        if ($environment === null)
-        {
-            $environment = new Environment();
-            $environment->setIdentifier($identifier);
-        }
+		if ($environment === null)
+		{
+			$environment = new Environment();
+			$environment->setIdentifier($identifier);
+		}
 
-        if (isset($data['name']))
-            $environment->setName($data['name']);
-        else
-            $environment->setName(ucfirst($identifier));
+		if (isset($data['name']))
+			$environment->setName($data['name']);
+		else
+			$environment->setName(ucfirst($identifier));
 
-        $this->entityManager->persist($environment);
-        $this->entityManager->flush();
+		$this->entityManager->persist($environment);
+		$this->entityManager->flush();
 
-        return $environment;
-    }
+		return $environment;
+	}
 }

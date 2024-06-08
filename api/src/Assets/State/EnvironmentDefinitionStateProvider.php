@@ -10,17 +10,17 @@ use ApiPlatform\State\ProviderInterface;
 
 class EnvironmentDefinitionStateProvider extends CommonState implements ProviderInterface
 {
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
-    {
-        $repo = $this->entityManager->getRepository(EnvironmentDefinition::class);
+	public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
+	{
+		$repo = $this->entityManager->getRepository(EnvironmentDefinition::class);
 
-        if ($operation instanceof CollectionOperationInterface)
-        {
-            return $this->getCollection($repo, $context);
-        }
+		if ($operation instanceof CollectionOperationInterface)
+		{
+			return $this->getCollection($repo, $context);
+		}
 
-        $environmentDefinition = $repo->findOneByIdentifier($uriVariables['id']);
+		$environmentDefinition = $repo->findOneByIdentifier($uriVariables['id']);
 
-        return $environmentDefinition;
-    }
+		return $environmentDefinition;
+	}
 }
