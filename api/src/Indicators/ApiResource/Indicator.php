@@ -35,15 +35,15 @@ use Doctrine\Common\Collections\Collection;
 	denormalizationContext: ['groups' => ['Indicator:write']],
 )]
 #[GetCollection(
-	security: "is_granted('ASSET_READ')",
+	security: "is_granted('INDICATOR_READ')",
 	normalizationContext: ['groups' => ['Indicators:read']],
 )]
 #[Get(
-	security: "is_granted('ASSET_READ')",
+	security: "is_granted('INDICATOR_READ')",
 )]
-#[Post(security: "is_granted('ASSET_WRITE')")]
-#[Put(security: "is_granted('ASSET_WRITE')")]
-#[Delete(security: "is_granted('ASSET_WRITE')")]
+#[Post(security: "is_granted('INDICATOR_WRITE')")]
+#[Put(security: "is_granted('INDICATOR_WRITE')")]
+#[Delete(security: "is_granted('INDICATOR_WRITE')")]
 class Indicator extends RogerApiResource
 {
 	#[Groups(['Indicators:read', 'Indicator:read', 'Indicator:write', 'IndicatorValues:read', 'IndicatorValue:read'])]
