@@ -18,6 +18,8 @@ $(document).ready( function () {
     order: dataTable_order
   });
 
+  $('.roger-add-button').html(RogerUtils.iconAdd());
+
 });
 
 $(document).on('change', '.filter-submit-change', function(e) {

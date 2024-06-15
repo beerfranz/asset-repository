@@ -1,0 +1,75 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Users{% endblock %}
+
+{% block body %}
+
+{% include '@roger/page-header.html.twig' with { 'title': 'Users', 'add_button': true, 'add_function': 'userForm()' } %}
+
+<div class="row">
+	<div class="col-md-12">
+		<table class="table" id="users">
+		</table>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+$(document).ready(function () {
+	var dataTableOpts = commonDataTableOpts();
+	dataTableOpts.ajax.url = '/users';
+	dataTableOpts.columns = [ 
+		{ data: 'subject', title: 'ID' },
+		{ data: 'email', title: 'Email', render: function(data, type, row, meta){ return '<a href="/users/' + data + '">' + data + '</a>'} },	
+		{ data: 'roles', title: 'Roles', orderable: false, defaultContent: '' },
+		{ data: 'id', title: 'Actions', render: function(data, type, row, meta){ return renderUD({ edit: { enabled: true, function: `update(${data})`}, remove: { enabled: true, function: `remove(${data})` }}); } }
+
+  ];
+
+	rogerInit('users', dataTableOpts);
+
+});
+
+function userForm(userId) {
+	var method = 'POST';
+	var action = '/users';
+	var fields = [
+		{ name: 'subject', label: 'Identifier' },
+		{ name: 'email', label: 'Email' },
+		{ name: 'roles', label: 'Roles', type: 'multicheckbox', options: [{ value: 'ROLE_ADMIN', label: 'admin'}, { value: 'ROLE_USER', label: 'user' }, { value: 'ROLE_GUEST', label: 'guest' } ] }
+	];
+
+	RogerForm.initModal({ method: method, action: action, fields: fields });
+}
+
+function remove(userId) {
+	var method = 'DELETE';
+	var action = `/users/${userId}`;
+
+	var fields = [
+		{ name: 'subject', label: 'Identifier' }
+	];
+
+	RogerForm.initModal({ method: method, action: action, fields: fields, populate: true });
+}
+
+function update(userId) {
+	var method = 'PUT';
+	var action = `/users/${userId}`;
+
+	var fields = [
+		{ name: 'email', label: 'Email', disabled: true },
+		{ name: 'roles', label: 'Roles' }
+	];
+
+	RogerForm.initModal({ method: method, action: action, fields: fields, populate: true });
+}
+
+
+</script>
+
+{% endblock %}

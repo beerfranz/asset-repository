@@ -14,6 +14,14 @@ var RogerUtils = {
 		return this.icon({...options, ...{ icon: 'glyphicon-share' }});
 	},
 
+	iconAdd: function(options) {
+		return this.icon({...options, ...{ icon: 'glyphicon-plus', classes: 'text-success' }});
+	},
+
+	iconRemove: function(options) {
+		return this.icon({...options, ...{ icon: 'glyphicon-trash' }});
+	},
+
 	icon: function(options) {
 		if (!options.hasOwnProperty('icon'))
 			options.icon = 'glyphicon-ok';

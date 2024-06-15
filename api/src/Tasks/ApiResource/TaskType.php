@@ -30,15 +30,15 @@ use Doctrine\Common\Collections\Collection;
 	denormalizationContext: ['groups' => ['TaskType:write']],
 )]
 #[GetCollection(
-	security: "is_granted('ASSET_READ')",
+	security: "is_granted('TASK_READ')",
 	normalizationContext: ['groups' => ['TaskTypes:read']],
 )]
 #[Get(
-	security: "is_granted('ASSET_READ')",
+	security: "is_granted('TASK_READ')",
 )]
-#[Post(security: "is_granted('ASSET_WRITE')")]
-#[Put(security: "is_granted('ASSET_WRITE')")]
-#[Delete(security: "is_granted('ASSET_WRITE')")]
+#[Post(security: "is_granted('TASK_WRITE')")]
+#[Put(security: "is_granted('TASK_WRITE')")]
+#[Delete(security: "is_granted('TASK_WRITE')")]
 class TaskType extends RogerApiResource
 {
 	#[Groups(['TaskTypes:read', 'TaskType:read', 'TaskType:write'])]

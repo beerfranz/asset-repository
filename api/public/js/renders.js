@@ -161,3 +161,42 @@ function renderFrequency(frequency) {
 function renderJson(json) {
   return JSON.stringify(json);
 }
+
+// Update/Delete buttons
+function renderUD(options) {
+  let tpl = '';
+
+  if (options.hasOwnProperty('edit')) {
+    if (! options.edit.hasOwnProperty('enabled'))
+      options.edit.enabled = false;
+    if (! options.edit.hasOwnProperty('function'))
+      options.edit.enabled = false;
+  } else {
+    options['edit'] = Array();
+    options['edit']['enabled'] = false;
+  }
+  
+  if (! options.edit.hasOwnProperty('function'))
+    options.edit.function = '';
+
+  if (options.hasOwnProperty('remove')) {
+    if (! options.remove.hasOwnProperty('enabled'))
+      options.remove.enabled = false;
+    if (! options.remove.hasOwnProperty('function'))
+      options.remove.enabled = false;
+  } else {
+    options['remove'] = Array();
+    options['remove']['enabled'] = false;
+  }
+  
+  if (! options.remove.hasOwnProperty('function'))
+    options.remove.function = '';
+
+  if (options.edit.enabled === true)
+    tpl += `<a href="#" onClick="${options.edit.function}">${RogerUtils.iconEdit()}</a>`;
+
+  if (options.remove.enabled === true)
+    tpl += `<a href="#" onClick="${options.remove.function}">${RogerUtils.iconRemove()}</a>`;
+
+  return tpl;
+}

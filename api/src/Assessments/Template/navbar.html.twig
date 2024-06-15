@@ -1,4 +1,4 @@
-{% if is_granted('ROLE_ASSET_ADMIN') %}
+{% if is_granted('ASSESSMENT_READ') %}
   <li class="dropdown {{ navbar.assessment_plans|default('') }} {{ navbar.assessment_templates|default('') }}">
     <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       Assessments <span class="caret"></span>

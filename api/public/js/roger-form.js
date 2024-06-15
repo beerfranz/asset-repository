@@ -1,11 +1,15 @@
 var RogerForm = {
   id: '',
+  fields: [],
   initModal: function(options) {
     $('#modal-body').html(this.getForm(options));
 
-    options.fields.forEach(o => this.addField(o));
+    options.fields.forEach(o => this.addField(o, options));
+    if (options.hasOwnProperty('populate')) {
+      this.populate(options);
+    }
     $('#modal-body').append('<p class="txt-danger hidden" id="modal-form-error"></p>')
-    this.addSubmitButton();
+    this.addSubmitButton({ method: options.method });
     $('#modal').modal('show');
   },
 
@@ -18,7 +22,25 @@ var RogerForm = {
     return `<form id="${this.id}" method="${options.method}" action="${options.action}"></form>`;
   },
 
-  addField: function(options) {
+  populate: function(options) {
+    let formId = this.id;
+    $.ajax({
+      url: options.action,
+      method: 'GET',
+      dataType: 'json',
+      headers: { 'Accept': 'application/ld+json' },
+      success: function(data) {
+        
+        for (const [key, value] of Object.entries(data)) {
+          try {
+            $('#' + formId + ' input[name="' + key + '"]').val(value);
+          } catch(e) {}
+        }
+      }
+    });
+  },
+
+  addField: function(options, formOptions) {
     var fieldId = this.id + '_' + options.name;
     
     if (!options.hasOwnProperty('label'))
@@ -30,20 +52,49 @@ var RogerForm = {
     if (!options.hasOwnProperty('type'))
       options.type = 'text';
 
-    let input = '';
     if (options.type === 'text') {
-      input = `<input type="text" name="${options.name}" value="${options.value}" id="${fieldId}" class="form-control" />`;
+      input = document.createElement("input");
+      input.setAttribute('value', options.value);
+      input.setAttribute('class', 'form-control');
     }
     if (options.type === 'select') {
-      input = `<select name="${options.name}" class="form-select form-control" aria-label="Default select example" id="${fieldId}">`;
-      input += '<option value="">---</options>';
+      input = document.createElement('select');
+      input.setAttribute('class', 'form-control form-select');
+
+      let selectEmpty = document.createElement('option');
+      selectEmpty.setAttribute('value', '');
+      selectEmpty.appendChild(document.createTextNode('---'));
+      input.appendChild(selectEmpty);
+
       options.options.forEach((e) => {
-        input += `<option value="${e.value}">${e.label}</option>`;
+        let option = document.createElement('option');
+        option.setAttribute('value', e.value);
+        option.appendChild(document.createTextNode(e.label));
+        input.appendChild(option);
       })
-      input += '</select>';
     }
     if (options.type === 'multicheckbox') {
+      // let input = document.createElement('div');
+      let input = '';
       options.options.forEach((e, i) => {
+
+        // let check = document.createElement('div');
+        // check.setAttribute('class', 'form-check');
+        // let checkInput = document.createElement('INPUT');
+        // checkInput.setAttribute('class', 'form-check-input');
+        // checkInput.setAttribute('type', 'checkbox');
+        // checkInput.setAttribute('name', options.name);
+        // checkInput.setAttribute('value', e.value);
+        // checkInput.setAttribute('id', `${fieldId}_${i}`);
+        // checkInput.setAttribute('data-type', 'array');
+        // let checkLabel = document.createElement('label');
+        // checkLabel.setAttribute('class', 'form-check-label');
+        // checkLabel.setAttribute('for', `${fieldId}_${i}`);
+        // checkLabel.appendChild(document.createTextNode(e.label));
+        // check.appendChild(checkInput);
+        // check.appendChild(checkLabel);
+        // input.appendChild(check);
+
         input += `
           <div class="form-check">
             <input class="form-check-input" type="checkbox" name="${options.name}" value="${e.value}" id="${fieldId}_${i}" data-type="array">
@@ -51,19 +102,58 @@ var RogerForm = {
           </div>
         `;
       });
+      this.addInputText(fieldId, options.label, input);
+      return;
     }
 
+    input.setAttribute('name', options.name);
+    input.setAttribute('id', fieldId);
+
+    if (!options.hasOwnProperty('disabled')) {
+      if (formOptions.method === 'DELETE') {
+        input.setAttribute("disabled", true);
+        input.setAttribute("readonly", true);
+      }
+    } else if (options.disabled === true) {
+      input.setAttribute("disabled", true);
+      input.setAttribute("readonly", true);
+    }
+
+    this.addInputElement(fieldId, options.label, input);
+
+  },
+
+  addInputText: function (fieldId, label, input) {
     $('#' + this.id).append(`
       <div class="form-group">
-        <label for="${fieldId}">${options.label}</label>
+        <label for="${fieldId}">${label}</label>
         ${input}
       </div>  
     `);
   },
 
-  addSubmitButton: function() {
-    $('#modal-save-btn').removeClass('hidden');
-    $('#modal-save-btn').attr('onClick', 'RogerForm.submit({formId: "'+this.id+'"});');
+  addInputElement: function(fieldId, label, input) {
+    let group = document.createElement('div');
+    group.setAttribute('class', 'form-group');
+    let groupLabel = document.createElement('label');
+    groupLabel.setAttribute('for', fieldId);
+    groupLabel.appendChild(document.createTextNode(label));
+    group.appendChild(groupLabel);
+    group.appendChild(input);
+
+    $('#' + this.id).append(group);
+  },
+
+  addSubmitButton: function(options) {
+    if (options.method === 'DELETE') {
+      $('#modal-save-btn').addClass('hidden');
+      $('#modal-remove-btn').removeClass('hidden');
+      $('#modal-remove-btn').attr('onClick', 'RogerForm.submit({formId: "'+this.id+'"});');
+    } else {
+      $('#modal-remove-btn').addClass('hidden');
+      $('#modal-save-btn').removeClass('hidden');
+      $('#modal-save-btn').attr('onClick', 'RogerForm.submit({formId: "'+this.id+'"});');
+    }
   },
 
   submit: function(options) {
@@ -102,7 +192,7 @@ var RogerForm = {
     if (!options.hasOwnProperty('success')) {
       options.success = function(data) {
         $('#modal').modal('hide');
-        $('#values').DataTable().draw();
+        $('.table').DataTable().draw();
       };
     }
 

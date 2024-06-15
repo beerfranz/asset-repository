@@ -36,6 +36,7 @@ abstract class RogerAuthenticator extends AbstractAuthenticator
 		{
 			$user = new User();
 			$user->setEmail($email);
+			$user->setSubject($email);
 			$user->setRoles($roles);
 			$this->entityManager->persist($user);
 			$this->entityManager->flush();

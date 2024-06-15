@@ -2,12 +2,23 @@
 
 namespace App\Security\Entity;
 
+Use App\Security\Entity\UserGroup;
 use App\Security\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+
+use ApiPlatform\Metadata\ApiResource;
+
+enum RoleEnum: string
+{
+    case ADMIN = 'ROLE_ADMIN';
+    case USER = 'ROLE_USER';
+}
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
+#[ApiResource]
 class User implements UserInterface
 {
     #[ORM\Id]
@@ -18,7 +29,16 @@ class User implements UserInterface
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
+    #[ORM\Column(length: 180, unique: true)]
+    private ?string $subject = null;
+
+    public const ROLES = [
+        'ROLE_ADMIN',
+        'ROLE_USER',
+    ];
+
     #[ORM\Column]
+    #[Assert\Choice(choices: User::ROLES, multiple: true)]
     private array $roles = [];
 
     public function getId(): ?int
@@ -34,6 +54,18 @@ class User implements UserInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getSubject(): ?string
+    {
+        return $this->subject;
+    }
+
+    public function setSubject(string $subject): self
+    {
+        $this->subject = $subject;
 
         return $this;
     }

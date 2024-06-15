@@ -7,7 +7,6 @@
         "ext-iconv": "*",
         "api-platform/core": "^3.1",
         "beerfranz/roger-bundle": "*",
-        "beerfranz/service-bundle": "dev-main",
         "doctrine/doctrine-bundle": "^2.7",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.12",
@@ -107,7 +106,6 @@
         }
     },
     "repositories": [
-        {"type": "git", "url":  "https://github.com/beerfranz/ServiceBundle" },
         {"type": "path", "url": "../bundles/RogerBundle"}
     ]
 }

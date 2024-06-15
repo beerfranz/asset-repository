@@ -18,9 +18,6 @@
     "beerfranz/roger-bundle": {
         "version": "1.0.0"
     },
-    "beerfranz/service-bundle": {
-        "version": "dev-main"
-    },
     "composer/pcre": {
         "version": "1.0.0"
     },

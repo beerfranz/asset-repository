@@ -31,15 +31,15 @@ use Doctrine\Common\Collections\Collection;
 	denormalizationContext: ['groups' => ['Risk:write']],
 )]
 #[GetCollection(
-	security: "is_granted('ASSET_READ')",
+	security: "is_granted('RISK_READ')",
 	normalizationContext: ['groups' => ['Risks:read']],
 )]
 #[Get(
-	security: "is_granted('ASSET_READ')",
+	security: "is_granted('RISK_READ')",
 )]
-#[Post(security: "is_granted('ASSET_WRITE')")]
-#[Put(security: "is_granted('ASSET_WRITE')")]
-#[Delete(security: "is_granted('ASSET_WRITE')")]
+#[Post(security: "is_granted('RISK_WRITE')")]
+#[Put(security: "is_granted('RISK_WRITE')")]
+#[Delete(security: "is_granted('RISK_WRITE')")]
 class Risk extends RogerApiResource
 {
 	#[Groups(['Risks:read', 'Risk:read', 'Risk:write'])]

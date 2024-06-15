@@ -32,18 +32,18 @@ use Doctrine\Common\Collections\Collection;
     denormalizationContext: ['groups' => ['TaskTag:write']],
 )]
 #[GetCollection(
-    security: "is_granted('ASSET_READ')",
+    security: "is_granted('TASK_READ')",
     normalizationContext: ['groups' => ['TaskTags:read']],
 )]
 #[Get(
-    security: "is_granted('ASSET_READ')",
+    security: "is_granted('TASK_READ')",
 )]
-#[Post(security: "is_granted('ASSET_WRITE')")]
-#[Put(security: "is_granted('ASSET_WRITE')")]
+#[Post(security: "is_granted('TASK_WRITE')")]
+#[Put(security: "is_granted('TASK_WRITE')")]
 #[Patch(
-    security: "is_granted('ASSET_WRITE')",
+    security: "is_granted('TASK_WRITE')",
 )]
-#[Delete(security: "is_granted('ASSET_WRITE')")]
+#[Delete(security: "is_granted('TASK_WRITE')")]
 class TaskTag extends RogerApiResource
 {
     #[Groups(['TaskTags:read', 'TaskTag:read'])]

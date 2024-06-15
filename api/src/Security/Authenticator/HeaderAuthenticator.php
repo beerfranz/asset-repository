@@ -44,6 +44,12 @@ class HeaderAuthenticator extends RogerAuthenticator
 			throw new CustomUserMessageAuthenticationException('No role provided in the HTTP header ' . $roleHeader);
 		}
 
+		$subHeader = $this->parameterBag->get('auth.header.sub', 'X-Token-User-Sub');
+		$sub = $request->headers->get($subHeader);
+		if (null === $sub) {
+			throw new CustomUserMessageAuthenticationException('No identifier provided in the HTTP header ' . $subHeader);
+		}
+
 		$roles = explode(' ', $role);
 
 		return $this->userPassport($email, $roles);

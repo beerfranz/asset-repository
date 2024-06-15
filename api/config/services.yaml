@@ -6,6 +6,7 @@
 parameters:
     auth.header.email: '%env(AUTH_HEADER_EMAIL)%'
     auth.header.roles: '%env(AUTH_HEADER_ROLES)%'
+    auth.header.sub: '%env(AUTH_HEADER_SUB)%'
     jwks_url: '%env(resolve:JWKS_URL)%'
     jwt_skip_verify: '%env(bool:JWT_SKIP_VERIFY)%'
 

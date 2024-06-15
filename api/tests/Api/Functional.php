@@ -29,22 +29,22 @@ abstract class Functional extends ApiTestCase {
 
 	protected function getAdminUser()
 	{
-		return [ 'x-token-user-email' => 'unittest-admin@local.com', 'x-token-user-roles' => 'ROLE_ASSET_ADMIN' ];
+		return [ 'x-token-user-email' => 'unittest-admin@local.com', 'x-token-user-roles' => 'ROLE_ADMIN ROLE_USER', 'x-token-user-sub' => 'admin' ];
 	}
 
 	protected function getReadUser()
 	{
-		return [ 'x-token-user-email' => 'unittest-reader@local.com', 'x-token-user-roles' => 'ROLE_ASSET_READ' ];
+		return [ 'x-token-user-email' => 'unittest-reader@local.com', 'x-token-user-roles' => 'ROLE_READ', 'x-token-user-sub' => 'read' ];
 	}
 
 	protected function getWriteUser1()
 	{
-		return [ 'x-token-user-email' => 'unittest-writer-1@local.com', 'x-token-user-roles' => 'ROLE_ASSET_WRITE' ];
+		return [ 'x-token-user-email' => 'unittest-writer-1@local.com', 'x-token-user-roles' => 'ROLE_USER', 'x-token-user-sub' => 'user' ];
 	}
 
 	protected function getWriteUser2()
 	{
-		return [ 'x-token-user-email' => 'unittest-writer-2@local.com', 'x-token-user-roles' => 'ROLE_ASSET_WRITE' ];
+		return [ 'x-token-user-email' => 'unittest-writer-2@local.com', 'x-token-user-roles' => 'ROLE_USER', 'x-token-user-sub' => 'user' ];
 	}
 
 	protected function getClientAdmin()

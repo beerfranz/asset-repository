@@ -1,0 +1,11 @@
+{% if is_granted('ROLE_ADMIN') %}
+  <li class="dropdown {{ navbar.security_users|default('') }} {{ navbar.security_groups|default('') }}">
+    <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Admin <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      <li class="{{ navbar.security_users|default('') }}"><a href="/ui/security/users">Users</a></li>
+      <li class="{{ navbar.security_groups|default('') }}"><a href="/ui/security/groups">Groups</a></li>
+    </ul>
+  </li>
+{% endif %}
