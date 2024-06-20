@@ -19,6 +19,8 @@ trait RogerTestApiTrait {
 		);
 		$this->assertResponseStatusCodeSame(201);
 		$this->assertJsonContains($context['output']);
+
+		return $this->response;
 	}
 
 	protected function testGet(string $uri, array $context) {
@@ -84,14 +86,31 @@ trait RogerTestApiTrait {
 		$this->testDelete($uri, $context);
 	}
 
-	protected function calculateSimpleOutput(string $class, string $identifier, string $uri, array $input = []): array
+	protected function testCrud(string $uri, array $context) {
+		$response = $this->testPost($uri, $context);
+		$data = json_decode($response->getContent(), true);
+		$uri = $data['@id'];
+		$this->testGet($uri, $context);
+		$this->testDelete($uri, $context);
+	}
+
+	protected function calculateSimpleOutput(string $class, ?string $identifier, ?string $uri, ?array $input = []): array
 	{
-		return array_merge($input, [
+		$out = [
 			'@context' => '/contexts/'. $class,
-			'@id' => $uri,
 			'@type' => $class,
-			'identifier' => $identifier,
-		]);
+		];
+
+		if (is_array($input))
+			$out = array_merge($input, $out);
+
+		if ($uri !== null)
+			$out['@id'] = $uri;
+
+		if ($identifier !== null)
+			$out['identifier'] = $identifier;
+
+		return $out;
 	}
 
 	protected function getContextResponseStatus(array $context) {

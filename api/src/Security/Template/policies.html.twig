@@ -1,0 +1,120 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Policies{% endblock %}
+
+{% block body %}
+
+{% include '@roger/page-header.html.twig' with { 'title': 'Policies', 'add_button': true, 'add_function': 'form()' } %}
+
+<div class="row">
+	<div class="col-md-12">
+		<table class="table" id="groups">
+		</table>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+$(document).ready(function () {
+	var dataTableOpts = commonDataTableOpts();
+	dataTableOpts.ajax.url = '/authorization_policies';
+	dataTableOpts.columns = [ 
+		{ data: 'id', title: 'ID' },
+		{ data: 'identifier', title: 'Identifier', render: function(data, type, row, meta){ return '<a href="/ui/security/policies/' + row.id + '">' + data + '</a>'} },
+		{ data: 'namespace', title: 'Namespace' },
+		{ data: 'object', title: 'Object' },
+		{ data: 'relation', title: 'Relation' },
+		{ data: 'context', title: 'Context', render: function(data) { return renderNullableString(data); } },
+		{ data: 'groupCount', title: 'Groups' },
+		{ data: 'id', title: 'Actions', render: function(data, type, row, meta){ return renderUD({ edit: { enabled: true, function: `update(${data})`}, remove: { enabled: true, function: `remove(${data})` }}); } }
+
+	];
+
+	rogerInit('groups', dataTableOpts);
+
+});
+
+formFields = [
+	{ name: 'identifier', label: 'Identifier' },
+	{ name: 'namespace', label: 'Namespace', type: 'select', events: { change: onNamespaceChange }, draw: onNamespaceLoad },
+	{ name: 'object', label: 'Object', disabled: true },
+	{ name: 'relation', label: 'Relation', type: 'select', disabled: true },
+	{ name: 'context', label: 'Context', disabled: true },
+];
+
+function onNamespaceLoad(e, form) {
+	$.ajax({ ...commonAjaxOptions(), ...{
+		url: '/authorization_namespaces/', 
+		success: function(data) {
+			data['hydra:member'].forEach(o => {
+				e.addOption({ label: o.namespace, value: o.namespace, attributes: { link: o.link } });
+			});
+			if (typeof e.initValue === 'function') {
+				e.initValue();
+			}
+		}
+	}});
+}
+
+function onNamespaceChange(event) {
+	const formId = $(this).parents('form').get(0).id;
+	let relation = $('#' + formId + '_relation').get(0);
+	let context = $('#' + formId + '_context').get(0);
+	let object = $('#' + formId + '_object').get(0);
+	if (this.value === '') {
+		relation.disabled = true;
+		object.disabled = true;
+		context.disabled = true;
+	} else {
+		const url = this.options[this.selectedIndex].getAttribute('link');
+		$.ajax({ ...commonAjaxOptions(), ...{
+			url: url, 
+			success: function(data) {
+				relation.removeOptions();
+				data['hydra:member'].forEach(o => {
+					relation.addOption({ label: o.relation, value: o.relation });
+				});
+				relation.disabled = false;
+				object.disabled = false;
+				context.disabled = false;
+			}
+		}});
+	}
+}
+
+function form(id) {
+	var method = 'POST';
+	var action = '/authorization_policies';
+	var fields = formFields;
+
+	RogerForm.initModal({ method: method, action: action, fields: fields });
+}
+
+function remove(id) {
+	var method = 'DELETE';
+	var action = `/authorization_policies/${id}`;
+
+	var fields = [
+		{ name: 'identifier', label: 'Identifier' }
+	];
+
+	RogerForm.initModal({ method: method, action: action, fields: fields, populate: true });
+}
+
+function update(id) {
+	var method = 'PUT';
+	var action = `/authorization_policies/${id}`;
+
+	var fields = formFields;
+
+	RogerForm.initModal({ method: method, action: action, fields: fields, populate: true });
+}
+
+
+</script>
+
+{% endblock %}

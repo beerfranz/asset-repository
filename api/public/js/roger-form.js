@@ -5,6 +5,7 @@ var RogerForm = {
     $('#modal-body').html(this.getForm(options));
 
     options.fields.forEach(o => this.addField(o, options));
+
     if (options.hasOwnProperty('populate')) {
       this.populate(options);
     }
@@ -33,7 +34,10 @@ var RogerForm = {
         
         for (const [key, value] of Object.entries(data)) {
           try {
-            $('#' + formId + ' input[name="' + key + '"]').val(value);
+            $('#' + formId + '_' + key).get(0).initValue = function() {
+              $(this).val(value).change();
+            };
+            $('#' + formId + '_' + key).get(0).initValue();
           } catch(e) {}
         }
       }
@@ -61,17 +65,28 @@ var RogerForm = {
       input = document.createElement('select');
       input.setAttribute('class', 'form-control form-select');
 
-      let selectEmpty = document.createElement('option');
-      selectEmpty.setAttribute('value', '');
-      selectEmpty.appendChild(document.createTextNode('---'));
-      input.appendChild(selectEmpty);
-
-      options.options.forEach((e) => {
+      input.addOption = function(o) {
         let option = document.createElement('option');
-        option.setAttribute('value', e.value);
-        option.appendChild(document.createTextNode(e.label));
-        input.appendChild(option);
-      })
+        option.setAttribute('value', o.value);
+        if (o.hasOwnProperty('attributes')) {
+          for (const [attr, value] of Object.entries(o.attributes)) {
+            option.setAttribute(attr, value);
+          }
+        }
+        option.appendChild(document.createTextNode(o.label));
+        this.appendChild(option);
+      }
+
+      input.removeOptions = function() {
+          this.innerHTML = ''
+      }
+
+      input.setOptions = function(a) {
+        input.removeOptions();
+        a.forEach(o => addOption(o));
+      }
+
+      input.addOption({ value: '', label: '---'});
     }
     if (options.type === 'multicheckbox') {
       // let input = document.createElement('div');
@@ -109,16 +124,25 @@ var RogerForm = {
     input.setAttribute('name', options.name);
     input.setAttribute('id', fieldId);
 
+    if (options.hasOwnProperty('events')) {
+      $.each(options.events, function(e, f) {
+        input.addEventListener(e, f);
+      });
+    }
+
     if (!options.hasOwnProperty('disabled')) {
       if (formOptions.method === 'DELETE') {
         input.setAttribute("disabled", true);
-        input.setAttribute("readonly", true);
+        // input.setAttribute("readonly", true);
       }
     } else if (options.disabled === true) {
       input.setAttribute("disabled", true);
-      input.setAttribute("readonly", true);
+      // input.setAttribute("readonly", true);
     }
 
+    if (options.hasOwnProperty('draw')) {
+      eval(options.draw)(input, this);
+    }
     this.addInputElement(fieldId, options.label, input);
 
   },
@@ -198,7 +222,7 @@ var RogerForm = {
 
     if (!options.hasOwnProperty('error')) {
       options.error = function(data) {
-        $('#modal-form-error').html('Unexpected error');
+        $('#modal-form-error').html('Unexpected error:' + data.responseJSON['hydra:description']);
         $('#modal-form-error').removeClass('hidden');
       }
     }
