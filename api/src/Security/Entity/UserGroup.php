@@ -26,6 +26,7 @@ class UserGroup extends RogerEntity
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['Roger:Messenger'])]
     private ?int $id = null;
 
     public function getId(): ?int

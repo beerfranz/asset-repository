@@ -44,7 +44,7 @@ class RogerListener
 	public function prePersist(RogerEntity $entity, PrePersistEventArgs $event)
 	{
 		if ($entity->__getSequenceClass() !== null)
-			$this->__setSequencedProperties($entity, $event->getObjectManager());
+			$this->setSequencedProperties($entity, $event->getObjectManager());
 
 	}
 
@@ -147,9 +147,9 @@ class RogerListener
 	protected function serializeEntity(RogerEntity $entity)
 	{
 		$context = [];
-		$group = $entity->__getMessengerSerializationGroup();
-		if ($group !== null) {
-			$context['groups'] = [ $group ];
+		$groups = $entity->__getMessengerSerializationGroups();
+		if (count($groups) > 0) {
+			$context['groups'] = $groups;
 		}
 
 		return $entity->toArray($context);

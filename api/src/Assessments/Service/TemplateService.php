@@ -62,13 +62,7 @@ class TemplateService extends RogerService
 		]);
 
 		$plan->setAsset($asset);
-
-		foreach ($template->getTaskTemplates() as $taskTemplate) {
-
-			$task = $this->taskService->generateTaskFromTaskTemplate($taskTemplate, null, null, []);
-
-			$plan->addTask($task);
-		}
+		$plan->setAssessmentTemplate($template);
 
 		$this->persistEntity($plan);
 

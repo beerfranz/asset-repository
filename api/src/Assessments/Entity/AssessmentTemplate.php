@@ -22,7 +22,7 @@ class AssessmentTemplate extends RogerEntity
 
 	use RogerIdTrait;
 
-	#[Groups(['AssessmentTemplate:messenger'])]
+	#[Groups(['AssessmentTemplate:messenger', 'AssessmentPlan'])]
 	#[ORM\Column(length: 255, unique: true, nullable: false)]
 	private ?string $identifier = null;
 
@@ -58,9 +58,9 @@ class AssessmentTemplate extends RogerEntity
 	#[ORM\Column(nullable: true)]
 	private ?array $rules = null;
 
-	public function getMessengerSerializationGroup(): string
+	public function __getMessengerSerializationGroups(): array
 	{
-		return 'AssessmentTemplate:messenger';
+		return ['AssessmentTemplate:messenger', 'Roger:Messenger'];
 	}
 
 	public function __construct()

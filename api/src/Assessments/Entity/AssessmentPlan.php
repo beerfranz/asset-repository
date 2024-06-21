@@ -45,6 +45,10 @@ class AssessmentPlan extends RogerEntity // implements RogerSequence
 
 	use RogerTitleTrait;
 
+	#[Groups(['AssessmentPlan'])]
+	#[ORM\ManyToOne(targetEntity: AssessmentTemplate::class)]
+	private ?AssessmentTemplate $assessmentTemplate = null;
+
 	/**
 	 * @var Collection<int, Task>
 	 */
@@ -61,19 +65,19 @@ class AssessmentPlan extends RogerEntity // implements RogerSequence
 		$this->tasks = new ArrayCollection();
 	}
 
-	public function getSequenceClass(): ?string
+	public function __getSequenceClass(): ?string
 	{
 		return AssessmentSequence::class;
 	}
 
-	public function getSequencedProperties(): array
+	public function __getSequencedProperties(): array
 	{
 		return [ 'identifier' => [ 'prefix' => 'a-' ], 'title' => [] ];
 	}
 
-	public function getMessengerSerializationGroup(): string
+	public function __getMessengerSerializationGroups(): array
 	{
-		return 'AssessmentPlan';
+		return [ 'AssessmentPlan', 'Roger:Messenger' ];
 	}
 
 	/**
@@ -108,6 +112,18 @@ class AssessmentPlan extends RogerEntity // implements RogerSequence
 	public function setAsset(Asset $asset): static
 	{
 		$this->asset = $asset;
+
+		return $this;
+	}
+
+	public function getAssessmentTemplate(): ?AssessmentTemplate
+	{
+		return $this->assessmentTemplate;
+	}
+
+	public function setAssessmentTemplate(AssessmentTemplate $assessmentTemplate): static
+	{
+		$this->assessmentTemplate = $assessmentTemplate;
 
 		return $this;
 	}

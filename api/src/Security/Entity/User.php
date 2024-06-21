@@ -16,6 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 use ApiPlatform\Metadata\ApiResource;
 
@@ -30,6 +31,7 @@ class User extends RogerEntity implements UserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['Roger:Messenger'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]

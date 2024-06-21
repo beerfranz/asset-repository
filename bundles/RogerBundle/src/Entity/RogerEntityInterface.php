@@ -10,7 +10,7 @@ interface RogerEntityInterface
 
 	public function __set($name, $value);
 
-	public function __getMessengerSerializationGroup(): ?string;
+	public function __getMessengerSerializationGroups(): ?array;
 
 	public function __getMessengerClass(): string;
 

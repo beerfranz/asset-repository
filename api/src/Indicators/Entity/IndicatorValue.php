@@ -12,6 +12,8 @@ use Beerfranz\RogerBundle\Entity\RogerEntity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Serializer\Annotation\Groups;
+
 #[ORM\EntityListeners([RogerListener::class])]
 #[ORM\Entity(repositoryClass: IndicatorValueRepository::class)]
 class IndicatorValue extends RogerEntity
@@ -19,6 +21,7 @@ class IndicatorValue extends RogerEntity
 	#[ORM\Id]
 	#[ORM\GeneratedValue]
 	#[ORM\Column]
+	#[Groups(['Roger:Messenger'])]
 	private ?int $id = null;
 
 	#[ORM\Column]
@@ -26,6 +29,7 @@ class IndicatorValue extends RogerEntity
 
 	#[ORM\ManyToOne(inversedBy: 'indicatorValues', cascade: ['persist'])]
 	#[ORM\JoinColumn(nullable: false)]
+	#[Groups(['Roger:Messenger'])]
 	private ?Indicator $indicator = null;
 
 	#[ORM\Column]
@@ -38,6 +42,7 @@ class IndicatorValue extends RogerEntity
 	private ?int $value = null;
 
 	#[ORM\Column(length: 255)]
+	#[Groups(['Roger:Messenger'])]
 	private ?string $identifier = null;
 
 	#[ORM\Column(nullable: true, type: 'json_document')]
@@ -51,7 +56,7 @@ class IndicatorValue extends RogerEntity
 		return $this->id;
 	}
 
-	public function getMessengerClass(): string
+	public function __getMessengerClass(): string
 	{
 		return IndicatorValueMessage::class;
 	}

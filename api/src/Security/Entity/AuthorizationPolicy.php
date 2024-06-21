@@ -13,6 +13,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Serializer\Annotation\Groups;
+
 #[ORM\Entity(repositoryClass: AuthorizationPolicyRepository::class)]
 #[ORM\Index(name: "authorization_policy_namespace_idx", fields: ["namespace"])]
 #[ORM\Index(name: "authorization_policy_object_idx", fields: ["object"])]
@@ -25,6 +27,7 @@ class AuthorizationPolicy extends RogerEntity
 	#[ORM\Id]
 	#[ORM\GeneratedValue]
 	#[ORM\Column]
+	#[Groups(['Roger:Messenger'])]
 	private ?int $id = null;
 
 	#[ORM\Column(length: 255, unique: true)]

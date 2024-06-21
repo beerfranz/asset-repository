@@ -116,9 +116,9 @@ abstract class RogerEntity implements RogerEntityInterface, JsonSerializable {
 		return Uuid::v7()->__toString();
 	}
 
-	public function __getMessengerSerializationGroup(): ?string
+	public function __getMessengerSerializationGroups(): ?array
 	{
-		return null;
+		return [ 'Roger:Messenger' ];
 	}
 
 	public function __getMessengerClass(): string
