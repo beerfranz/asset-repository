@@ -146,13 +146,17 @@ var RogerForm = {
 
     input.setOptions = function(a) {
       input.removeOptions();
-      for (o in a) {
+      for (o of a) {
         this.addOption(o);
       }
     }
 
     if (options.type === 'select') {
       input.addOption({ value: '', label: '---'});
+    }
+
+    if (options.hasOwnProperty('options')) {
+      input.setOptions(options.options);
     }
     return input;
   },

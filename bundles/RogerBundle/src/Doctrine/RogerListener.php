@@ -43,17 +43,17 @@ class RogerListener
 
 	public function prePersist(RogerEntity $entity, PrePersistEventArgs $event)
 	{
-		if ($entity->getSequenceClass() !== null)
-			$this->setSequencedProperties($entity, $event->getObjectManager());
+		if ($entity->__getSequenceClass() !== null)
+			$this->__setSequencedProperties($entity, $event->getObjectManager());
 
 	}
 
 	protected function setSequencedProperties(RogerEntity $entity, $entityManager)
 	{
-		$seqRepo = $entityManager->getRepository($entity->getSequenceClass());
+		$seqRepo = $entityManager->getRepository($entity->__getSequenceClass());
 
 		$props = [];
-		foreach($entity->getSequencedProperties() as $prop => $attr) {
+		foreach($entity->__getSequencedProperties() as $prop => $attr) {
 			if ($entity->__get($prop) === null)
 				$props[$prop] = $attr;
 		}
@@ -138,7 +138,7 @@ class RogerListener
 		$context['actor'] = $this->getUser();
 		$context['datetime'] = new \DateTimeImmutable();
 		
-		$messageClass = $this->entity->getMessengerClass();
+		$messageClass = $this->entity->__getMessengerClass();
 
 		$this->logger->info('Dispatch message ' . $messageClass . ': ' . $this->action . ' ' . $this->entity::class);
 		$this->bus->dispatch(new $messageClass($this->action, $context));
@@ -147,7 +147,7 @@ class RogerListener
 	protected function serializeEntity(RogerEntity $entity)
 	{
 		$context = [];
-		$group = $entity->getMessengerSerializationGroup();
+		$group = $entity->__getMessengerSerializationGroup();
 		if ($group !== null) {
 			$context['groups'] = [ $group ];
 		}
