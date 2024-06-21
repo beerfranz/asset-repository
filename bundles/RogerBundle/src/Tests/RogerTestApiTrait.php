@@ -29,6 +29,8 @@ trait RogerTestApiTrait {
 
 		$this->assertResponseStatusCodeSame(200);
 		$this->assertJsonContains($context['output']);
+
+		return $this->response;
 	}
 
 	protected function testDelete(string $uri, array $context) {
@@ -43,6 +45,8 @@ trait RogerTestApiTrait {
 			$context['auditAction'] = 'remove';
 			$this->testAudit($context);
 		}
+
+		return $this->response;
 	}
 
 	protected function testPut(string $uri, array $context) {
@@ -63,6 +67,8 @@ trait RogerTestApiTrait {
 				$context['auditAction'] = 'create';
 			$this->testAudit($context);
 		}
+
+		return $this->response;
 	}
 
 	protected function testPatch(string $uri, array $context) {
@@ -78,6 +84,8 @@ trait RogerTestApiTrait {
 
 		if (isset($context['withGetTest']) && $context['withGetTest'] === true)
 			$this->testGet($uri, $context);
+
+		return $this->response;
 	}
 
 	protected function testIdempotentCrud(string $uri, array $context) {

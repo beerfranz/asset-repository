@@ -29,4 +29,25 @@ final class SecurityFactory extends RogerFactory
 		return $e;
 	}
 
+	public static function getAutorizationPolicy($options = [])
+	{
+		if (!isset($options['namespace']))
+			$options['namespace'] = 'task';
+
+		if (!isset($options['relation']))
+			$options['relation'] = 'task:read';
+
+		$e = [
+			'identifier' => self::randomString(),
+			'namespace' => $options['namespace'],
+			'object' => '*',
+			'relation' => $options['relation'],
+		];
+
+		if (isset($options['groups']))
+			$e['groups'] = $options['groups'];
+
+		return $e;
+	}
+
 }

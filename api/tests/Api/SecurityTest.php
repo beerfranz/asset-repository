@@ -35,6 +35,49 @@ class SecurityTest extends Functional
 
 	}
 
+	public function testCrudAuthorizationPolicy(): void
+	{
+		$policy = SecurityFactory::getAutorizationPolicy();
+		
+		$output = $this->calculateSimpleOutput('AuthorizationPolicy', null, null, $policy);
+
+		$this->testCrud('/authorization_policies', [
+			'headers' => $this->getAdminUser(),
+			'input' => $policy,
+			'output' => $output,
+		]);
+	}
+
+	public function testRoleList(): void
+	{
+		$output = [
+			'hydra:member' => [
+				[ 'identifier' => 'ROLE_ADMIN' ],
+				[ 'identifier' => 'ROLE_USER' ],
+			]
+			
+		];
+		$this->testGetCollection('/authorization_roles', [
+			'headers' => $this->getAdminUser(),
+			'output' => $output,
+		]);
+	}
+
+	public function testNamespaceList(): void
+	{
+		$output = [
+			'hydra:member' => [
+				[ 'namespace' => 'tasks' ],
+				[ 'namespace' => 'assessments' ],
+			]
+			
+		];
+		$this->testGetCollection('/authorization_namespaces', [
+			'headers' => $this->getAdminUser(),
+			'output' => $output,
+		]);
+	}
+
 	public function testUser(): void
 	{
 		$group = SecurityFactory::getGroup();
@@ -51,13 +94,34 @@ class SecurityTest extends Functional
 
 		$user = SecurityFactory::getUser([ 'groups' => [$groupUri] ]);
 		$output = $this->calculateSimpleOutput('User', null, null, $user);
-		$this->testPost('/users', [
+		$response = $this->testPost('/users', [
 			'headers' => $this->getAdminUser(),
 			'input' => $user,
 			'output' => $output,
 		]);
+		$data = json_decode($response->getContent(), true);
+		$userUri = $data['@id'];
 
+		$policy = SecurityFactory::getAutorizationPolicy([ 'groups' => [$groupUri] ]);
+		$output = $this->calculateSimpleOutput('AuthorizationPolicy', null, null, $policy);
+		$response = $this->testPost('/authorization_policies', [
+			'headers' => $this->getAdminUser(),
+			'input' => $policy,
+			'output' => $output,
+		]);
+		$data = json_decode($response->getContent(), true);
+		$policyUri = $data['@id'];
+		$policyNamespace = $data['namespace'];
+		$policyRelation = $data['relation'];
 
+		$this->processQueue();
+		
+		$output = [ 'authorizationsCount'  => 1 ];
+		$response = $this->testGet($userUri, [
+			'headers' => $this->getAdminUser(),
+			'output' => $output,
+		]);
+		$data = json_decode($response->getContent(), true);
 	}
 
 }

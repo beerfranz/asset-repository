@@ -42,7 +42,7 @@ class AuthorizationService extends RogerService
 		$refreshId = time();
 		foreach ($user->getGroups() as $group) {
 			foreach ($group->getAuthorizationPolicies() as $authorizationPolicy) {
-				$this->refreshUserAuthorization($user, $authorizationPolicy, $refreshId);
+				$authorization = $this->refreshUserAuthorization($user, $authorizationPolicy, $refreshId);
 			}
 		}
 
@@ -51,7 +51,7 @@ class AuthorizationService extends RogerService
 		}
 	}
 
-	protected function refreshUserAuthorization(User $user, AuthorizationPolicy $authorizationPolicy, int $refeshId)
+	protected function refreshUserAuthorization(User $user, AuthorizationPolicy $authorizationPolicy, int $refeshId): Authorization
 	{
 		$authorization = $this->repo->findOneBy([
 			'user' => $user,
@@ -67,12 +67,15 @@ class AuthorizationService extends RogerService
 				'namespace' => $authorizationPolicy->getNamespace(),
 				'object' => $authorizationPolicy->getObject(),
 				'relation' => $authorizationPolicy->getRelation(),
-				'context' => $authorizationPolicy->getContext(),
+				// 'context' => $authorizationPolicy->getContext(),
 			]);
-		}
 
+		}
+		
 		$authorization->setRefreshId($refeshId);
 		$this->persistEntity($authorization);
+
+		return $authorization;
 	}
 
 

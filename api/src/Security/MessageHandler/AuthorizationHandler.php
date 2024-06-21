@@ -19,13 +19,19 @@ use Psr\Log\LoggerInterface;
 class AuthorizationHandler extends RogerHandlerAbstract
 {
 
+	protected $userRepo;
+	protected $userGroupRepo;
+	protected $policyRepo;
+
 	public function __construct(
 		protected AuthorizationService $service,
 		protected LoggerInterface $logger,
 		protected EntityManagerInterface $entityManager,
 	)
 	{
-
+		$this->userRepo = $entityManager->getRepository(User::class);
+		$this->userGroupRepo = $entityManager->getRepository(UserGroup::class);
+		$this->policyRepo = $entityManager->getRepository(AuthorizationPolicy::class);
 	}
 
 	#[AsMessageHandler]
@@ -39,23 +45,29 @@ class AuthorizationHandler extends RogerHandlerAbstract
 
 		if ($this->isAboutEntityNames($context, [ 'User' ])) {
 			$userId = $context['entity']['id'];
-			$userRepo = $this->entityManager->getRepository(User::class);
-
-			$user = $userRepo->find($userId);
+			$user = $this->userRepo->find($userId);
 			$this->service->refreshUserAuthorizations($user);
 		}
 
-		// if ($this->isAboutEntityNames($context, [ 'UserGroup' ])) {
-		// 	$groupId = $context['entity']['id'];
-		// 	$userGroupRepo = $this->entityManager->getRepository(UserGroup::class);
+		if ($this->isAboutEntityNames($context, [ 'UserGroup' ])) {
+			$groupId = $context['entity']['id'];
+			$group = $this->userGroupRepo->find($groupId);
 
-		// 	$group = $userGroupRepo->find($groupId);
+			foreach ($group->getUsers() as $user) {
+				$this->service->refreshUserAuthorizations($user);
+			}
+		}
 
-		// 	foreach ($group->getUsers() as $user) {
-		// 		$this->service->refreshUserAuthorizations($user);
-		// 	}
-		// }
-	
+		if ($this->isAboutEntityNames($context, [ 'AuthorizationPolicy' ])) {
+			$policyId = $context['entity']['id'];
+			$policy = $this->policyRepo->find($policyId);
+
+			foreach ($policy->getGroups() as $group) {
+				foreach ($group->getUsers() as $user) {
+					$this->service->refreshUserAuthorizations($user);
+				}
+			}
+		}
 	}
 
 }
