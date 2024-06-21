@@ -16,7 +16,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
             <li class="{{ navbar.dashboard|default('') }}"><a href="/ui/dashboard">Dashboard</a></li>
-            {% if is_granted('ROLE_ASSET_ADMIN') and settingsService.isModuleActivated('architecture') == true %}
+            {% if is_granted('ASSET_READ') and settingsService.isModuleActivated('architecture') == true %}
             <li class="dropdown {{ navbar.asset_definitions|default('') }} {{ navbar.environment_definitions|default('') }} {{ navbar.map|default('') }}">
               <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Architecture <span class="caret"></span>
@@ -28,7 +28,7 @@
               </ul>
             </li>
             {% endif %}
-            {% if is_granted('ROLE_ASSET_ADMIN') %}
+            {% if is_granted('ASSET_READ') %}
             <li class="{{ navbar.environments|default('') }}"><a href="/ui/environments">Environments</a></li>
             <li class="dropdown {{ navbar.assets|default('') }} {{ navbar.riskManagers|default('') }} {{ navbar.indicators|default('') }}">
               <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -59,7 +59,9 @@
             <li class="{{ navbar.kinds|default('') }}"><a href="/ui/kinds">Kinds</a></li>
             <li class="{{ navbar.audits|default('') }}"><a href="/ui/audits">Audits</a></li>
 
-            {% if is_granted('ROLE_ASSET_ADMIN') %}
+            {% include '@security/navbar.html.twig' %}
+
+            {% if is_granted('ROLE_ADMIN') %}
               <li class="dropdown {{ navbar.settings|default('') }} {{ navbar.users|default('') }}">
                 <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Admin <span class="caret"></span>

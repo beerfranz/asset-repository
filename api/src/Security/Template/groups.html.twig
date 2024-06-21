@@ -1,0 +1,73 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Groups{% endblock %}
+
+{% block body %}
+
+{% include '@roger/page-header.html.twig' with { 'title': 'Groups', 'add_button': true, 'add_function': 'groupForm()' } %}
+
+<div class="row">
+	<div class="col-md-12">
+		<table class="table" id="groups">
+		</table>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+$(document).ready(function () {
+	var dataTableOpts = commonDataTableOpts();
+	dataTableOpts.ajax.url = '/user_groups';
+	dataTableOpts.columns = [ 
+		{ data: 'id', title: 'ID' },
+		{ data: 'identifier', title: 'Identifier', render: function(data, type, row, meta){ return '<a href="/groups/' + row.id + '">' + data + '</a>'} },	
+		{ data: 'userCount', title: 'Users' },
+		{ data: 'policyCount', title: 'Policies' },
+		{ data: 'id', title: 'Actions', render: function(data, type, row, meta){ return renderUD({ edit: { enabled: true, function: `update(${data})`}, remove: { enabled: true, function: `remove(${data})` }}); } }
+
+  ];
+
+	rogerInit('groups', dataTableOpts);
+
+});
+
+function groupForm(groupId) {
+	var method = 'POST';
+	var action = '/user_groups';
+	var fields = [
+		{ name: 'identifier', label: 'Identifier' },
+	];
+
+	RogerForm.initModal({ method: method, action: action, fields: fields });
+}
+
+function remove(groupId) {
+	var method = 'DELETE';
+	var action = `/user_groups/${groupId}`;
+
+	var fields = [
+		{ name: 'identifier', label: 'Identifier' }
+	];
+
+	RogerForm.initModal({ method: method, action: action, fields: fields, populate: true });
+}
+
+function update(groupId) {
+	var method = 'PUT';
+	var action = `/user_groups/${groupId}`;
+
+	var fields = [
+		{ name: 'identifier', label: 'Identifier' },
+	];
+
+	RogerForm.initModal({ method: method, action: action, fields: fields, populate: true });
+}
+
+
+</script>
+
+{% endblock %}

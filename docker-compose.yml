@@ -25,6 +25,7 @@ services:
       MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       AUTH_HEADER_ROLES: x-token-user-roles
       AUTH_HEADER_EMAIL: x-token-user-email
+      AUTH_HEADER_SUB: x-token-user-sub
       JWKS_URL: ${OAUTH_JWTS_URL}
       JWT_SKIP_VERIFY: "true"
       SYMFONY_PHPUNIT_REQUIRE: "nikic/php-parser:^4.13"  # fix test coverage

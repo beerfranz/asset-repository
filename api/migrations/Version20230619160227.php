@@ -67,8 +67,6 @@ final class Version20230619160227 extends AbstractMigration
         $this->addSql('CREATE TABLE registry (id INT NOT NULL, identifier VARCHAR(255) NOT NULL, attributes JSON DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE source (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_5F8A7F735E237E06 ON source (name)');
-        $this->addSql('CREATE TABLE "user" (id INT NOT NULL, email VARCHAR(180) NOT NULL, roles JSON NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_8D93D649E7927C74 ON "user" (email)');
         $this->addSql('CREATE TABLE version (id INT NOT NULL, asset_definition_id INT DEFAULT NULL, registry_id INT DEFAULT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_BF1CD3C3126B7070 ON version (asset_definition_id)');
         $this->addSql('CREATE INDEX IDX_BF1CD3C34CB707ED ON version (registry_id)');
@@ -134,7 +132,6 @@ final class Version20230619160227 extends AbstractMigration
         $this->addSql('DROP TABLE owner');
         $this->addSql('DROP TABLE registry');
         $this->addSql('DROP TABLE source');
-        $this->addSql('DROP TABLE "user"');
         $this->addSql('DROP TABLE version');
     }
 }

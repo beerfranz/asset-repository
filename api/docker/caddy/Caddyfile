@@ -60,7 +60,8 @@
     route {
         import serve
         php_fastcgi unix//var/run/php/php-fpm.sock {
-            header_up x-token-user-roles ROLE_ASSET_ADMIN
+            header_up x-token-user-roles "ROLE_ADMIN ROLE_USER"
+            header_up x-token-user-sub theadmin
             header_up x-token-user-email admin@fake.io
         }
         file_server

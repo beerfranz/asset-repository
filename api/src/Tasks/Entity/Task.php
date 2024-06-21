@@ -90,12 +90,12 @@ class Task extends RogerEntity
 		$this->tags = new ArrayCollection();
 	}
 
-	public function getMessengerSerializationGroup(): ?string
+	public function __getMessengerSerializationGroups(): ?array
 	{
-		return 'Task';
+		return [ 'Roger:Messenger', 'Task' ]; 
 	}
 
-	public function getMessengerClass(): string
+	public function __getMessengerClass(): string
 	{
 		return TaskMessage::class;
 	}

@@ -41,6 +41,13 @@ setting:
         namespace: App\Setting\Controller
     type: attribute
 
+security:
+    resource:
+        path: ../src/Security/Controller
+        namespace: App\Security\Controller
+    prefix: /ui/security
+    type: attribute
+
 # audits:
 #     resource:
 #         path: ../src/Audits/Controller

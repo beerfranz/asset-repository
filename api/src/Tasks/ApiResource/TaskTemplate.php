@@ -38,20 +38,20 @@ use Doctrine\Common\Collections\Collection;
 	denormalizationContext: ['groups' => ['TaskTemplate:write']],
 )]
 #[GetCollection(
-	security: "is_granted('ASSET_READ')",
+	security: "is_granted('TASK_READ')",
 	normalizationContext: ['groups' => ['TaskTemplates:read']],
 )]
 #[Get(
-	security: "is_granted('ASSET_READ')",
+	security: "is_granted('TASK_READ')",
 )]
-#[Post(security: "is_granted('ASSET_WRITE')")]
-#[Put(security: "is_granted('ASSET_WRITE')")]
-#[Delete(security: "is_granted('ASSET_WRITE')")]
+#[Post(security: "is_granted('TASK_WRITE')")]
+#[Put(security: "is_granted('TASK_WRITE')")]
+#[Delete(security: "is_granted('TASK_WRITE')")]
 #[Put(
 	name: 'generate_tasks_from_template',
 	uriTemplate: '/task_templates/{identifier}/generate/{taskIdentifier}',
 	uriVariables: [ 'identifier', 'taskIdentifier' ] ,
-	security: "is_granted('ASSET_WRITE')",
+	security: "is_granted('TASK_WRITE')",
 	normalizationContext: [ 'groups' => [ 'TaskTemplateGenerate' ]],
 	denormalizationContext: [ 'groups' => [ 'TaskTemplateGenerate' ]],
 	input: TaskTemplateGenerateDto::class,

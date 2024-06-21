@@ -171,6 +171,8 @@ class AssessmentTest extends Functional
 			]
 		);
 
+		$this->processQueue();
+
 		// Process tasks
 		$this->testGetCollection('/tasks', [
 			'headers' => $this->getAdminUser(),

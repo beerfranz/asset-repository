@@ -12,6 +12,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Serializer\Annotation\Groups;
+
 #[ORM\Entity(repositoryClass: IndicatorRepository::class)]
 #[ORM\UniqueConstraint(columns:["identifier"])]
 class Indicator extends RogerEntity
@@ -19,9 +21,11 @@ class Indicator extends RogerEntity
 	#[ORM\Id]
 	#[ORM\GeneratedValue]
 	#[ORM\Column]
+	#[Groups(['Roger:Messenger'])]
 	private ?int $id = null;
 
 	#[ORM\Column(length: 255)]
+	#[Groups(['Roger:Messenger'])]
 	private ?string $identifier = null;
 
 	#[ORM\Column(length: 255)]
@@ -46,6 +50,7 @@ class Indicator extends RogerEntity
 	private Collection $indicatorValues;
 
 	#[ORM\Column(length: 255, nullable: true)]
+	#[Groups(['Roger:Messenger'])]
 	private ?string $taskTemplateIdentifier = null;
 
 	public function __construct()

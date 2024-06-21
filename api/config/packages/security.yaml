@@ -6,7 +6,7 @@ security:
     providers:
         users:
             entity:
-                class: 'App\Entity\User'
+                class: 'App\Security\Entity\User'
                 property: 'email'
     firewalls:
         dev:
@@ -16,8 +16,8 @@ security:
             lazy: true
             provider: users
             custom_authenticators:
-                - Beerfranz\ServiceBundle\Security\HeaderAuthenticator
-                - Beerfranz\ServiceBundle\Security\JwtAuthenticator
+                - App\Security\Authenticator\HeaderAuthenticator
+                - App\Security\Authenticator\JwtAuthenticator
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -28,8 +28,8 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/, roles: ROLE_ASSET_ADMIN }
-        - { path: ^/asset_definitions, roles: ROLE_ARCHITECT_ADMIN }
+        - { path: ^/, roles: [ROLE_USER] }
+        - { path: '^/admin', roles: [ROLE_ADMIN] }
 
 when@test:
     security:

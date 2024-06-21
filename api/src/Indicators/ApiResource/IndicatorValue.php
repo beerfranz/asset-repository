@@ -35,28 +35,28 @@ use Doctrine\Common\Collections\Collection;
 #[GetCollection(
 	uriTemplate: '/indicators/{indicatorIdentifier}/values',
 	uriVariables: [ 'indicatorIdentifier'] ,
-	security: "is_granted('ASSET_READ')",
+	security: "is_granted('INDICATOR_READ')",
 	normalizationContext: ['groups' => ['IndicatorValues:read']],
 )]
 #[Get(
 	uriTemplate: '/indicators/{indicatorIdentifier}/values/{identifier}',
 	uriVariables: [ 'indicatorIdentifier', 'identifier'],
-	security: "is_granted('ASSET_READ')"
+	security: "is_granted('INDICATOR_READ')"
 )]
 #[Post(
 	uriTemplate: '/indicators/{indicatorIdentifier}/values', 
 	uriVariables: [ 'indicatorIdentifier'] ,
-	security: "is_granted('ASSET_WRITE')"
+	security: "is_granted('INDICATOR_WRITE')"
 )]
 #[Put(
 	uriTemplate: '/indicators/{indicatorIdentifier}/values/{identifier}',
 	uriVariables: [ 'indicatorIdentifier', 'identifier' ],
-	security: "is_granted('ASSET_WRITE')"
+	security: "is_granted('INDICATOR_WRITE')"
 )]
 #[Patch(
 	uriTemplate: '/indicators/{indicatorIdentifier}/values/{identifier}',
 	uriVariables: [ 'indicatorIdentifier', 'identifier' ],
-	security: "is_granted('ASSET_WRITE')"
+	security: "is_granted('INDICATOR_WRITE')"
 )]
 class IndicatorValue extends RogerApiResource
 {

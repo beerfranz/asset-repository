@@ -116,22 +116,22 @@ abstract class RogerEntity implements RogerEntityInterface, JsonSerializable {
 		return Uuid::v7()->__toString();
 	}
 
-	public function getMessengerSerializationGroup(): ?string
+	public function __getMessengerSerializationGroups(): ?array
 	{
-		return null;
+		return [ 'Roger:Messenger' ];
 	}
 
-	public function getMessengerClass(): string
+	public function __getMessengerClass(): string
 	{
 		return RogerAsyncMessage::class;
 	}
 
-	public function getSequenceClass(): ?string
+	public function __getSequenceClass(): ?string
 	{
 		return null;
 	}
 
-	public function getSequencedProperties(): array
+	public function __getSequencedProperties(): array
 	{
 		return [];
 	}

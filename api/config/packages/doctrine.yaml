@@ -58,6 +58,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Setting/Entity'
                 prefix: 'App\Setting\Entity'
                 alias: Setting
+            Security:
+                is_bundle: false
+                type: attribute
+                dir: '%kernel.project_dir%/src/Security/Entity'
+                prefix: 'App\Security\Entity'
+                alias: Security
 
 when@test:
     doctrine:

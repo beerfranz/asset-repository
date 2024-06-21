@@ -39,6 +39,11 @@ abstract class RogerFactory extends ModelFactory
         parent::__construct();
     }
 
+    protected static function getClass(): string
+    {
+        return 'fake';
+    }
+
     /**
      * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#model-factories
      *
@@ -62,7 +67,7 @@ abstract class RogerFactory extends ModelFactory
         ;
     }
 
-    protected function randomString(): string
+    protected static function randomString(): string
     {
         return self::faker()->lexify('????????????');
     }

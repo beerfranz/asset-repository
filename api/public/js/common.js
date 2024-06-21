@@ -18,6 +18,8 @@ $(document).ready( function () {
     order: dataTable_order
   });
 
+  $('.roger-add-button').html(RogerUtils.iconAdd());
+
 });
 
 $(document).on('change', '.filter-submit-change', function(e) {
@@ -80,32 +82,13 @@ $(document).on('click', '#modal-footer button[type=submit]', function(e) {
  *    * value
  *    * type (optional)
  */
-function commonApiGet(url, target, populateRow) {
-  $.ajax({
-    url: url,
-    dataType: 'json',
+function commonAjaxOptions() {
+  return {
     method: 'GET',
-    contentType: 'application/json',
+    dataType: 'json',
+    headers: { 'Accept': 'application/ld+json' },
     beforeSend: function() {
-      target.empty();
+      
     },
-    success: function(data) {
-      data.forEach(function(row) {
-        content = '<tr>';
-        populateRow(row).forEach(e => {
-          content += '<td>';
-          if (e.link)
-            content += '<a href="' + e.link +'">';
-          content += e.value 
-          if (e.link)
-            content += '</a>';
-          content += '</td>';
-        });
-        content += '<td><a class="row-update" data-id="' + row.id + '">' + update + '</a>';
-        content += '<a class="row-delete" data-id="' + row.id + '">' + trash + '</a></td>';
-        content += '</tr>';
-        target.append(content);
-      });
-    }
-  });
+  };
 }

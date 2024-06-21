@@ -1,13 +1,13 @@
 <?php
-namespace App\Security;
+namespace App\Tasks\Voter;
 
-use App\Entity\User;
+use App\Security\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class AssetVoter extends Voter
+class TaskVoter extends Voter
 {
     private $security = null;
 
@@ -18,7 +18,7 @@ class AssetVoter extends Voter
 
     protected function supports($attribute, $subject): bool
     {
-        $supportsAttribute = in_array($attribute, ['ASSET_READ', 'ASSET_WRITE']);
+        $supportsAttribute = in_array($attribute, ['TASK_READ', 'TASK_WRITE']);
 
         return $supportsAttribute;
     }
@@ -39,11 +39,11 @@ class AssetVoter extends Voter
         }
 
         switch ($attribute) {
-            case 'ASSET_READ':
-                if ( in_array('ROLE_ASSET_ADMIN', $user->getRoles()) or in_array('ROLE_ASSET_READONLY', $user->getRoles()) ) { return true; }
+            case 'TASK_READ':
+                if ( $this->security->isGranted('ROLE_USER') ) { return true; }
                 break;
-            case 'ASSET_WRITE':
-                if ( in_array('ROLE_ASSET_ADMIN', $user->getRoles())) { return true; }
+            case 'TASK_WRITE':
+                if ( $this->security->isGranted('ROLE_USER') ) { return true; }
                 break;
         }
 

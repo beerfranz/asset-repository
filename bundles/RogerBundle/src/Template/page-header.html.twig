@@ -1,0 +1,6 @@
+<h1>
+	{{ title }}
+	{% if add_button is defined and add_button == true %}
+		<a href="#" onclick="{{ add_function | default('') }}" class="roger-add-button">Add</a>
+	{% endif %}
+</h1>

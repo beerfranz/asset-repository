@@ -1,0 +1,111 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Users{% endblock %}
+
+{% block body %}
+
+{% include '@roger/page-header.html.twig' with { 'title': 'Users', 'add_button': true, 'add_function': 'userForm()' } %}
+
+<div class="row">
+	<div class="col-md-12">
+		<table class="table" id="users">
+		</table>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+$(document).ready(function () {
+	var dataTableOpts = commonDataTableOpts();
+	dataTableOpts.ajax.url = '/users';
+	dataTableOpts.columns = [ 
+		{ data: 'subject', title: 'ID' },
+		{ data: 'email', title: 'Email', render: function(data, type, row, meta){ return '<a href="/users/' + data + '">' + data + '</a>'} },	
+		{ data: 'roles', title: 'Roles', orderable: false, defaultContent: '' },
+		{ data: 'groupCount', title: 'Groups' },
+		{ data: 'authorizationsCount', title: 'Authorizations' },
+		{ data: 'id', title: 'Actions', render: function(data, type, row, meta){ return renderUD({ edit: { enabled: true, function: `update(${data})`}, remove: { enabled: true, function: `remove(${data})` }}); } }
+
+  ];
+
+	rogerInit('users', dataTableOpts);
+
+});
+
+formFields = [
+	{ name: 'subject', label: 'Identifier' },
+	{ name: 'email', label: 'Email' },
+	{ name: 'roles', label: 'Roles', type: 'multiselect', draw: loadRoles },
+	{ name: 'groups', label: 'Groups', type: 'multiselect', draw: loadGroups }
+
+];
+
+function loadRoles(e, form) {
+	$.ajax({ ...commonAjaxOptions(), ...{
+		url: '/authorization_roles', 
+		success: function(data) {
+			e.removeOptions();
+			data['hydra:member'].forEach(o => {
+				e.addOption({ label: o.label, value: o.identifier });
+			});
+			if (typeof e.initValue === 'function') {
+				e.initValue();
+			}
+			e.disabled = false;
+		}
+	}});
+}
+
+function loadGroups(e, form) {
+	$.ajax({ ...commonAjaxOptions(), ...{
+		url: '/user_groups', 
+		success: function(data) {
+			e.removeOptions();
+			data['hydra:member'].forEach(o => {
+				e.addOption({ label: o.identifier, value: '/user_groups/'+o.id });
+			});
+			if (typeof e.initValue === 'function') {
+				e.initValue();
+			}
+			e.disabled = false;
+		}
+	}});
+}
+
+
+function userForm(userId) {
+	var method = 'POST';
+	var action = '/users';
+	var fields = formFields;
+
+	RogerForm.initModal({ method: method, action: action, fields: fields });
+}
+
+function remove(userId) {
+	var method = 'DELETE';
+	var action = `/users/${userId}`;
+
+	var fields = [
+		{ name: 'subject', label: 'Identifier' }
+	];
+
+	RogerForm.initModal({ method: method, action: action, fields: fields, populate: true });
+}
+
+function update(userId) {
+	var method = 'PUT';
+	var action = `/users/${userId}`;
+
+	var fields = formFields;
+
+	RogerForm.initModal({ method: method, action: action, fields: fields, populate: true });
+}
+
+
+</script>
+
+{% endblock %}
