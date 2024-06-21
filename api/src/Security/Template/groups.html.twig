@@ -26,6 +26,7 @@ $(document).ready(function () {
 		{ data: 'id', title: 'ID' },
 		{ data: 'identifier', title: 'Identifier', render: function(data, type, row, meta){ return '<a href="/groups/' + row.id + '">' + data + '</a>'} },	
 		{ data: 'userCount', title: 'Users' },
+		{ data: 'policyCount', title: 'Policies' },
 		{ data: 'id', title: 'Actions', render: function(data, type, row, meta){ return renderUD({ edit: { enabled: true, function: `update(${data})`}, remove: { enabled: true, function: `remove(${data})` }}); } }
 
   ];

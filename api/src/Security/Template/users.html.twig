@@ -35,14 +35,51 @@ $(document).ready(function () {
 
 });
 
+formFields = [
+	{ name: 'subject', label: 'Identifier' },
+	{ name: 'email', label: 'Email' },
+	{ name: 'roles', label: 'Roles', type: 'multiselect', draw: loadRoles },
+	{ name: 'groups', label: 'Groups', type: 'multiselect', draw: loadGroups }
+
+];
+
+function loadRoles(e, form) {
+	$.ajax({ ...commonAjaxOptions(), ...{
+		url: '/authorization_roles', 
+		success: function(data) {
+			e.removeOptions();
+			data['hydra:member'].forEach(o => {
+				e.addOption({ label: o.label, value: o.identifier });
+			});
+			if (typeof e.initValue === 'function') {
+				e.initValue();
+			}
+			e.disabled = false;
+		}
+	}});
+}
+
+function loadGroups(e, form) {
+	$.ajax({ ...commonAjaxOptions(), ...{
+		url: '/user_groups', 
+		success: function(data) {
+			e.removeOptions();
+			data['hydra:member'].forEach(o => {
+				e.addOption({ label: o.identifier, value: '/user_groups/'+o.id });
+			});
+			if (typeof e.initValue === 'function') {
+				e.initValue();
+			}
+			e.disabled = false;
+		}
+	}});
+}
+
+
 function userForm(userId) {
 	var method = 'POST';
 	var action = '/users';
-	var fields = [
-		{ name: 'subject', label: 'Identifier' },
-		{ name: 'email', label: 'Email' },
-		{ name: 'roles', label: 'Roles', type: 'multicheckbox', options: [{ value: 'ROLE_ADMIN', label: 'admin'}, { value: 'ROLE_USER', label: 'user' }, { value: 'ROLE_GUEST', label: 'guest' } ] }
-	];
+	var fields = formFields;
 
 	RogerForm.initModal({ method: method, action: action, fields: fields });
 }
@@ -62,10 +99,7 @@ function update(userId) {
 	var method = 'PUT';
 	var action = `/users/${userId}`;
 
-	var fields = [
-		{ name: 'email', label: 'Email', disabled: true },
-		{ name: 'roles', label: 'Roles' }
-	];
+	var fields = formFields;
 
 	RogerForm.initModal({ method: method, action: action, fields: fields, populate: true });
 }

@@ -31,14 +31,19 @@ var RogerForm = {
       dataType: 'json',
       headers: { 'Accept': 'application/ld+json' },
       success: function(data) {
-        
         for (const [key, value] of Object.entries(data)) {
+          let e;
+          let id;
           try {
-            $('#' + formId + '_' + key).get(0).initValue = function() {
-              $(this).val(value).change();
-            };
-            $('#' + formId + '_' + key).get(0).initValue();
-          } catch(e) {}
+            e = $('#' + formId + '_' + key).get(0);
+            id = e.id;
+          } catch(e) { continue; }
+          e.initValue = function() {
+            $(this).val(value);
+            var event = new Event('change');
+            this.dispatchEvent(event);
+          };
+          e.initValue();
         }
       }
     });
@@ -46,6 +51,7 @@ var RogerForm = {
 
   addField: function(options, formOptions) {
     var fieldId = this.id + '_' + options.name;
+    let input = undefined;
     
     if (!options.hasOwnProperty('label'))
       options.label = options.name;
@@ -61,64 +67,8 @@ var RogerForm = {
       input.setAttribute('value', options.value);
       input.setAttribute('class', 'form-control');
     }
-    if (options.type === 'select') {
-      input = document.createElement('select');
-      input.setAttribute('class', 'form-control form-select');
-
-      input.addOption = function(o) {
-        let option = document.createElement('option');
-        option.setAttribute('value', o.value);
-        if (o.hasOwnProperty('attributes')) {
-          for (const [attr, value] of Object.entries(o.attributes)) {
-            option.setAttribute(attr, value);
-          }
-        }
-        option.appendChild(document.createTextNode(o.label));
-        this.appendChild(option);
-      }
-
-      input.removeOptions = function() {
-          this.innerHTML = ''
-      }
-
-      input.setOptions = function(a) {
-        input.removeOptions();
-        a.forEach(o => addOption(o));
-      }
-
-      input.addOption({ value: '', label: '---'});
-    }
-    if (options.type === 'multicheckbox') {
-      // let input = document.createElement('div');
-      let input = '';
-      options.options.forEach((e, i) => {
-
-        // let check = document.createElement('div');
-        // check.setAttribute('class', 'form-check');
-        // let checkInput = document.createElement('INPUT');
-        // checkInput.setAttribute('class', 'form-check-input');
-        // checkInput.setAttribute('type', 'checkbox');
-        // checkInput.setAttribute('name', options.name);
-        // checkInput.setAttribute('value', e.value);
-        // checkInput.setAttribute('id', `${fieldId}_${i}`);
-        // checkInput.setAttribute('data-type', 'array');
-        // let checkLabel = document.createElement('label');
-        // checkLabel.setAttribute('class', 'form-check-label');
-        // checkLabel.setAttribute('for', `${fieldId}_${i}`);
-        // checkLabel.appendChild(document.createTextNode(e.label));
-        // check.appendChild(checkInput);
-        // check.appendChild(checkLabel);
-        // input.appendChild(check);
-
-        input += `
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="${options.name}" value="${e.value}" id="${fieldId}_${i}" data-type="array">
-            <label class="form-check-label" for="${fieldId}_${i}">${e.label}</label>
-          </div>
-        `;
-      });
-      this.addInputText(fieldId, options.label, input);
-      return;
+    if (['select', 'multiselect'].includes(options.type)) {
+      input = this.generateSelectElement(options);
     }
 
     input.setAttribute('name', options.name);
@@ -140,11 +90,13 @@ var RogerForm = {
       // input.setAttribute("readonly", true);
     }
 
+    
+    this.addInputElement(fieldId, options.label, input);
     if (options.hasOwnProperty('draw')) {
       eval(options.draw)(input, this);
     }
-    this.addInputElement(fieldId, options.label, input);
 
+    this.fields[options.name] = input;
   },
 
   addInputText: function (fieldId, label, input) {
@@ -168,6 +120,43 @@ var RogerForm = {
     $('#' + this.id).append(group);
   },
 
+  generateSelectElement: function(options) {
+    input = document.createElement('select');
+    input.setAttribute('class', 'form-control form-select');
+
+    if (options.type === 'multiselect') {
+      input.setAttribute('multiple', 'multiple');
+    }
+
+    input.addOption = function(o) {
+      let option = document.createElement('option');
+      option.setAttribute('value', o.value);
+      if (o.hasOwnProperty('attributes')) {
+        for (const [attr, value] of Object.entries(o.attributes)) {
+          option.setAttribute(attr, value);
+        }
+      }
+      option.appendChild(document.createTextNode(o.label));
+      this.appendChild(option);
+    }
+
+    input.removeOptions = function() {
+        this.innerHTML = ''
+    }
+
+    input.setOptions = function(a) {
+      input.removeOptions();
+      for (o in a) {
+        this.addOption(o);
+      }
+    }
+
+    if (options.type === 'select') {
+      input.addOption({ value: '', label: '---'});
+    }
+    return input;
+  },
+
   addSubmitButton: function(options) {
     if (options.method === 'DELETE') {
       $('#modal-save-btn').addClass('hidden');
@@ -189,10 +178,10 @@ var RogerForm = {
 
       formData.forEach(function(value, key){
         let e = form.querySelector('[name='+key+']');
-        if (e.getAttribute('data-type') == 'array') {
+        if (e.getAttribute('multiple') === 'multiple') {
           data[key] = formData.getAll(key);
         } else {
-          data[key] = value;  
+          data[key] = value;
         }
       });
 

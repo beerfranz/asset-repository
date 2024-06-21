@@ -8,7 +8,7 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<table class="table" id="groups">
+		<table class="table" id="policies">
 		</table>
 	</div>
 </div>
@@ -24,7 +24,7 @@ $(document).ready(function () {
 	dataTableOpts.ajax.url = '/authorization_policies';
 	dataTableOpts.columns = [ 
 		{ data: 'id', title: 'ID' },
-		{ data: 'identifier', title: 'Identifier', render: function(data, type, row, meta){ return '<a href="/ui/security/policies/' + row.id + '">' + data + '</a>'} },
+		{ data: 'identifier', title: 'Identifier' },
 		{ data: 'namespace', title: 'Namespace' },
 		{ data: 'object', title: 'Object' },
 		{ data: 'relation', title: 'Relation' },
@@ -34,7 +34,7 @@ $(document).ready(function () {
 
 	];
 
-	rogerInit('groups', dataTableOpts);
+	rogerInit('policies', dataTableOpts);
 
 });
 
@@ -44,23 +44,26 @@ formFields = [
 	{ name: 'object', label: 'Object', disabled: true },
 	{ name: 'relation', label: 'Relation', type: 'select', disabled: true },
 	{ name: 'context', label: 'Context', disabled: true },
+	{ name: 'groups', label: 'Groups', type: 'multiselect', draw: onGroupLoad },
 ];
 
 function onNamespaceLoad(e, form) {
 	$.ajax({ ...commonAjaxOptions(), ...{
-		url: '/authorization_namespaces/', 
+		url: '/authorization_namespaces', 
 		success: function(data) {
 			data['hydra:member'].forEach(o => {
 				e.addOption({ label: o.namespace, value: o.namespace, attributes: { link: o.link } });
 			});
 			if (typeof e.initValue === 'function') {
 				e.initValue();
+				let relation = $('#' + form.id + '_relation').get(0);
+				onRelationLoad(relation, form);
 			}
 		}
 	}});
 }
 
-function onNamespaceChange(event) {
+function onNamespaceChange() {
 	const formId = $(this).parents('form').get(0).id;
 	let relation = $('#' + formId + '_relation').get(0);
 	let context = $('#' + formId + '_context').get(0);
@@ -71,19 +74,51 @@ function onNamespaceChange(event) {
 		context.disabled = true;
 	} else {
 		const url = this.options[this.selectedIndex].getAttribute('link');
-		$.ajax({ ...commonAjaxOptions(), ...{
-			url: url, 
-			success: function(data) {
-				relation.removeOptions();
-				data['hydra:member'].forEach(o => {
-					relation.addOption({ label: o.relation, value: o.relation });
-				});
-				relation.disabled = false;
-				object.disabled = false;
-				context.disabled = false;
-			}
-		}});
+		loadRelation(relation, url);
+		object.disabled = false;
+		context.disabled = false;
 	}
+}
+
+function onRelationLoad(e, form) {
+	const formId = form.id;
+	let namespace = $('#' + formId + '_namespace').get(0);
+	if (namespace !== undefined && namespace.value !== '') {
+		const url = namespace.options[namespace.selectedIndex].getAttribute('link');
+		loadRelation(e, url);
+	}
+}
+
+function loadRelation(e, url) {
+	$.ajax({ ...commonAjaxOptions(), ...{
+		url: url, 
+		success: function(data) {
+			e.removeOptions();
+			data['hydra:member'].forEach(o => {
+				e.addOption({ label: o.relation, value: o.relation });
+			});
+			if (typeof e.initValue === 'function') {
+				e.initValue();
+			}
+			e.disabled = false;
+		}
+	}});
+}
+
+function onGroupLoad(e, form) {
+	$.ajax({ ...commonAjaxOptions(), ...{
+		url: '/user_groups', 
+		success: function(data) {
+			e.removeOptions();
+			data['hydra:member'].forEach(o => {
+				e.addOption({ label: o.identifier, value: '/user_groups/'+o.id });
+			});
+			if (typeof e.initValue === 'function') {
+				e.initValue();
+			}
+			e.disabled = false;
+		}
+	}});
 }
 
 function form(id) {

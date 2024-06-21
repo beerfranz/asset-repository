@@ -91,6 +91,11 @@ class UserGroup extends RogerEntity
 	{
 		return count($this->users);
 	}
+
+	public function getPolicyCount(): int
+	{
+		return count($this->authorizationPolicies);
+	}
 	
 	public function getAuthorizationPolicies(): Collection
 	{
