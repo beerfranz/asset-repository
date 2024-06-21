@@ -27,6 +27,7 @@ $(document).ready(function () {
 		{ data: 'email', title: 'Email', render: function(data, type, row, meta){ return '<a href="/users/' + data + '">' + data + '</a>'} },	
 		{ data: 'roles', title: 'Roles', orderable: false, defaultContent: '' },
 		{ data: 'groupCount', title: 'Groups' },
+		{ data: 'authorizationsCount', title: 'Authorizations' },
 		{ data: 'id', title: 'Actions', render: function(data, type, row, meta){ return renderUD({ edit: { enabled: true, function: `update(${data})`}, remove: { enabled: true, function: `remove(${data})` }}); } }
 
   ];

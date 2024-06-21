@@ -7,6 +7,7 @@ use App\Security\Repository\AuthorizationPolicyRepository;
 use ApiPlatform\Metadata\ApiResource;
 
 use Beerfranz\RogerBundle\Entity\RogerEntity;
+use Beerfranz\RogerBundle\Doctrine\RogerListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -18,6 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource(
 	security: "is_granted('ROLE_ADMIN')",
 )]
+#[ORM\EntityListeners([RogerListener::class])]
 class AuthorizationPolicy extends RogerEntity
 {
 	#[ORM\Id]
