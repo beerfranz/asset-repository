@@ -21,7 +21,7 @@
 
 $(document).ready(function () {
 	var dataTableOpts = commonDataTableOpts();
-	dataTableOpts.ajax.url = '/user_groups';
+	dataTableOpts.ajax.url = '/admin/user_groups';
 	dataTableOpts.columns = [ 
 		{ data: 'id', title: 'ID' },
 		{ data: 'identifier', title: 'Identifier', render: function(data, type, row, meta){ return '<a href="/groups/' + row.id + '">' + data + '</a>'} },	
@@ -37,7 +37,7 @@ $(document).ready(function () {
 
 function groupForm(groupId) {
 	var method = 'POST';
-	var action = '/user_groups';
+	var action = '/admin/user_groups';
 	var fields = [
 		{ name: 'identifier', label: 'Identifier' },
 	];
@@ -47,7 +47,7 @@ function groupForm(groupId) {
 
 function remove(groupId) {
 	var method = 'DELETE';
-	var action = `/user_groups/${groupId}`;
+	var action = `/admin/user_groups/${groupId}`;
 
 	var fields = [
 		{ name: 'identifier', label: 'Identifier' }

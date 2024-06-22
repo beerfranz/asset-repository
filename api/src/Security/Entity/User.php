@@ -24,6 +24,7 @@ use ApiPlatform\Metadata\ApiResource;
 #[ORM\Table(name: '`user`')]
 #[ApiResource(
     security: "is_granted('ROLE_ADMIN')",
+    routePrefix: '/admin',
 )]
 #[ORM\EntityListeners([RogerListener::class])]
 class User extends RogerEntity implements UserInterface

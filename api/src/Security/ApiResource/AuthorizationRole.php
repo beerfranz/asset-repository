@@ -15,6 +15,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     description: 'Roles authorizations',
     provider: AuthorizationRoleState::class,
+    routePrefix: '/admin',
 )]
 #[GetCollection(
     security: "is_granted('ROLE_ADMIN')",

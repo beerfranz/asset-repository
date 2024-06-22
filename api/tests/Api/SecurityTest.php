@@ -14,7 +14,7 @@ class SecurityTest extends Functional
 		
 		$output = $this->calculateSimpleOutput('User', null, null, $user);
 
-		$this->testCrud('/users', [
+		$this->testCrud(SecurityFactory::getPath('users'), [
 			'headers' => $this->getAdminUser(),
 			'input' => $user,
 			'output' => $output,
@@ -27,7 +27,7 @@ class SecurityTest extends Functional
 		
 		$output = $this->calculateSimpleOutput('UserGroup', null, null, $group);
 
-		$this->testCrud('/user_groups', [
+		$this->testCrud(SecurityFactory::getPath('user_groups'), [
 			'headers' => $this->getAdminUser(),
 			'input' => $group,
 			'output' => $output,
@@ -41,7 +41,7 @@ class SecurityTest extends Functional
 		
 		$output = $this->calculateSimpleOutput('AuthorizationPolicy', null, null, $policy);
 
-		$this->testCrud('/authorization_policies', [
+		$this->testCrud(SecurityFactory::getPath('authorization_policies'), [
 			'headers' => $this->getAdminUser(),
 			'input' => $policy,
 			'output' => $output,
@@ -57,7 +57,7 @@ class SecurityTest extends Functional
 			]
 			
 		];
-		$this->testGetCollection('/authorization_roles', [
+		$this->testGetCollection(SecurityFactory::getPath('authorization_roles'), [
 			'headers' => $this->getAdminUser(),
 			'output' => $output,
 		]);
@@ -72,7 +72,7 @@ class SecurityTest extends Functional
 			]
 			
 		];
-		$this->testGetCollection('/authorization_namespaces', [
+		$this->testGetCollection(SecurityFactory::getPath('authorization_namespaces'), [
 			'headers' => $this->getAdminUser(),
 			'output' => $output,
 		]);
@@ -83,7 +83,7 @@ class SecurityTest extends Functional
 		$group = SecurityFactory::getGroup();
 		$output = $this->calculateSimpleOutput('UserGroup', null, null, $group);
 
-		$response = $this->testPost('/user_groups', [
+		$response = $this->testPost(SecurityFactory::getPath('user_groups'), [
 			'headers' => $this->getAdminUser(),
 			'input' => $group,
 			'output' => $output,
@@ -94,7 +94,7 @@ class SecurityTest extends Functional
 
 		$user = SecurityFactory::getUser([ 'groups' => [$groupUri] ]);
 		$output = $this->calculateSimpleOutput('User', null, null, $user);
-		$response = $this->testPost('/users', [
+		$response = $this->testPost(SecurityFactory::getPath('users'), [
 			'headers' => $this->getAdminUser(),
 			'input' => $user,
 			'output' => $output,
@@ -104,7 +104,7 @@ class SecurityTest extends Functional
 
 		$policy = SecurityFactory::getAutorizationPolicy([ 'groups' => [$groupUri] ]);
 		$output = $this->calculateSimpleOutput('AuthorizationPolicy', null, null, $policy);
-		$response = $this->testPost('/authorization_policies', [
+		$response = $this->testPost(SecurityFactory::getPath('authorization_policies'), [
 			'headers' => $this->getAdminUser(),
 			'input' => $policy,
 			'output' => $output,

@@ -21,7 +21,7 @@
 
 $(document).ready(function () {
 	var dataTableOpts = commonDataTableOpts();
-	dataTableOpts.ajax.url = '/users';
+	dataTableOpts.ajax.url = '/admin/users';
 	dataTableOpts.columns = [ 
 		{ data: 'subject', title: 'ID' },
 		{ data: 'email', title: 'Email', render: function(data, type, row, meta){ return '<a href="/users/' + data + '">' + data + '</a>'} },	
@@ -46,7 +46,7 @@ formFields = [
 
 function loadRoles(e, form) {
 	$.ajax({ ...commonAjaxOptions(), ...{
-		url: '/authorization_roles', 
+		url: '/admin/authorization_roles', 
 		success: function(data) {
 			e.removeOptions();
 			data['hydra:member'].forEach(o => {
@@ -62,7 +62,7 @@ function loadRoles(e, form) {
 
 function loadGroups(e, form) {
 	$.ajax({ ...commonAjaxOptions(), ...{
-		url: '/user_groups', 
+		url: '/admin/user_groups', 
 		success: function(data) {
 			e.removeOptions();
 			data['hydra:member'].forEach(o => {
@@ -79,7 +79,7 @@ function loadGroups(e, form) {
 
 function userForm(userId) {
 	var method = 'POST';
-	var action = '/users';
+	var action = '/admin/users';
 	var fields = formFields;
 
 	RogerForm.initModal({ method: method, action: action, fields: fields });
@@ -87,7 +87,7 @@ function userForm(userId) {
 
 function remove(userId) {
 	var method = 'DELETE';
-	var action = `/users/${userId}`;
+	var action = `/admin/users/${userId}`;
 
 	var fields = [
 		{ name: 'subject', label: 'Identifier' }
@@ -98,7 +98,7 @@ function remove(userId) {
 
 function update(userId) {
 	var method = 'PUT';
-	var action = `/users/${userId}`;
+	var action = `/admin/users/${userId}`;
 
 	var fields = formFields;
 

@@ -20,6 +20,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: "authorization_object_idx", fields: ["object"])]
 #[ApiResource(
 	security: "is_granted('ROLE_ADMIN')",
+	routePrefix: '/admin',
 )]
 #[GetCollection(
     security: "is_granted('ROLE_ADMIN')",

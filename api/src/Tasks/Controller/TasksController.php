@@ -20,7 +20,7 @@ class TasksController extends AbstractController
 	#[Route('/ui/tasks', name: 'get_tasks', methods: ['GET'])]
 	public function getTasks(Request $request): Response
 	{
-		return $this->render('tasks.html.twig', [ 'navbar' => [ 'tasks' => 'active' ] ]);
+		return $this->render('@tasks/tasks.html.twig', [ 'navbar' => [ 'tasks' => 'active' ] ]);
 	}
 
 
@@ -32,13 +32,13 @@ class TasksController extends AbstractController
 
 		$audits = $auditService->find('Task', $task->getIdentifier());
 
-		return $this->render('task.html.twig', [ 'task' => $task, 'allowedNextStatuses' => $allowedNextStatuses, 'audits' => $audits ]);
+		return $this->render('@tasks/task.html.twig', [ 'task' => $task, 'allowedNextStatuses' => $allowedNextStatuses, 'audits' => $audits ]);
 	}
 
 	#[Route('/ui/task-templates', name: 'getTaskTemplates', methods: ['GET'])]
 	public function getTaskTemplates(Request $request): Response
 	{
-		return $this->render('task-templates.html.twig', [ 'navbar' => [ 'task_templates' => 'active' ] ]);
+		return $this->render('@tasks/task-templates.html.twig', [ 'navbar' => [ 'task_templates' => 'active' ] ]);
 	}
 
 	#[Route('/ui/task-templates/{identifier}', name: 'getTaskTemplate', methods: ['GET'])]
@@ -46,13 +46,13 @@ class TasksController extends AbstractController
 	{
 		$taskTemplate = $repo->findOneByIdentifier($identifier);
 
-		return $this->render('task-template.html.twig', [ 'taskTemplate' => $taskTemplate ]);
+		return $this->render('@tasks/task-template.html.twig', [ 'taskTemplate' => $taskTemplate ]);
 	}
 
 	#[Route('/ui/task-types', name: 'getTaskTypes', methods: ['GET'])]
 	public function getTaskTypes(Request $request): Response
 	{
-		return $this->render('task-types.html.twig', [ 'navbar' => [ 'task-types' => 'active' ] ]);
+		return $this->render('@tasks/task-types.html.twig', [ 'navbar' => [ 'task-types' => 'active' ] ]);
 	}
 
 	#[Route('/ui/task-types/{identifier}', name: 'getTaskType', methods: ['GET'])]
@@ -60,13 +60,13 @@ class TasksController extends AbstractController
 	{
 		$taskType = $service->findOneByIdentifier($identifier);
 
-		return $this->render('task-type.html.twig', [ 'taskType' => $taskType ]);
+		return $this->render('@tasks/task-type.html.twig', [ 'taskType' => $taskType ]);
 	}
 
 	#[Route('/ui/task-workflows', name: 'getTaskWorkflows', methods: ['GET'])]
 	public function getTaskWorkflows(Request $request): Response
 	{
-		return $this->render('task-workflows.html.twig', [ 'navbar' => [ 'task-workflows' => 'active' ] ]);
+		return $this->render('@tasks/task-workflows.html.twig', [ 'navbar' => [ 'task-workflows' => 'active' ] ]);
 	}
 
 	#[Route('/ui/task-workflows/{identifier}', name: 'getTaskWorkflow', methods: ['GET'])]
@@ -74,7 +74,7 @@ class TasksController extends AbstractController
 	{
 		$taskWorkflow = $repo->findOneByIdentifier($identifier);
 
-		return $this->render('task-workflow.html.twig', [ 'taskWorkflow' => $taskWorkflow ]);
+		return $this->render('@tasks/task-workflow.html.twig', [ 'taskWorkflow' => $taskWorkflow ]);
 	}
 
 }

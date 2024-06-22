@@ -4,6 +4,7 @@
 
 {% block body %}
 
+{% include '@roger/page-header.html.twig' with { 'title': 'Tasks', 'add_button': true, 'add_function': 'form()' } %}
 
 {# <div class="row">
   <div class="col-md-12">
@@ -43,6 +44,65 @@ $(document).ready(function () {
 	rogerInit('tasks', dataTableOpts);
 
 });
+
+
+formFields = [
+  { name: 'identifier', label: 'Identifier' },
+  { name: 'title', label: 'Title' },
+  { name: 'taskType', label: 'Type', type: 'select', draw: getTaskTypeList },
+  { name: 'description', label: 'Description' },
+];
+
+function getTaskTypeList(e, form) {
+  $.ajax({ ...commonAjaxOptions(), ...{
+    url: '/task_types',
+    success: function(data) {
+      data['hydra:member'].forEach(o => {
+        e.addOption({ label: o.identifier, value: o['@id'] });
+      });
+      if (typeof e.initValue === 'function') {
+        e.initValue();
+      }
+    }
+  }});
+}
+
+function form(id) {
+  var method = 'POST';
+  var action = '/tasks';
+  var fields = formFields;
+
+  RogerForm.initModal({ method: method, action: action, fields: fields });
+}
+
+function remove(id) {
+  var method = 'DELETE';
+  var action = `/tasks/${id}`;
+
+  var fields = [
+    { name: 'identifier', label: 'Identifier' }
+  ];
+
+  RogerForm.initModal({ method: method, action: action, fields: fields, populate: true });
+}
+
+function update(id) {
+  var method = 'PUT';
+  var action = `/tasks/${id}`;
+
+  var fields = formFields;
+
+  RogerForm.initModal({ method: method, action: action, fields: fields, populate: true });
+}
+
+
+
+
+
+
+
+
+
 
 </script>
 

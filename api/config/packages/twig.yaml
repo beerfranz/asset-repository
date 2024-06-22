@@ -6,6 +6,7 @@ twig:
         '%kernel.project_dir%/src/Assessments/Template': 'assessments'
         '%kernel.project_dir%/src/Setting/Template': 'setting'
         '%kernel.project_dir%/src/Security/Template': 'security'
+        '%kernel.project_dir%/src/Tasks/Template': 'tasks'
         '%kernel.project_dir%/vendor/beerfranz/roger-bundle/src/Template': 'roger'
 
 when@test:

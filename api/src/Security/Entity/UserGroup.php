@@ -20,6 +20,7 @@ use Beerfranz\RogerBundle\Entity\RogerEntity;
 #[ORM\EntityListeners([RogerListener::class])]
 #[ApiResource(
 	security: "is_granted('ROLE_ADMIN')",
+	routePrefix: '/admin',
 )]
 class UserGroup extends RogerEntity
 {
