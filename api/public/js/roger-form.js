@@ -70,6 +70,12 @@ var RogerForm = {
     if (['select', 'multiselect'].includes(options.type)) {
       input = this.generateSelectElement(options);
     }
+    if (options.type === 'textarea') {
+      input = document.createElement("textarea");
+      input.setAttribute('cols', 40);
+      input.setAttribute('rows', 4);
+      input.setAttribute('class', 'form-control');
+    }
 
     input.setAttribute('name', options.name);
     input.setAttribute('id', fieldId);

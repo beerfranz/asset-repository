@@ -39,6 +39,7 @@ $(document).ready(function () {
 		{ data: 'identifier', title: 'identifier', render: function(data, type, row, meta){ return '<a href="/ui/tasks/' + data + '">' + data + '</a>'} },
 		{ data: 'title', title: 'Title', render: function(data, type, row, meta){ return '<a href="/ui/tasks/' + row.identifier + '">' + data + '</a>'} },
     { data: 'status', title: 'Status', render: function(data, type, row, meta){ return renderNullableString(data, '-'); } },
+    { data: 'identifier', title: 'Actions', render: function(data, type, row, meta){ return renderUD({ edit: { enabled: true, function: `update('${data}')`}, remove: { enabled: true, function: `remove('${data}')` }}); } }
   ];
 
 	rogerInit('tasks', dataTableOpts);
@@ -50,7 +51,10 @@ formFields = [
   { name: 'identifier', label: 'Identifier' },
   { name: 'title', label: 'Title' },
   { name: 'taskType', label: 'Type', type: 'select', draw: getTaskTypeList },
-  { name: 'description', label: 'Description' },
+  { name: 'description', label: 'Description', type: 'textarea' },
+  // { name: 'status', label: 'Status', type: 'select', draw: getStatusList },
+  { name: 'owner', label: 'Owner' },
+  { name: 'assignedTo', label: 'Assigned To' },
 ];
 
 function getTaskTypeList(e, form) {

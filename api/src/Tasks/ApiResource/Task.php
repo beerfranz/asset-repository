@@ -2,6 +2,8 @@
 
 namespace App\Tasks\ApiResource;
 
+use App\Tasks\ApiResource\TaskType;
+use App\Tasks\ApiResource\TaskTemplate;
 use App\Tasks\State\TaskState;
 
 use Beerfranz\RogerBundle\ApiResource\RogerApiResource;
@@ -46,7 +48,7 @@ use Doctrine\Common\Collections\Collection;
 #[Delete(security: "is_granted('TASK_WRITE')")]
 class Task extends RogerApiResource
 {
-    #[Groups(['Tasks:read', 'Task:read'])]
+    #[Groups(['Tasks:read', 'Task:read', 'Task:write'])]
     #[ApiProperty(identifier: true)]
     public $identifier;
 
@@ -72,7 +74,7 @@ class Task extends RogerApiResource
     public $assignedTo;
 
     #[Groups(['Tasks:read', 'Task:read'])]
-    public $taskTemplate;
+    public ?TaskTemplate $taskTemplate;
 
     #[Groups(['Task:write'])]
     public $taskTemplateIdentifier;
@@ -91,5 +93,8 @@ class Task extends RogerApiResource
         openapiContext: [ "type" => "object" ]
     )]
     public ?array $tags = [];
+
+    #[Groups(['Tasks:read', 'Task:read'])]
+    public ?TaskType $taskType;
 
 }

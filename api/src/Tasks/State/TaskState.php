@@ -3,6 +3,8 @@
 namespace App\Tasks\State;
 
 use App\Tasks\ApiResource\Task as TaskApi;
+use App\Tasks\ApiResource\TaskType;
+use App\Tasks\ApiResource\TaskTemplate;
 use App\Tasks\Entity\Task as TaskEntity;
 use App\Tasks\Service\TaskService;
 
@@ -67,7 +69,22 @@ final class TaskState extends RogerState
 
 	public function fromEntityToApi($entity, $api): TaskApi
 	{
-		$this->simpleFromEntityToApi($entity, $api);
+		// $this->simpleFromEntityToApi($entity, $api);
+		$api->identifier = $entity->getIdentifier();
+		$api->title = $entity->getTitle();
+		$api->description = $entity->getDescription();
+		$api->status = $entity->getStatus();
+		$api->isDone = $entity->isIsDone();
+		$api->createdAt = $entity->getCreatedAt();
+		$api->owner = $entity->getOwner();
+		$api->assignedTo = $entity->getAssignedTo();
+		$taskTemplate = $entity->getTaskTemplate();
+		if (null !== $taskTemplate) {
+			$api->taskTemplate = new TaskTemplate([ 'identifier' => $entity->getTaskTemplate()->getIdentifier() ]);
+		}
+		$taskType =  $entity->getTaskType();
+		if (null !== $taskType)
+			$api->taskType = new TaskType([ 'identifier' => $taskType->getIdentifier() ]);
 
 		$tags = [];
 		try {
