@@ -6,19 +6,16 @@
 
 {% include '@roger/page-header.html.twig' with { 'title': 'Tasks', 'add_button': true, 'add_function': 'form()' } %}
 
-{# <div class="row">
+<div class="row">
   <div class="col-md-12">
-    <form id="instances-filters" class="dataTableFilters form-inline">
+    <form id="tasks-filters" class="dataTableFilters form-inline">
       <div class="form-group">
-        <label class="form-label" for="filter-identifier">Identifier</label>
-        <input class="form-control autocomplete" name="identifier" type="text" id="filter-identifier" placeholder="identifier" 
-          autocomplete-source="/entity/instances" autocomplete-group="Instance:identifier" autocomplete-name="identifier" />
-
-        {% include 'components/filter-kind.html.twig' %}
+        {% include 'components/filter-task-type.html.twig' %}
+        {% include 'components/filter-task-status.html.twig' %}
       </div>
     </form>
   </div>
-</div> #}
+</div>
 
 <div class="row">
   <div class="col-md-12">
@@ -39,6 +36,7 @@ $(document).ready(function () {
 		{ data: 'identifier', title: 'identifier', render: function(data, type, row, meta){ return '<a href="/ui/tasks/' + data + '">' + data + '</a>'} },
 		{ data: 'title', title: 'Title', render: function(data, type, row, meta){ return '<a href="/ui/tasks/' + row.identifier + '">' + data + '</a>'} },
     { data: 'status', title: 'Status', render: function(data, type, row, meta){ return renderNullableString(data, '-'); } },
+    { data: 'taskType', title: 'Type', render: function(data, type, row, meta){ return renderNullableString(data, '-').replace('/task_types/',''); } },
     { data: 'identifier', title: 'Actions', render: function(data, type, row, meta){ return renderUD({ edit: { enabled: true, function: `update('${data}')`}, remove: { enabled: true, function: `remove('${data}')` }}); } }
   ];
 
