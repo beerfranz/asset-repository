@@ -94,12 +94,18 @@ class TaskTemplate extends RogerApiResource
 			$this->workflow = $taskWorkflow['workflow'];
 		return $this;
 	}
-	
-	#[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
-	public TaskTemplate $parent;
 
 	#[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
-	public TaskType $type;
+	public $parentIdentifier = null;
+	
+	#[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
+	public ?TaskTemplate $parent = null;
+
+	#[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
+	public $typeIdentifier = null;
+
+	#[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
+	public ?TaskType $type = null;
 
 	#[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
 	#[ApiProperty(
