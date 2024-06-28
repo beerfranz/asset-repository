@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Service;
+namespace App\Common\Service;
 
-use App\Entity\Trigger;
-use App\Service\UserTemplate;
+use App\Common\Entity\Trigger;
+use App\Common\Service\UserTemplate;
 
 use Doctrine\ORM\EntityManagerInterface;
 

@@ -6,7 +6,7 @@ use App\Risks\Entity\Risk;
 use App\Risks\Entity\RiskManager;
 use App\Assets\Entity\Asset;
 
-use App\Service\UserTemplate;
+use App\Common\Service\UserTemplate;
 
 use Beerfranz\RogerBundle\Service\RogerService;
 

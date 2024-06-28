@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Service;
+namespace App\Common\Service;
 
-use App\Type\UserTemplateType;
+use App\Common\Entity\UserTemplateType;
 
 use Twig\Sandbox\SecurityPolicy;
 use Twig\Extension\SandboxExtension;

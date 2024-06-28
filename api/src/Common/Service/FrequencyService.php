@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Service;
+namespace App\Common\Service;
 
-use App\Entity\Frequency;
+use App\Common\Entity\Frequency;
 use App\Indicators\Entity\Indicator;
 use App\Tasks\Entity\TaskTemplate;
 

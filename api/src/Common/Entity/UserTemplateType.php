@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Type;
+namespace App\Common\Entity;
 
 class UserTemplateType {
 

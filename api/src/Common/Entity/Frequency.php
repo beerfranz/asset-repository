@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Entity;
+namespace App\Common\Entity;
 
 use Beerfranz\RogerBundle\Entity\RogerEntity;
 
 use Symfony\Component\Scheduler\Trigger\CronExpressionTrigger;
-
-use ApiPlatform\Metadata\ApiResource;
 
 class Frequency extends RogerEntity {
 

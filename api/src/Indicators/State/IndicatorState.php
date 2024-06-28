@@ -7,7 +7,7 @@ use App\Indicators\Entity\Indicator;
 use App\Indicators\Entity\IndicatorValue;
 
 use App\Indicators\Service\IndicatorService;
-use App\Service\FrequencyService;
+use App\Common\Service\FrequencyService;
 
 use Beerfranz\RogerBundle\State\RogerStateFacade;
 use Beerfranz\RogerBundle\State\RogerState;

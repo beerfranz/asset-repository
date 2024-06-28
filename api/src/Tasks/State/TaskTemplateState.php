@@ -6,7 +6,7 @@ use App\Tasks\ApiResource\TaskTemplate as TaskTemplateApi;
 use App\Tasks\ApiResource\TaskTemplateGenerateDto;
 use App\Tasks\Entity\TaskTemplate as TaskTemplateEntity;
 use App\Tasks\Service\TaskTemplateService;
-use App\Service\FrequencyService;
+use App\Common\Service\FrequencyService;
 use App\Tasks\Service\TaskWorkflowService;
 
 use App\Tasks\ApiResource\TaskType;

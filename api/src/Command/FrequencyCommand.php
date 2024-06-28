@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Service\FrequencyService;
+use App\Common\Service\FrequencyService;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
