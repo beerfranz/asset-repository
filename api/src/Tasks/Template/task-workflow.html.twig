@@ -4,6 +4,18 @@
 
 {% block body %}
 
-{{ dump(taskWorkflow) }}
+Statuses:
+<ul>
+{% for status, attrs in taskWorkflow.workflow.statuses %}
+	<li>{{ attrs.status }}
+		<ul>
+			<li>Constraints: {{ attrs.constraints | json_encode }}</li>
+			<li>Next statuses: {{ attrs.nextStatuses | json_encode }}</li>
+			<li>Is done: {{ attrs.isDone ? 'Yes': 'No' }}</li>
+			<li>Is default: {{ attrs.isDefault ? 'Yes': 'No' }}</li>
+		</ul>
+	</li>
+{% endfor %}
+</ul>
 
 {% endblock %}
