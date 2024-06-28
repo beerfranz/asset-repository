@@ -85,7 +85,7 @@ class Task extends RogerApiResource
     #[Groups(['Task:read'])]
     public $events;
 
-    #[Groups(['Task:read'])]
+    #[Groups(['Tasks:read', 'Task:read'])]
     public $allowedNextStatuses;
 
     #[Groups(['Tasks:read', 'Task:read', 'Task:write'])]
