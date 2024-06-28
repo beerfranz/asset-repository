@@ -33,6 +33,9 @@ var RogerForm = {
       headers: { 'Accept': 'application/ld+json' },
       success: function(data) {
         for (k in fields) {
+          if (fields[k].onPopulate !== undefined) {
+            fields[k].onPopulate(data);
+          }
           k.split('.').reduce((a, c) => {
             if (a !== undefined) {
               if (a[c] !== undefined) {
@@ -86,6 +89,10 @@ var RogerForm = {
       $.each(options.events, function(e, f) {
         input.addEventListener(e, f);
       });
+    }
+
+    if (options.hasOwnProperty('onPopulate')) {
+      input.onPopulate = options.onPopulate;
     }
 
     if (!options.hasOwnProperty('disabled')) {

@@ -50,7 +50,7 @@ formFields = [
   { name: 'title', label: 'Title' },
   { name: 'taskType', label: 'Type', type: 'select', draw: getTaskTypeList },
   { name: 'description', label: 'Description', type: 'textarea' },
-  // { name: 'status', label: 'Status', type: 'select', draw: getStatusList },
+  { name: 'status', label: 'Status', type: 'select', onPopulate: onPopulateStatus },
   { name: 'owner', label: 'Owner' },
   { name: 'assignedTo', label: 'Assigned To' },
 ];
@@ -67,6 +67,15 @@ function getTaskTypeList(e, form) {
       }
     }
   }});
+}
+
+function onPopulateStatus(data) {
+  let options = [];
+  data.allowedNextStatuses.forEach(s => {
+    options.push({ attributes: { label: s, value: s }});
+  });
+  options.push({ attributes: { label: data.status, value: data.status } });
+  this.setOptions(options);
 }
 
 function form(id) {
