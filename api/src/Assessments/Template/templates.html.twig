@@ -4,6 +4,8 @@
 
 {% block body %}
 
+{% include '@roger/page-header.html.twig' with { 'title': 'Assessment Templates', 'add_button': true, 'add_function': 'addForm()' } %}
+
 <div class="row">
 	<div class="col-md-12">
 		<table class="table" id="test-templates"></table>
@@ -33,7 +35,7 @@ $(document).ready(function () {
 		{ data: 'title', title: 'Title' },
 		{ data: 'assetsCount', title: 'Assets' },
 		{ data: 'taskTemplatesCount', title: 'Task templates' },
-		{ data: '', title: 'Actions', orderable: false, render: function(data, type, row, meta){ return renderAssessmentTemplateActions(row); } }
+		{ data: 'identifier', title: 'Actions', orderable: false, render: function(data, type, row, meta){ return renderAssessmentTemplateActions(row) + renderUD({ edit: { enabled: true, function: `update('${data}')`}, remove: { enabled: true, function: `remove('${data}')` }}); } }
 	];
 
 	rogerInit('test-templates', dataTableOpts);
@@ -55,9 +57,72 @@ function generateAssessmentPlanForm(templateIdentifier) {
 			RogerForm.initModal({ method: method, action: action, fields: fields });
 		}
 	}});
+}
 
 
-	
+formFields = [
+	{ name: 'identifier', label: 'Identifier' },
+	{ name: 'title', label: 'Title' },
+	{ name: 'taskTemplates', label: 'Tasks templates', type: 'multiselect', draw: loadTaskTemplates },
+	{ name: 'assets', label: 'Assets', type: 'multiselect', draw: loadAssets },
+];
+
+function loadTaskTemplates(e, form) {
+	$.ajax({ ...commonAjaxOptions(), ...{
+		url: '/task_templates', 
+		success: function(data) {
+			e.removeOptions();
+			data['hydra:member'].forEach(o => {
+				e.addOption({ label: o.identifier, value: o['identifier'] });
+			});
+			if (typeof e.initValue === 'function') {
+				e.initValue();
+			}
+		}
+	}});
+}
+
+function loadAssets(e, form) {
+	$.ajax({ ...commonAjaxOptions(), ...{
+		url: '/assets', 
+		success: function(data) {
+			e.removeOptions();
+			data['hydra:member'].forEach(o => {
+				e.addOption({ label: o.identifier, value: o['identifier'] });
+			});
+			if (typeof e.initValue === 'function') {
+				e.initValue();
+			}
+		}
+	}});
+}
+
+function addForm(id) {
+	var method = 'POST';
+	var action = '/assessments/templates';
+	var fields = formFields;
+
+	RogerForm.initModal({ method: method, action: action, fields: fields });
+}
+
+function remove(id) {
+	var method = 'DELETE';
+	var action = `/assessments/templates/${id}`;
+
+	var fields = [
+		{ name: 'identifier', label: 'Identifier' }
+	];
+
+	RogerForm.initModal({ method: method, action: action, fields: fields, populate: true });
+}
+
+function update(id) {
+	var method = 'PUT';
+	var action = `/assessments/templates/${id}`;
+
+	var fields = formFields;
+
+	RogerForm.initModal({ method: method, action: action, fields: fields, populate: true });
 }
 
 

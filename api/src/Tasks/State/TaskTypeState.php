@@ -37,7 +37,7 @@ final class TaskTypeState extends RogerState
 
 	public function fromEntityToApi($entity, $api): TaskTypeApi
 	{
-		$this->simpleFromEntityToApi($entity, $api);
+		$api->identifier = $entity->getIdentifier();
 
 		$taskWorkflow = $entity->getTaskWorkflow();
 		if ($taskWorkflow !== null) {

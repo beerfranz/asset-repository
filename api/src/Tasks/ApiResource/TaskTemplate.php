@@ -8,6 +8,8 @@ use App\Tasks\State\TaskTemplateState;
 use App\Tasks\ApiResource\TaskTemplateGenerateDto;
 
 use App\Tasks\Entity\TaskTag;
+use App\Tasks\ApiResource\TaskType;
+
 use Beerfranz\RogerBundle\ApiResource\RogerApiResource;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -28,8 +30,8 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-#[ApiFilter(GroupFilter::class, arguments: ['parameterName' => 'groups', 'overrideDefaultGroups' => true, 'whitelist' => ['Type:identifier']])]
-#[ApiFilter(AutocompleteFilter::class, properties: [ 'type.identifier'])]
+#[ApiFilter(GroupFilter::class, arguments: ['parameterName' => 'groups', 'overrideDefaultGroups' => true, 'whitelist' => ['TaskType:identifier']])]
+#[ApiFilter(AutocompleteFilter::class, properties: [ 'taskType.identifier'])]
 #[ApiResource(
 	description: 'Task template',
 	processor: TaskTemplateState::class,
@@ -92,12 +94,12 @@ class TaskTemplate extends RogerApiResource
 			$this->workflow = $taskWorkflow['workflow'];
 		return $this;
 	}
+	
+	#[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
+	public TaskTemplate $parent;
 
 	#[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
-	public $parentIdentifier;
-
-	#[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
-	public $typeIdentifier;
+	public TaskType $type;
 
 	#[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
 	#[ApiProperty(

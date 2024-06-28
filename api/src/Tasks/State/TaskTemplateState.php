@@ -9,6 +9,8 @@ use App\Tasks\Service\TaskTemplateService;
 use App\Service\FrequencyService;
 use App\Tasks\Service\TaskWorkflowService;
 
+use App\Tasks\ApiResource\TaskType;
+
 use ApiPlatform\Metadata\Operation;
 
 use Beerfranz\RogerBundle\State\RogerState;
@@ -82,8 +84,15 @@ final class TaskTemplateState extends RogerState
 			$entity->setTaskWorkflow($this->taskWorkflowService->findOneByIdentifier($worflow_identifier));
 		}
 
-		$entity->setParent($this->service->findOneByIdentifier($api->__get('parentIdentifier')));
-		$entity->setTaskType($this->service->findOneTaskTypeByIdentifier($api->__get('typeIdentifier')));
+		if ($api->__get('parent') !== null)
+			$entity->setParent($this->service->findOneByIdentifier($api->__get('parent')->__get('identifier')));
+		if ($api->__get('parentIdentifier') !== null)
+			$entity->setParent($this->service->findOneByIdentifier($api->__get('parentIdentifier')));
+
+		if ($api->__get('type') !== null)
+			$entity->setTaskType($this->service->findOneTaskTypeByIdentifier($api->__get('type')->__get('identifier')));
+		if ($api->__get('typeIdentifier') !== null)
+			$entity->setTaskType($this->service->findOneTaskTypeByIdentifier($api->__get('typeIdentifier')));
 
 		foreach ($api->tags as $name => $opts) {
 			$entity->addTag($this->service->getTag($name, $opts));
@@ -105,11 +114,15 @@ final class TaskTemplateState extends RogerState
 			$api->__set('workflow', $entity->getTaskType()->getTaskWorkflow()->getWorkflow());
 		} catch(\Error $e) {}
 
-		if (null !== $entity->getParent())
+		if (null !== $entity->getParent()) {
 			$api->parentIdentifier = $entity->getParent()->getIdentifier();
+			$api->parent = new TaskTemplateApi([ 'identifier' => $entity->getParent()->getIdentifier()]);
+		}
 
-		if (null !== $entity->getTaskType())
+		if (null !== $entity->getTaskType()) {
 			$api->typeIdentifier = $entity->getTaskType()->getIdentifier();
+			$api->type = new TaskType(['identifier' => $entity->getTaskType()->getIdentifier()]);
+		}
 
 		$tags = [];
 		try {

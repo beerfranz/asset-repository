@@ -25,25 +25,27 @@ var RogerForm = {
 
   populate: function(options) {
     let formId = this.id;
+    let fields = this.fields;
     $.ajax({
       url: options.action,
       method: 'GET',
       dataType: 'json',
       headers: { 'Accept': 'application/ld+json' },
       success: function(data) {
-        for (const [key, value] of Object.entries(data)) {
-          let e;
-          let id;
-          try {
-            e = $('#' + formId + '_' + key).get(0);
-            id = e.id;
-          } catch(e) { continue; }
-          e.initValue = function() {
-            $(this).val(value);
-            var event = new Event('change');
-            this.dispatchEvent(event);
-          };
-          e.initValue();
+        for (k in fields) {
+          k.split('.').reduce((a, c) => {
+            if (a !== undefined) {
+              if (a[c] !== undefined) {
+                fields[k].initValue = function() {
+                  $(this).val(a[c]);
+                  var event = new Event('change');
+                  this.dispatchEvent(event);
+                };
+                fields[k].initValue();
+              }
+              return a[c];
+            }
+          }, data);
         }
       }
     });
@@ -186,12 +188,26 @@ var RogerForm = {
 
       var data = {};
 
+      const dotPathToObject = (pathStr, value) => pathStr
+        .split(".")
+        .reverse()
+        .reduce((acc, cv, index) => ({
+            [cv]: index === 1 && value ? {[acc]: value} : acc
+        }));
+
       formData.forEach(function(value, key){
-        let e = form.querySelector('[name='+key+']');
+        let e = form.querySelector('[name="'+key+'"]');
+
         if (e.getAttribute('multiple') === 'multiple') {
-          data[key] = formData.getAll(key);
-        } else {
+          value = formData.getAll(key);
+        }
+
+        let trucChelou = dotPathToObject(key, value);
+
+        if (typeof trucChelou === 'string')
           data[key] = value;
+        else {
+          $.extend(data, trucChelou);
         }
       });
 

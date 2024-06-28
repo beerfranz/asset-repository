@@ -78,6 +78,7 @@ final class TaskState extends RogerState
 		$api->createdAt = $entity->getCreatedAt();
 		$api->owner = $entity->getOwner();
 		$api->assignedTo = $entity->getAssignedTo();
+		$api->attributes = $entity->getAttributes();
 		$taskTemplate = $entity->getTaskTemplate();
 		if (null !== $taskTemplate) {
 			$api->taskTemplate = new TaskTemplate([ 'identifier' => $entity->getTaskTemplate()->getIdentifier() ]);

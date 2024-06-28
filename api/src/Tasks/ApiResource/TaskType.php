@@ -41,7 +41,7 @@ use Doctrine\Common\Collections\Collection;
 #[Delete(security: "is_granted('TASK_WRITE')")]
 class TaskType extends RogerApiResource
 {
-	#[Groups(['TaskTypes:read', 'TaskType:read', 'TaskType:write'])]
+	#[Groups(['TaskTypes:read', 'TaskType:read', 'TaskType:write', 'TaskTemplates:read', 'TaskTemplate:read'])]
 	#[ApiProperty(identifier: true)]
 	public $identifier;
 

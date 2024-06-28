@@ -4,20 +4,17 @@
 
 {% block body %}
 
+{% include '@roger/page-header.html.twig' with { 'title': 'Task Templates', 'add_button': true, 'add_function': 'form()' } %}
 
-{# <div class="row">
+<div class="row">
   <div class="col-md-12">
-    <form id="instances-filters" class="dataTableFilters form-inline">
+    <form id="task-templates-filters" class="dataTableFilters form-inline">
       <div class="form-group">
-        <label class="form-label" for="filter-identifier">Identifier</label>
-        <input class="form-control autocomplete" name="identifier" type="text" id="filter-identifier" placeholder="identifier" 
-          autocomplete-source="/entity/instances" autocomplete-group="Instance:identifier" autocomplete-name="identifier" />
-
-        {% include 'components/filter-kind.html.twig' %}
+        {% include 'components/filter-task-type.html.twig' %}
       </div>
     </form>
   </div>
-</div> #}
+</div>
 
 <div class="row">
   <div class="col-md-12">
@@ -40,11 +37,77 @@ $(document).ready(function () {
     { data: 'frequency', title: 'Repeat', render: function(data, type, row, meta) { return renderFrequency(data); } },
     { data: 'parentIdentifier', title: 'Parent', render: function(data, type, row, meta){ return renderNullableString(data, '-'); } },
     { data: 'typeIdentifier', title: 'Type', render: function(data, type, row, meta){ return renderNullableString(data, '-'); } },
+    { data: 'identifier', title: 'Actions', render: function(data, type, row, meta){ return renderUD({ edit: { enabled: true, function: `update('${data}')`}, remove: { enabled: true, function: `remove('${data}')` }}); } }
   ];
 
 	rogerInit('task-templates', dataTableOpts);
 
 });
+
+
+formFields = [
+  { name: 'identifier', label: 'Identifier' },
+  { name: 'title', label: 'Title' },
+  { name: 'type', label: 'Type', type: 'select', draw: getTaskTypeList },
+  { name: 'description', label: 'Description', type: 'textarea' },
+  { name: 'parent.@id', label: 'Parent', type: 'select', draw: getTaskTemplateList },
+];
+
+function getTaskTypeList(e, form) {
+  $.ajax({ ...commonAjaxOptions(), ...{
+    url: '/task_types',
+    success: function(data) {
+      data['hydra:member'].forEach(o => {
+        e.addOption({ label: o.identifier, value: o['@id'] });
+      });
+      if (typeof e.initValue === 'function') {
+        e.initValue();
+      }
+    }
+  }});
+}
+
+function getTaskTemplateList(e, form) {
+  $.ajax({ ...commonAjaxOptions(), ...{
+    url: '/task_templates',
+    success: function(data) {
+      data['hydra:member'].forEach(o => {
+        e.addOption({ label: o.identifier, value: o['@id'] });
+      });
+      if (typeof e.initValue === 'function') {
+        e.initValue();
+      }
+    }
+  }});
+}
+
+function form(id) {
+  var method = 'POST';
+  var action = '/task_templates';
+  var fields = formFields;
+
+  RogerForm.initModal({ method: method, action: action, fields: fields });
+}
+
+function remove(id) {
+  var method = 'DELETE';
+  var action = `/task_templates/${id}`;
+
+  var fields = [
+    { name: 'identifier', label: 'Identifier' }
+  ];
+
+  RogerForm.initModal({ method: method, action: action, fields: fields, populate: true });
+}
+
+function update(id) {
+  var method = 'PUT';
+  var action = `/task_templates/${id}`;
+
+  var fields = formFields;
+
+  RogerForm.initModal({ method: method, action: action, fields: fields, populate: true });
+}
 
 </script>
 
