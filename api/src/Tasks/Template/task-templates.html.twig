@@ -37,13 +37,18 @@ $(document).ready(function () {
     { data: 'frequency', title: 'Repeat', render: function(data, type, row, meta) { return renderFrequency(data); } },
     { data: 'parentIdentifier', title: 'Parent', render: function(data, type, row, meta){ return renderNullableString(data, '-'); } },
     { data: 'typeIdentifier', title: 'Type', render: function(data, type, row, meta){ return renderNullableString(data, '-'); } },
-    { data: 'identifier', title: 'Actions', render: function(data, type, row, meta){ return renderUD({ edit: { enabled: true, function: `update('${data}')`}, remove: { enabled: true, function: `remove('${data}')` }}); } }
+    { data: 'identifier', title: 'Actions', render: function(data, type, row, meta){ return renderTemplateActions({ identifier: data}) + renderUD({ edit: { enabled: true, function: `update('${data}')`}, remove: { enabled: true, function: `remove('${data}')` }}); } }
   ];
 
 	rogerInit('task-templates', dataTableOpts);
 
 });
 
+function renderTemplateActions(options) {
+  let actions = '';
+  actions += `<a role="button" onClick="generateTask('${options.identifier}');">${RogerUtils.iconShare({ title: 'Generate task' })}</a>`;
+  return actions;
+}
 
 formFields = [
   { name: 'identifier', label: 'Identifier' },
@@ -107,6 +112,19 @@ function update(id) {
   var fields = formFields;
 
   RogerForm.initModal({ method: method, action: action, fields: fields, populate: true });
+}
+
+function generateTask(identifier) {
+
+  var method = 'POST';
+  var action = `/task_templates/${identifier}/generate`;
+
+  var fields = [
+    { name: 'identifier', label: 'Identifier' },
+  ];
+
+  RogerForm.initModal({ method: method, action: action, fields: fields });
+
 }
 
 </script>

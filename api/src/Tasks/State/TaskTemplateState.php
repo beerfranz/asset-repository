@@ -12,6 +12,8 @@ use App\Tasks\Service\TaskWorkflowService;
 use App\Tasks\ApiResource\TaskType;
 
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Post;
 
 use Beerfranz\RogerBundle\State\RogerState;
 use Beerfranz\RogerBundle\State\RogerStateFacade;
@@ -54,8 +56,13 @@ final class TaskTemplateState extends RogerState
 	{
 		if ($api instanceof TaskTemplateGenerateDto)
 		{
-			$taskIdentifier = $uriVariables['taskIdentifier'];
 			$taskTemplateIdentifier = $uriVariables['identifier'];
+
+			if ($operation instanceof Put)
+				$taskIdentifier = $uriVariables['taskIdentifier'];
+			elseif ($operation instanceof Post) {
+				$taskIdentifier = $api->identifier;
+			}
 
 			$taskTemplate = $this->getEntityByIdentifier($taskTemplateIdentifier);
 

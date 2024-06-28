@@ -7,5 +7,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class TaskTemplateGenerateDto
 {
-
+	#[Groups(['TaskTemplateGenerate'])]
+	public ?string $identifier = null;
 }
