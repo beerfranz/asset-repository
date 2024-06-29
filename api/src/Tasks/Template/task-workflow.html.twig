@@ -18,4 +18,27 @@ Statuses:
 {% endfor %}
 </ul>
 
+Diagramm:
+<pre class="mermaid">
+	graph LR
+	{%- for status, attrs in taskWorkflow.workflow.statuses %}
+
+		{{ status }}{% if attrs.isDefault %}(({{ status }})){% endif %}
+		{%- for nextStatus in attrs.nextStatuses %}
+
+		{{ status }} --> {{ nextStatus }}
+		{% endfor %}
+	{% endfor %}
+</pre>
+
+{% endblock %}
+
+
+{% block js %}
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
+
 {% endblock %}
