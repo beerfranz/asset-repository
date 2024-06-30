@@ -16,7 +16,7 @@ class IndicatorController extends AbstractController
 	#[Route('/ui/indicators', name: 'getIndicators', methods: ['GET'])]
 	public function getIndicators(Request $request): Response
 	{
-		return $this->render('indicators.html.twig', [ 'navbar' => [ 'indicators' => 'active' ] ]);
+		return $this->render('@indicator/indicators.html.twig', [ 'navbar' => [ 'indicators' => 'active' ] ]);
 	}
 
 	#[Route('/ui/indicators/{identifier}', name: 'getIndicator', methods: ['GET'])]
@@ -24,7 +24,7 @@ class IndicatorController extends AbstractController
 	{
 		$indicator = $repo->findOneByIdentifier($identifier);
 
-		return $this->render('indicator.html.twig', [ 'indicator' => $indicator ]);
+		return $this->render('@indicator/indicator.html.twig', [ 'indicator' => $indicator ]);
 	}
 
 }

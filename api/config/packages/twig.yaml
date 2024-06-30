@@ -9,6 +9,7 @@ twig:
         '%kernel.project_dir%/src/Tasks/Template': 'tasks'
         '%kernel.project_dir%/src/Assets/Template': 'asset'
         '%kernel.project_dir%/src/Risks/Template': 'risk'
+        '%kernel.project_dir%/src/Indicators/Template': 'indicator'
         '%kernel.project_dir%/vendor/beerfranz/roger-bundle/src/Template': 'roger'
 
 when@test:

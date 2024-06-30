@@ -38,7 +38,7 @@
                 <li class="{{ navbar.assets|default('') }}"><a href="/ui/assets">Assets</a></li>
                 
                 {% include '@risk/navbar.html.twig' %}
-                <li class="{{ navbar.indicators|default('') }}"><a href="/ui/indicators">Indicators</a></li>
+                {% include '@indicator/navbar.html.twig' %}
               </ul>
             </li>
             {% endif %}
