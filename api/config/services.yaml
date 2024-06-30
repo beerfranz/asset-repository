@@ -29,3 +29,13 @@ services:
     # please note that last definitions always *replace* previous ones
     App\Assets\Doctrine\AssetListener:
         tags: [doctrine.orm.entity_listener]
+
+    App\File\Serializer\MediaObjectNormalizer:
+        tags: [serializer.normalizer]
+
+    App\File\Serializer\MultipartDecoder:
+        tags: [serializer.encoder]
+
+    App\File\Serializer\UploadedFileDenormalizer:
+        tags: [serializer.normalizer]
+    

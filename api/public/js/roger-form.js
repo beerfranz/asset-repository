@@ -1,6 +1,8 @@
 var RogerForm = {
   id: '',
   fields: [],
+  textArea: null,
+  textAreaPlugin: null,
   initModal: function(options) {
     $('#modal-body').html(this.getForm(options));
 
@@ -26,6 +28,7 @@ var RogerForm = {
   populate: function(options) {
     let formId = this.id;
     let fields = this.fields;
+    let textAreaPlugin = this.textAreaPlugin;
     $.ajax({
       url: options.action,
       method: 'GET',
@@ -43,6 +46,9 @@ var RogerForm = {
                   $(this).val(a[c]);
                   var event = new Event('change');
                   this.dispatchEvent(event);
+                  if (this.nodeName == 'TEXTAREA') {
+                    textAreaPlugin.value($(this).val());
+                  }
                 };
                 fields[k].initValue();
               }
@@ -133,6 +139,33 @@ var RogerForm = {
     group.appendChild(input);
 
     $('#' + this.id).append(group);
+
+    if (input.nodeName == 'TEXTAREA') {
+      // https://github.com/Ionaru/easy-markdown-editor?tab=readme-ov-file#quick-access
+      this.textAreaPlugin = new EasyMDE({
+        element: input,
+        uploadImage: true,
+        imageUploadFunction: async (file, onSuccess, onError) => {
+          const formData  = new FormData();
+          formData.append('file', file);
+          return $.ajax({ ...commonAjaxOptions(), ...{
+            url: '/media_objects',
+            method: 'POST',
+            headers: { 'accept': 'application/ld+json' },
+            data: formData,
+            processData: false,
+            contentType: false,
+            cache:false,
+            success: function(data) {
+              onSuccess(data.contentUrl);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+              onError();
+            }
+          }});
+        }
+      });
+    }
   },
 
   generateSelectElement: function(options) {

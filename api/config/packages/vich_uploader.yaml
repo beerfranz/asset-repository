@@ -1,0 +1,12 @@
+vich_uploader:
+    db_driver: orm
+    storage: flysystem
+
+    mappings:
+       media_object:
+           # uri_prefix: /medias
+           upload_destination: default.storage
+           namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+           directory_namer:
+                service: vich_uploader.namer_directory_property
+                options: { property: 'tenant', transliterate: true }

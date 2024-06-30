@@ -48,6 +48,13 @@ security:
     prefix: /ui/security
     type: attribute
 
+file:
+    resource:
+        path: ../src/File/Controller
+        namespace: App\File\Controller
+    type: attribute
+
+
 # audits:
 #     resource:
 #         path: ../src/Audits/Controller
