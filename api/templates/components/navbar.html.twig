@@ -36,7 +36,8 @@
               </a>
               <ul class="dropdown-menu">
                 <li class="{{ navbar.assets|default('') }}"><a href="/ui/assets">Assets</a></li>
-                <li class="{{ navbar.riskManagers|default('') }}"><a href="/ui/risk-managers">Risk managers</a></li>
+                
+                {% include '@risk/navbar.html.twig' %}
                 <li class="{{ navbar.indicators|default('') }}"><a href="/ui/indicators">Indicators</a></li>
               </ul>
             </li>

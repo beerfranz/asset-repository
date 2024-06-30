@@ -17,7 +17,7 @@ class RiskController extends AbstractController
 	#[Route('/ui/risk-managers', name: 'getRiskManagers', methods: ['GET'])]
 	public function getRiskManagers(Request $request): Response
 	{
-		return $this->render('risk-managers.html.twig', [ 'navbar' => [ 'riskManagers' => 'active' ] ]);
+		return $this->render('@risk/risk-managers.html.twig', [ 'navbar' => [ 'riskManagers' => 'active' ] ]);
 	}
 
 	#[Route('/ui/risk-managers/{identifier}', name: 'getRiskManager', methods: ['GET'])]
@@ -27,7 +27,7 @@ class RiskController extends AbstractController
 
 		$risks = $riskRepo->findBy([ 'riskManager' => $riskManager]);
 
-		return $this->render('risk-manager.html.twig', [ 'riskManager' => $riskManager, 'risks' => $risks ]);
+		return $this->render('@risk/risk-manager.html.twig', [ 'riskManager' => $riskManager, 'risks' => $risks ]);
 	}
 
 }
