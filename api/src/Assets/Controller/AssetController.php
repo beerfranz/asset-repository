@@ -65,7 +65,7 @@ class AssetController extends AbstractController
 	#[Route('/ui/sources', name: 'getSources', methods: ['GET'])]
 	public function getSources(Request $request): Response
 	{
-		return $this->render('sources.html.twig', [ 'navbar' => [ 'sources' => 'active' ] ]);
+		return $this->render('@asset/sources.html.twig', [ 'navbar' => [ 'sources' => 'active' ] ]);
 	}
 
 	#[Route('/ui/kinds', name: 'getKinds', methods: ['GET'])]
