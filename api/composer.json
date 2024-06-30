@@ -13,6 +13,7 @@
         "dragonmantank/cron-expression": "^3.3",
         "dunglas/doctrine-json-odm": "^1.4",
         "firebase/php-jwt": "^6.7",
+        "league/flysystem-bundle": "^3.3",
         "nelmio/cors-bundle": "^2.2",
         "phpdocumentor/reflection-docblock": "^5.3",
         "symfony/asset": "6.4.*",
@@ -34,7 +35,8 @@
         "symfony/twig-bundle": "6.4.*",
         "symfony/uid": "6.4.*",
         "symfony/validator": "6.4.*",
-        "symfony/yaml": "6.4.*"
+        "symfony/yaml": "6.4.*",
+        "vich/uploader-bundle": "^2.4"
     },
     "require-dev": {
         "api-platform/schema-generator": "^5.0",
