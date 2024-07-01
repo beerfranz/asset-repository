@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+
+  # usage: smtps://test:test@mailslurper:1025/?skip_ssl_verify=true
+  mailslurper:
+    image: oryd/mailslurper:latest-smtps
+    ports:
+      - "4436:4436" # web UI
+      - "4437:4437" # SMTP server
+      # 1025: smtps
+
+  serverless:
+    image: serverless-local:local
+    build:
+      context: ./docker/serverless
+    environment:
+      - SMTP_SENDER=app@local
+      - SMTP_URL=smtps://test:test@mailslurper:1025/?skip_ssl_verify=true
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - AWS_ENDPOINT_URL_COGNITO_IDENTITY=http://cognito:9229
+      - AWS_ENDPOINT_URL_COGNITO_IDENTITY_PROVIDER=http://cognito:9229
+      - AWS_ENDPOINT_URL_KMS=http://kms:8081
+      - AWS_REGION=fake
+      - AWS_ACCESS_KEY_ID=fake
+      - AWS_SECRET_ACCESS_KEY=fake
+      - KEY_ALIAS=arn:aws:kms:us-west-2:999999999:alias/testing
+      - KEY_ARN=arn:aws:kms:us-west-2:999999999:key/bc436485-5092-42b8-92a3-0aa8b93536c
+    # volumes:
+    #   - ./docker/serverless/src:/usr/src/app
+    ports:
+      - '3002:3002'
+
+  cognito:
+    image: jagregory/cognito-local
+    user: "1000:1000"
+    environment:
+      - HOST=cognito
+    volumes:
+      - ./docker/cognito/data:/app/.cognito
+    ports:
+      - '9229:9229'
+
+  cognito-config:
+    image: public.ecr.aws/aws-cli/aws-cli
+    environment:
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=123
+      - AWS_SECRET_ACCESS_KEY=456
+      - AWS_ENDPOINT_URL_COGNITO_IDENTITY=http://cognito:9229
+      - AWS_ENDPOINT_URL_COGNITO_IDENTITY_PROVIDER=http://cognito:9229
+      - AWS_DEFAULT_OUTPUT=text
+    volumes:
+      - ./docker/cognito/config:/aws/config
+    entrypoint: /bin/bash -c
+    command: /aws/config/config.sh
+    depends_on:
+      - cognito
+    restart: on-failure
+
+  kms:
+    image: nsmithuk/local-kms
+    user: "1000:1000"
+    environment:
+      - PORT=8081
+      - KMS_ACCOUNT_ID=999999999
+      - KMS_REGION=us-west-2
+      - KMS_DATA_PATH=/data/db
+    volumes:
+      - ./docker/kms/data:/data
+      - ./docker/kms/init:/init
+    ports:
+      - '8081:8081'

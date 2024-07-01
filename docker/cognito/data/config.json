@@ -1,0 +1,23 @@
+{
+  "LambdaClient": {
+    "endpoint": "http://serverless:3002"
+  },
+  "TokenConfig": {
+    "IssuerDomain": "http://localhost:9229"
+  },
+  "TriggerFunctions": {
+    "PreSignUp": "lambda-dev-signup",
+    "CustomEmailSender": "lambda-dev-email",
+    "CustomMessage": "lambda-dev-email"
+  },
+  "UserPoolDefaults": {
+    "UsernameAttributes": [
+      "email"
+    ]
+  },
+  "KMSConfig": {
+    "KMSKeyId": "arn:aws:kms:us-west-2:999999999:key/bc436485-5092-42b8-92a3-0aa8b93536c",
+    "KMSKeyAlias": "arn:aws:kms:us-west-2:999999999:alias/testing",
+    "endpoint": "http://kms:8081"
+  }
+}
