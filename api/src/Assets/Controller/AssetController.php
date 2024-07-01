@@ -17,13 +17,13 @@ class AssetController extends AbstractController
 	#[Route('/ui', name: 'getIndex', methods: ['GET'])]
 	public function getIndex(Request $request): Response
 	{
-		return $this->render('assets.html.twig', [ 'navbar' => [ 'assets' => 'active' ]]);
+		return $this->render('@asset/assets.html.twig', [ 'navbar' => [ 'assets' => 'active' ]]);
 	}
 
 	#[Route('/ui/assets', name: 'getAssets', methods: ['GET'])]
 	public function getAssets(Request $request): Response
 	{
-		return $this->render('assets.html.twig', [ 'navbar' => [ 'assets' => 'active' ]]);
+		return $this->render('@asset/assets.html.twig', [ 'navbar' => [ 'assets' => 'active' ]]);
 	}
 
 	#[Route('/ui/assets/{identifier}', name: 'getAsset', methods: ['GET'])]

@@ -4,6 +4,8 @@
 
 {% block body %}
 
+{% include '@roger/page-header.html.twig' with { 'title': 'Assets', 'add_button': true, 'add_function': 'form()' } %}
+
 <div class="row">
   <div class="col-md-12">
     <form id="assets-filters" class="dataTableFilters form-inline">
@@ -62,6 +64,20 @@ $(document).ready(function () {
   rogerInit('assets', dataTableOpts);
   
 });
+
+formFields = [
+  { name: 'identifier', label: 'Identifier' },
+  { name: 'kind.identifier', label: 'Kind' },
+  { name: 'owner.name', label: 'Owner' },
+];
+
+function form() {
+  var method = 'POST';
+  var action = '/assets';
+  var fields = formFields;
+
+  RogerForm.initModal({ method: method, action: action, fields: fields });
+}
 
 </script>
 
