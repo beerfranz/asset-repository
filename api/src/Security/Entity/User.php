@@ -42,6 +42,7 @@ class User extends RogerEntity implements UserInterface
     private ?string $subject = null;
 
     public const ROLES = [
+        'ROLE_SUPER_ADMIN',
         'ROLE_ADMIN',
         'ROLE_USER',
     ];
