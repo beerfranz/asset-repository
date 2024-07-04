@@ -11,6 +11,8 @@ use App\Tasks\Service\TaskService;
 use Beerfranz\RogerBundle\State\RogerState;
 use Beerfranz\RogerBundle\State\RogerStateFacade;
 
+use ApiPlatform\Metadata\Operation;
+
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class TaskState extends RogerState
@@ -21,6 +23,13 @@ final class TaskState extends RogerState
 		TaskService $service,
 	) {
 		parent::__construct($facade, $service);
+	}
+
+	public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
+	{
+		if (!isset($context['filters']['status']))
+			$context['filters']['isDone'] = false;
+		return $this->stateProvide($operation, $uriVariables, $context);
 	}
 
 	public function newApi(): TaskApi
