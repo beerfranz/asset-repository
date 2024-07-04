@@ -23,7 +23,7 @@ class HeaderAuthenticator extends RogerAuthenticator
 	public function supports(Request $request): ?bool
 	{
 		$emailHeader = $this->parameterBag->get('auth.header.email', 'X-Token-User-Email');
-		return $request->headers->has($emailHeader);
+		return $this->parameterBag->get('auth.headers.enabled') && $request->headers->has($emailHeader);
 	}
 
 	public function authenticate(Request $request): Passport
@@ -52,7 +52,7 @@ class HeaderAuthenticator extends RogerAuthenticator
 
 		$roles = explode(' ', $role);
 
-		return $this->userPassport($email, $roles);
+		return $this->userPassport($sub, $email, $roles);
 	}
 
 	public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response

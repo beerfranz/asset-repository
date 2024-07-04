@@ -9,6 +9,10 @@ parameters:
     auth.header.sub: '%env(AUTH_HEADER_SUB)%'
     jwks_url: '%env(resolve:JWKS_URL)%'
     jwt_skip_verify: '%env(bool:JWT_SKIP_VERIFY)%'
+    auth.createAuthnUser: '%env(bool:AUTO_CREATE_AUTHN_USER)%'
+    auth.headers.enabled: '%env(bool:AUTH_HEADERS_ENABLED)%'
+    auth.jwt.enabled: '%env(bool:AUTH_JWT_ENABLED)%'
+    auth.refreshRoles: '%env(bool:AUTH_REFRESH_ROLES)%'
 
 services:
     # default configuration for services in *this* file

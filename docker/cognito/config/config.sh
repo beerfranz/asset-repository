@@ -22,11 +22,14 @@ if [ -z "$clients" ]; then
   echo "Create client"
   clients=$(aws cognito-idp create-user-pool-client \
     --user-pool-id ${poolId} \
-    --client-name test)
+    --client-name test \
+    --generate-secret
+  )
 
 fi
 
 clientId=$(echo $clients | awk '{ print $2 }' | head -1)
+clientSecret=$(aws cognito-idp describe-user-pool-client --user-pool-id $poolId --client-id $clientId | head -1 | awk '{ print $4 }')
 
 # aws cognito-idp update-user-pool --user-pool-id $poolId --lambda-config '
 # {
@@ -42,6 +45,7 @@ clientId=$(echo $clients | awk '{ print $2 }' | head -1)
 
 echo "COGNITO_POOL_ID: $poolId"
 echo "COGNITO_CLIENT_ID: $clientId"
+echo "COGNITO_CLIENT_SECRET: $clientSecret"
 
 # Example to create a user
 # aws cognito-idp sign-up --client-id ${clientId} --username jane3@example.com --password PASSWORD \

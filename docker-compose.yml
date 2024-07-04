@@ -25,10 +25,14 @@ services:
       MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       AUTH_HEADER_ROLES: x-token-user-roles
       AUTH_HEADER_EMAIL: x-token-user-email
-      AUTH_HEADER_SUB: x-token-user-sub
-      JWKS_URL: ${OAUTH_JWTS_URL}
+      AUTH_HEADER_SUB: x-token-subject
+      JWKS_URL: ${OAUTH_JWKS_URL}
       JWT_SKIP_VERIFY: "true"
       SYMFONY_PHPUNIT_REQUIRE: "nikic/php-parser:^4.13"  # fix test coverage
+      AUTO_CREATE_AUTHN_USER: "true"
+      AUTH_REFRESH_ROLES: "true"
+      AUTH_HEADERS_ENABLED: "true"
+      AUTH_JWT_ENABLED: "true"
 
   php-worker:
     <<: *php
@@ -79,6 +83,7 @@ services:
       target: app_caddy
     depends_on:
       - php
+      - keycloak
       # - pwa
     environment:
       PWA_UPSTREAM: pwa:3000
@@ -160,25 +165,30 @@ services:
       file: docker-compose-cloud.yml
       service: mailslurper
 
-  serverless:
-    extends:
-      file: docker-compose-cloud.yml
-      service: serverless
+  # serverless:
+  #   extends:
+  #     file: docker-compose-cloud.yml
+  #     service: serverless
 
-  cognito:
-    extends:
-      file: docker-compose-cloud.yml
-      service: cognito
+  # cognito:
+  #   extends:
+  #     file: docker-compose-cloud.yml
+  #     service: cognito
 
-  cognito-config:
-    extends:
-      file: docker-compose-cloud.yml
-      service: cognito-config
+  # cognito-config:
+  #   extends:
+  #     file: docker-compose-cloud.yml
+  #     service: cognito-config
 
-  kms:
+  # kms:
+  #   extends:
+  #     file: docker-compose-cloud.yml
+  #     service: kms
+
+  keycloak:
     extends:
       file: docker-compose-cloud.yml
-      service: kms
+      service: keycloak
 
 # Mercure is installed as a Caddy module, prevent the Flex recipe from installing another service
 ###> symfony/mercure-bundle ###
