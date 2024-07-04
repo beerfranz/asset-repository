@@ -45,6 +45,18 @@ services:
       - ./bundles:/srv/bundles
     command: [ "php", "bin/console", "messenger:consume", "async" ] # for production: add restart and "--limit=10", "--time-limit=60"
 
+  php-cron:
+    <<: *php
+    image: asset-repository-php:latest
+    # build:
+    #   context: ./api
+    #   target: app_php_dev
+    volumes:
+      - ./api:/srv/app
+      - ./api/docker/php/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
+      - ./bundles:/srv/bundles
+    command: [ "/bin/ash", "-c", "while true; do php bin/console app:frequency ; sleep 600; done" ]
+
   # frankenphp:
   #   image: dunglas/frankenphp
   #   tty: true # for clean log in local

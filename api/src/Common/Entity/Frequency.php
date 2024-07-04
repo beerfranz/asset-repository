@@ -28,6 +28,8 @@ class Frequency extends RogerEntity {
 
   public function calculateNextIteration()
   {
+    if ($this->crontab === null)
+      return null;
     $cronExpression = CronExpressionTrigger::fromSpec($this->crontab);
 
     $this->nextIterationAt = $cronExpression->getNextRunDate(new \DateTimeImmutable);

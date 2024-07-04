@@ -32,17 +32,19 @@ class FrequencyService
   public function setNextIteration()
   {
     foreach ($this->indicatorRepo->getFrequencyToUpdate() as $indicator) {
-      $this->persists($this->calculateNextIteration($indicator));
+      if ($indicator->getFrequency() !== null)
+        $this->persists($this->calculateNextIteration($indicator));
     }
 
     foreach ($this->taskTemplateRepo->getFrequencyToUpdate() as $taskTemplate) {
-      $this->persists($this->calculateNextIteration($taskTemplate));
+      if ($taskTemplate->getFrequency() !== null)
+        $this->persists($this->calculateNextIteration($taskTemplate));
     }
   }
 
   public function calculateNextIteration($entity) {
     $frequency = new Frequency($entity->getFrequency());
-      
+
     $frequency->calculateNextIteration();
     
     $entity->setFrequency($frequency->jsonSerialize());
@@ -53,7 +55,6 @@ class FrequencyService
   protected function persists($entity) {
     $this->entityManager->persist($entity);
     $this->entityManager->flush();
-    $this->entityManager->clear();
   }
 
 }
