@@ -37,13 +37,38 @@ $(document).ready(function () {
 		{ data: 'title', title: 'Title', render: function(data, type, row, meta){ return '<a href="/ui/tasks/' + row.identifier + '">' + data + '</a>'} },
     { data: 'status', title: 'Status', render: function(data, type, row, meta){ return renderNullableString(data, '-'); } },
     { data: 'taskType', title: 'Type', render: function(data, type, row, meta){ return renderNullableString(data, '-').replace('/task_types/',''); } },
-    { data: 'identifier', title: 'Actions', render: function(data, type, row, meta){ return renderUD({ edit: { enabled: true, function: `update('${data}')`}, remove: { enabled: true, function: `remove('${data}')` }}); } }
+    { data: 'identifier', title: 'Actions', render: function(data, type, row, meta){ return renderUD({ edit: { enabled: true, function: `update('${data}')`}, remove: { enabled: true, function: `remove('${data}')` }}) + renderTaskStatus(row); } }
   ];
 
 	rogerInit('tasks', dataTableOpts);
 
 });
 
+function renderTaskStatus(data) {
+  let options = `<option value="${data.status}">${data.status}</option>`;
+  options += data.allowedNextStatuses.map(status => `<option value="${status}">${status}</option>`);
+  return `<select class="updateTaskStatusOnChange" data-identifier="${data.identifier}" name="status">${options}</select>`;
+}
+
+$(document).on('change', '.updateTaskStatusOnChange', function (e) {
+  const status = $(this).val();
+  const identifier = $(this).attr('data-identifier');
+
+  $.ajax({ ...commonAjaxOptions(), ...{
+    url: `/tasks/${identifier}`,
+    method: 'PATCH',
+    data: JSON.stringify({
+      status: status
+    }),
+    headers: {
+      'Accept': 'application/ld+json',
+      'Content-Type': 'application/merge-patch+json'
+    },
+    success: function(data) {
+      $('.table').DataTable().draw();
+    }
+  }});
+});
 
 formFields = [
   { name: 'identifier', label: 'Identifier' },
