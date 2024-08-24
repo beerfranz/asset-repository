@@ -2,7 +2,7 @@
 
 namespace App\Assets\Entity;
 
-use App\Type\AssetAttributeType;
+use App\Common\Entity\AssetAttributeType;
 use App\Risks\Entity\Risk;
 use Beerfranz\RogerBundle\Filter\AutocompleteFilter;
 

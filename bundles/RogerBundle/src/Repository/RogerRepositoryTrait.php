@@ -33,7 +33,7 @@ trait RogerRepositoryTrait {
 		$query = $q->getQuery();
 
 		if ($paginator) {
-			return new Paginator($query, $fetchJoinCollection = true);
+			return new Paginator($query, $fetchJoinCollection = false);
 		}
 
 		return $query->getResult();

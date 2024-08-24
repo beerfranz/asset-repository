@@ -1,0 +1,44 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Task workflow {{ taskWorkflow.identifier }}{% endblock %}
+
+{% block body %}
+
+Statuses:
+<ul>
+{% for status, attrs in taskWorkflow.workflow.statuses %}
+	<li>{{ attrs.status }}
+		<ul>
+			<li>Constraints: {{ attrs.constraints | json_encode }}</li>
+			<li>Next statuses: {{ attrs.nextStatuses | json_encode }}</li>
+			<li>Is done: {{ attrs.isDone ? 'Yes': 'No' }}</li>
+			<li>Is default: {{ attrs.isDefault ? 'Yes': 'No' }}</li>
+		</ul>
+	</li>
+{% endfor %}
+</ul>
+
+Diagramm:
+<pre class="mermaid">
+	graph LR
+	{%- for status, attrs in taskWorkflow.workflow.statuses %}
+
+		{{ status }}{% if attrs.isDefault %}(({{ status }})){% endif %}
+		{%- for nextStatus in attrs.nextStatuses %}
+
+		{{ status }} --> {{ nextStatus }}
+		{% endfor %}
+	{% endfor %}
+</pre>
+
+{% endblock %}
+
+
+{% block js %}
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
+
+{% endblock %}

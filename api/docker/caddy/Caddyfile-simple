@@ -1,0 +1,80 @@
+{
+    # Debug
+    {$CADDY_DEBUG}
+    # admin 0.0.0.0:2019
+    servers {
+        metrics
+    }
+}
+
+(serve) {
+    # tracing {
+    #     span caddy
+    # }
+    root * /srv/app/public
+    # mercure {
+    #     # Transport to use (default to Bolt)
+    #     transport_url {$MERCURE_TRANSPORT_URL:bolt:///data/mercure.db}
+    #     # Publisher JWT key
+    #     publisher_jwt {env.MERCURE_PUBLISHER_JWT_KEY} {env.MERCURE_PUBLISHER_JWT_ALG}
+    #     # Subscriber JWT key
+    #     subscriber_jwt {env.MERCURE_SUBSCRIBER_JWT_KEY} {env.MERCURE_SUBSCRIBER_JWT_ALG}
+    #     # Allow anonymous subscribers (double-check that it's what you want)
+    #     anonymous
+    #     # Enable the subscription API (double-check that it's what you want)
+    #     subscriptions
+    #     # Extra directives
+    #     {$MERCURE_EXTRA_DIRECTIVES}
+    # }
+    vulcain
+    push
+
+    # Add links to the API docs and to the Mercure Hub if not set explicitly (e.g. the PWA)
+    header ?Link `</docs.jsonld>; rel="http://www.w3.org/ns/hydra/core#apiDocumentation", </.well-known/mercure>; rel="mercure"`
+    # Disable Topics tracking if not enabled explicitly: https://github.com/jkarlin/topics
+    header ?Permissions-Policy "browsing-topics=()"
+
+    # Comment the following line if you don't want Next.js to catch requests for HTML documents.
+    # In this case, they will be handled by the PHP app.
+    # reverse_proxy @pwa http://{$PWA_UPSTREAM}
+
+    encode zstd gzip
+}
+
+{$SERVER_NAME_SSO} {
+    log
+
+    route {
+        # authorize with mypolicy
+        import serve
+
+        php_fastcgi unix//var/run/php/php-fpm.sock
+
+        file_server
+    }
+}
+
+{$SERVER_NAME} {
+    log
+
+    route {
+        import serve
+        php_fastcgi unix//var/run/php/php-fpm.sock {
+            header_up x-token-user-roles "ROLE_ADMIN ROLE_USER"
+            header_up x-token-user-sub theadmin
+            header_up x-token-user-email admin@fake.io
+        }
+        file_server
+    }
+}
+
+# Matches requests for HTML documents, for static files and for Next.js files,
+# except for known API paths and paths with extensions handled by API Platform
+# @pwa expression `(
+#         header({'Accept': '*text/html*'})
+#         && !path(
+#             '/docs*', '/graphql*', '/bundles*', '/contexts*', '/_profiler*', '/_wdt*', '/ui*',
+#             '*.json*', '*.html', '*.csv', '*.yml', '*.yaml', '*.xml'
+#         )
+#     )
+#     || path('/favicon.ico', '/manifest.json', '/robots.txt', '/_next*', '/sitemap*')`

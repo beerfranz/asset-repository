@@ -1,0 +1,51 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Tasks{% endblock %}
+
+{% block body %}
+
+{% include '@roger/page-header.html.twig' with { 'title': 'Tasks', 'add_button': true, 'add_function': 'form()' } %}
+
+<div class="row">
+  <div class="col-md-12">
+    <form id="tasks-filters" class="dataTableFilters form-inline">
+      <div class="form-group">
+        {% include 'components/filter-task-type.html.twig' %}
+        {% include 'components/filter-task-status.html.twig' %}
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+		<table class="table" id="tasks"></table>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+$(document).ready(function () {
+	var dataTableOpts = commonDataTableOpts();
+	dataTableOpts.ajax.url = '/tasks';
+	dataTableOpts.columns = [ 
+		{ data: 'identifier', title: 'identifier', render: function(data, type, row, meta){ return '<a href="/ui/tasks/' + data + '">' + data + '</a>'} },
+		{ data: 'title', title: 'Title', render: function(data, type, row, meta){ return '<a href="/ui/tasks/' + row.identifier + '">' + data + '</a>'} },
+    { data: 'status', title: 'Status', render: function(data, type, row, meta){ return renderTaskStatus(row); } },
+    { data: 'taskType', title: 'Type', render: function(data, type, row, meta){ return renderNullableString(data, '-').replace('/task_types/',''); } },
+    { data: 'identifier', title: 'Actions', render: function(data, type, row, meta){ return renderUD({ edit: { enabled: true, function: `update('${data}')`}, remove: { enabled: true, function: `remove('${data}')` }}) ; } }
+  ];
+
+	rogerInit('tasks', dataTableOpts);
+
+});
+
+{% include '@tasks/component/task.js' %}
+
+</script>
+
+{% endblock %}

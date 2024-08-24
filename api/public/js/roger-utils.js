@@ -7,7 +7,7 @@ var RogerUtils = {
 	},
 
 	iconEdit: function(options) {
-		return this.icon({...options, ...{ icon: 'glyphicon-pencil' }});
+		return this.icon({...options, ...{ icon: 'glyphicon-pencil', classes: 'text-warning', title: 'Edit' }});
 	},
 
 	iconShare: function(options) {
@@ -15,11 +15,11 @@ var RogerUtils = {
 	},
 
 	iconAdd: function(options) {
-		return this.icon({...options, ...{ icon: 'glyphicon-plus', classes: 'text-success' }});
+		return this.icon({...options, ...{ icon: 'glyphicon-plus', classes: 'text-success', title: 'Add' }});
 	},
 
 	iconRemove: function(options) {
-		return this.icon({...options, ...{ icon: 'glyphicon-trash' }});
+		return this.icon({...options, ...{ icon: 'glyphicon-trash', classes: 'text-danger', title: 'Remove' }});
 	},
 
 	icon: function(options) {

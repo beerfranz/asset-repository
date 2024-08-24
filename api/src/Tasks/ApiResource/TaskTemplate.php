@@ -8,6 +8,8 @@ use App\Tasks\State\TaskTemplateState;
 use App\Tasks\ApiResource\TaskTemplateGenerateDto;
 
 use App\Tasks\Entity\TaskTag;
+use App\Tasks\ApiResource\TaskType;
+
 use Beerfranz\RogerBundle\ApiResource\RogerApiResource;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -28,8 +30,8 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-#[ApiFilter(GroupFilter::class, arguments: ['parameterName' => 'groups', 'overrideDefaultGroups' => true, 'whitelist' => ['Type:identifier']])]
-#[ApiFilter(AutocompleteFilter::class, properties: [ 'type.identifier'])]
+#[ApiFilter(GroupFilter::class, arguments: ['parameterName' => 'groups', 'overrideDefaultGroups' => true, 'whitelist' => ['TaskType:identifier']])]
+#[ApiFilter(AutocompleteFilter::class, properties: [ 'taskType.identifier'])]
 #[ApiResource(
 	description: 'Task template',
 	processor: TaskTemplateState::class,
@@ -48,14 +50,22 @@ use Doctrine\Common\Collections\Collection;
 #[Put(security: "is_granted('TASK_WRITE')")]
 #[Delete(security: "is_granted('TASK_WRITE')")]
 #[Put(
-	name: 'generate_tasks_from_template',
+	name: 'generate_tasks_from_template_put',
 	uriTemplate: '/task_templates/{identifier}/generate/{taskIdentifier}',
 	uriVariables: [ 'identifier', 'taskIdentifier' ] ,
 	security: "is_granted('TASK_WRITE')",
 	normalizationContext: [ 'groups' => [ 'TaskTemplateGenerate' ]],
 	denormalizationContext: [ 'groups' => [ 'TaskTemplateGenerate' ]],
 	input: TaskTemplateGenerateDto::class,
-	// output: AssetDefinitionBatchDto::class,
+)]
+#[Post(
+	name: 'generate_tasks_from_template_post',
+	uriTemplate: '/task_templates/{identifier}/generate',
+	uriVariables: [ 'identifier' ] ,
+	security: "is_granted('TASK_WRITE')",
+	normalizationContext: [ 'groups' => [ 'TaskTemplateGenerate' ]],
+	denormalizationContext: [ 'groups' => [ 'TaskTemplateGenerate' ]],
+	input: TaskTemplateGenerateDto::class,
 )]
 class TaskTemplate extends RogerApiResource
 {
@@ -94,10 +104,16 @@ class TaskTemplate extends RogerApiResource
 	}
 
 	#[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
-	public $parentIdentifier;
+	public $parentIdentifier = null;
+	
+	#[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
+	public ?TaskTemplate $parent = null;
 
 	#[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
-	public $typeIdentifier;
+	public $typeIdentifier = null;
+
+	#[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
+	public ?TaskType $type = null;
 
 	#[Groups(['TaskTemplates:read', 'TaskTemplate:read', 'TaskTemplate:write'])]
 	#[ApiProperty(

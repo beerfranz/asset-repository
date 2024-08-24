@@ -81,18 +81,19 @@ function rogerInitFilters(filterId, dataTableId) {
   $('.autocomplete').each(function() {
     var element = $(this);
     var url = element.attr('autocomplete-source');
-    var elementName = element.attr('autocomplete-name');
+    var elementName = element.attr('name');
+    var filterName = element.attr('autocomplete-name');
     var group = element.attr('autocomplete-group');
 
     const regexp = /^(.*)\.(.*)$/g;
-    var found = [...elementName.matchAll(regexp)];
+    var found = [...filterName.matchAll(regexp)];
 
     element.autocomplete({
       minLength: 3,
       source: function(request, response) {
         var q = request.term;
         var filters = {};
-        filters[elementName + '_partial'] = q;
+        filters[filterName + '_partial'] = q;
         filters['groups'] = [ group ];
         $.ajax({
           url: url,
@@ -109,7 +110,7 @@ function rogerInitFilters(filterId, dataTableId) {
               }
             }
             else if (found.length === 0) {
-              response(data['hydra:member'].map(x => x[elementName] ));
+              response(data['hydra:member'].map(x => x[filterName] ));
             } else {
               response(data['hydra:member'].map(x => x[found[0][1]][found[0][2]] ));
             }

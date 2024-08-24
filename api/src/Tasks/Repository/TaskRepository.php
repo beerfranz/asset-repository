@@ -3,6 +3,7 @@
 namespace App\Tasks\Repository;
 
 use App\Tasks\Entity\Task;
+use App\Assessments\Entity\AssessmentPlan;
 
 use Beerfranz\RogerBundle\Repository\RogerRepositoryInterface;
 use Beerfranz\RogerBundle\Repository\RogerRepositoryTrait;
@@ -26,6 +27,13 @@ class TaskRepository extends ServiceEntityRepository implements RogerRepositoryI
 	{
 		parent::__construct($registry, Task::class);
 	}
+
+	// protected function getQueryBuilder() {
+	// 	return $this->createQueryBuilder('s')
+	// 				->from(AssessmentPlan::class, 'a')
+	// 				->innerJoin('s.assessments', 'a')
+	// 	;
+	// }
 
 //    /**
 //     * @return Task[] Returns an array of Task objects

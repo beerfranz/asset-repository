@@ -5,6 +5,39 @@
     servers {
         metrics
     }
+
+    order authenticate before respond
+    order authorize before basicauth
+
+    security {
+        oauth identity provider generic {
+            realm generic
+            driver generic
+            client_id {$OAUTH_CLIENT_ID}
+            client_secret {$OAUTH_CLIENT_SECRET}
+            scopes {$OAUTH_CLIENT_SCOPES}
+            metadata_url {$OAUTH_METADATA_URL}
+        }
+
+        authentication portal authn_proxy_portal {
+            crypto key sign-verify {$JWT_SHARED_KEY}
+            enable identity provider generic
+
+            transform user {
+                match origin generic
+                action add role ROLE_ADMIN
+                action add role ROLE_USER
+            }
+        }
+
+        authorization policy mypolicy {
+            set auth url /auth/oauth2/generic/
+            crypto key verify {$JWT_SHARED_KEY}
+            allow roles authp/guest
+            validate bearer header
+            inject headers with claims
+        }
+    }
 }
 
 (serve) {
@@ -44,12 +77,42 @@
 {$SERVER_NAME_SSO} {
     log
 
+    route /auth/* {
+        authenticate with authn_proxy_portal
+    }
+
     route {
-        # authorize with mypolicy
+        authorize with mypolicy
         import serve
 
         php_fastcgi unix//var/run/php/php-fpm.sock
 
+        file_server
+    }
+}
+
+{$SERVER_NAME_BASIC_AUTH} {
+    log
+
+    @basicauth {
+        header Authorization "Basic *"
+    }
+
+    route @basicauth {
+        # Use the command caddy hash-password to generate a hash
+        basicauth {
+            import basicauthN
+        }
+        map {http.auth.user.id} {roles} {
+            import basicauthZ
+        }
+
+        import serve
+
+        php_fastcgi unix//var/run/php/php-fpm.sock {
+            header_up x-token-user-roles {roles}
+            header_up x-token-user-email {http.auth.user.id}
+        }
         file_server
     }
 }
@@ -60,9 +123,9 @@
     route {
         import serve
         php_fastcgi unix//var/run/php/php-fpm.sock {
-            header_up x-token-user-roles "ROLE_ADMIN ROLE_USER"
-            header_up x-token-user-sub theadmin
+            header_up x-token-user-roles "ROLE_ADMIN ROLE_USER ROLE_SUPER_ADMIN"
             header_up x-token-user-email admin@fake.io
+            header_up x-token-subject 666
         }
         file_server
     }

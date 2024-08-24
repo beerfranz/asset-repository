@@ -20,6 +20,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Index(name: "authorization_policy_object_idx", fields: ["object"])]
 #[ApiResource(
 	security: "is_granted('ROLE_ADMIN')",
+	routePrefix: '/admin',
 )]
 #[ORM\EntityListeners([RogerListener::class])]
 class AuthorizationPolicy extends RogerEntity

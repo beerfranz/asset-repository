@@ -61,6 +61,16 @@ abstract class RogerState implements ProcessorInterface, ProviderInterface, Roge
 			$entities = $this->getCollection($context);
 			$totalItems = count($entities);
 
+			// if only a few data is asked (request for filter)
+			if (null !== $context['request']->get('groups') ) {
+				return new TraversablePaginator(
+					$entities,
+					$currentPage,
+					$itemsPerPage,
+					$totalItems,
+				);
+			}
+
 			$output = [];
 			foreach($entities as $entity) {
 				$api = $this->newApi();
@@ -117,7 +127,7 @@ abstract class RogerState implements ProcessorInterface, ProviderInterface, Roge
 			if ($operation instanceof Patch)
 				$this->isPatch = true;
 			
-			if (isset($uriVariables['identifier']))
+			if (isset($uriVariables['identifier']) && $uriVariables['identifier'] !== null)
 				$api->__set('identifier', $uriVariables['identifier']);
 
 			$entity = $this->processOneEntity($api);

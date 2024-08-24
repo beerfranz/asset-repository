@@ -25,10 +25,14 @@ services:
       MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       AUTH_HEADER_ROLES: x-token-user-roles
       AUTH_HEADER_EMAIL: x-token-user-email
-      AUTH_HEADER_SUB: x-token-user-sub
-      JWKS_URL: ${OAUTH_JWTS_URL}
+      AUTH_HEADER_SUB: x-token-subject
+      JWKS_URL: ${OAUTH_JWKS_URL}
       JWT_SKIP_VERIFY: "true"
       SYMFONY_PHPUNIT_REQUIRE: "nikic/php-parser:^4.13"  # fix test coverage
+      AUTO_CREATE_AUTHN_USER: "true"
+      AUTH_REFRESH_ROLES: "true"
+      AUTH_HEADERS_ENABLED: "true"
+      AUTH_JWT_ENABLED: "true"
 
   php-worker:
     <<: *php
@@ -41,6 +45,43 @@ services:
       - ./bundles:/srv/bundles
     command: [ "php", "bin/console", "messenger:consume", "async" ] # for production: add restart and "--limit=10", "--time-limit=60"
 
+  php-cron:
+    <<: *php
+    image: asset-repository-php:latest
+    # build:
+    #   context: ./api
+    #   target: app_php_dev
+    volumes:
+      - ./api:/srv/app
+      - ./api/docker/php/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
+      - ./bundles:/srv/bundles
+    command: [ "/bin/ash", "-c", "while true; do php bin/console app:frequency ; sleep 600; done" ]
+
+  # frankenphp:
+  #   image: dunglas/frankenphp
+  #   tty: true # for clean log in local
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./api:/app/public
+  #     - ./bundles:/app/bundles
+  #     - caddy_data:/data
+  #     - ./docker/frankenphp/config:/config
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-!ChangeMe!}@database:5432/${POSTGRES_DB:-app}?serverVersion=${POSTGRES_VERSION:-14}
+  #     TRUSTED_PROXIES: ${TRUSTED_PROXIES:-127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
+  #     TRUSTED_HOSTS: ^${SERVER_NAME:-example\.com|localhost}|caddy$$
+  #     MERCURE_URL: ${CADDY_MERCURE_URL:-http://caddy/.well-known/mercure}
+  #     MERCURE_PUBLIC_URL: https://${SERVER_NAME:-localhost}/.well-known/mercure
+  #     MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
+  #     AUTH_HEADER_ROLES: x-token-user-roles
+  #     AUTH_HEADER_EMAIL: x-token-user-email
+  #     AUTH_HEADER_SUB: x-token-user-sub
+  #     JWKS_URL: ${OAUTH_JWTS_URL}
+  #     JWT_SKIP_VERIFY: "true"
+  #     SYMFONY_PHPUNIT_REQUIRE: "nikic/php-parser:^4.13"  # fix test coverage
+    
   # pwa:
   #   build:
   #     context: ./pwa
@@ -54,6 +95,7 @@ services:
       target: app_caddy
     depends_on:
       - php
+      - keycloak
       # - pwa
     environment:
       PWA_UPSTREAM: pwa:3000
@@ -116,22 +158,6 @@ services:
       # - ./api/docker/db/data:/var/lib/postgresql/data
 ###< doctrine/doctrine-bundle ###
 
-  pgweb:
-    image: sosedoff/pgweb:0.14.0
-    ports: 
-      - "8081:8081" 
-    environment:
-      - PGWEB_DATABASE_URL=postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-!ChangeMe!}@database:5432/${POSTGRES_DB:-app}?sslmode=disable
-    depends_on:
-      - database
-  # pgweb_test:
-  #   image: sosedoff/pgweb:0.14.0
-  #   ports: 
-  #     - "8082:8081" 
-  #   environment:
-  #     - PGWEB_DATABASE_URL=postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-!ChangeMe!}@database:5432/${POSTGRES_DB:-app}_test?sslmode=disable
-  #   depends_on:
-  #     - database
   adminer:
     image: adminer:4.8.1-standalone
     ports:
@@ -145,6 +171,36 @@ services:
       - ASSET_REPOSITORY_URL=http://caddy:8080
     volumes:
       - ./test_data/requests:/app/requests
+
+  mailslurper:
+    extends:
+      file: docker-compose-cloud.yml
+      service: mailslurper
+
+  # serverless:
+  #   extends:
+  #     file: docker-compose-cloud.yml
+  #     service: serverless
+
+  # cognito:
+  #   extends:
+  #     file: docker-compose-cloud.yml
+  #     service: cognito
+
+  # cognito-config:
+  #   extends:
+  #     file: docker-compose-cloud.yml
+  #     service: cognito-config
+
+  # kms:
+  #   extends:
+  #     file: docker-compose-cloud.yml
+  #     service: kms
+
+  keycloak:
+    extends:
+      file: docker-compose-cloud.yml
+      service: keycloak
 
 # Mercure is installed as a Caddy module, prevent the Flex recipe from installing another service
 ###> symfony/mercure-bundle ###

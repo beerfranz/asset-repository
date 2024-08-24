@@ -3,15 +3,19 @@
 namespace App\Tasks\State;
 
 use App\Tasks\ApiResource\Task as TaskApi;
+use App\Tasks\ApiResource\TaskType;
+use App\Tasks\ApiResource\TaskTemplate;
 use App\Tasks\Entity\Task as TaskEntity;
 use App\Tasks\Service\TaskService;
 
 use Beerfranz\RogerBundle\State\RogerState;
 use Beerfranz\RogerBundle\State\RogerStateFacade;
 
+use ApiPlatform\Metadata\Operation;
+
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-final class TaskState extends RogerState
+class TaskState extends RogerState
 {
 
 	public function __construct(
@@ -19,6 +23,13 @@ final class TaskState extends RogerState
 		TaskService $service,
 	) {
 		parent::__construct($facade, $service);
+	}
+
+	public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
+	{
+		if (!isset($context['filters']['status']))
+			$context['filters']['isDone'] = false;
+		return $this->stateProvide($operation, $uriVariables, $context);
 	}
 
 	public function newApi(): TaskApi
@@ -67,7 +78,23 @@ final class TaskState extends RogerState
 
 	public function fromEntityToApi($entity, $api): TaskApi
 	{
-		$this->simpleFromEntityToApi($entity, $api);
+		// $this->simpleFromEntityToApi($entity, $api);
+		$api->identifier = $entity->getIdentifier();
+		$api->title = $entity->getTitle();
+		$api->description = $entity->getDescription();
+		$api->status = $entity->getStatus();
+		$api->isDone = $entity->isIsDone();
+		$api->createdAt = $entity->getCreatedAt();
+		$api->owner = $entity->getOwner();
+		$api->assignedTo = $entity->getAssignedTo();
+		$api->attributes = $entity->getAttributes();
+		$taskTemplate = $entity->getTaskTemplate();
+		if (null !== $taskTemplate) {
+			$api->taskTemplate = new TaskTemplate([ 'identifier' => $entity->getTaskTemplate()->getIdentifier() ]);
+		}
+		$taskType =  $entity->getTaskType();
+		if (null !== $taskType)
+			$api->taskType = new TaskType([ 'identifier' => $taskType->getIdentifier() ]);
 
 		$tags = [];
 		try {

@@ -36,23 +36,14 @@
               </a>
               <ul class="dropdown-menu">
                 <li class="{{ navbar.assets|default('') }}"><a href="/ui/assets">Assets</a></li>
-                <li class="{{ navbar.riskManagers|default('') }}"><a href="/ui/risk-managers">Risk managers</a></li>
-                <li class="{{ navbar.indicators|default('') }}"><a href="/ui/indicators">Indicators</a></li>
+                
+                {% include '@risk/navbar.html.twig' %}
+                {% include '@indicator/navbar.html.twig' %}
               </ul>
             </li>
             {% endif %}
             <li class="{{ navbar.instances|default('') }}"><a href="/ui/instances">Instances</a></li>
-            <li class="dropdown {{ navbar.tasks|default('') }} {{ navbar.task_templates|default('') }} {{ navbar.task_workflows|default('') }} {{ navbar.task_types|default('') }}">
-              <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Tasks <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu">
-                <li class="{{ navbar.tasks|default('') }}"><a href="/ui/tasks">Tasks</a></li>
-                <li class="{{ navbar.task_templates|default('') }}"><a href="/ui/task-templates">Task templates</a></li>
-                <li class="{{ navbar.task_types|default('') }}"><a href="/ui/task-types">Task types</a></li>
-                <li class="{{ navbar.task_workflows|default('') }}"><a href="/ui/task-workflows">Task workflows</a></li>
-              </ul>
-            </li>
+            {% include '@tasks/navbar.html.twig' %}
             {% include '@assessments/navbar.html.twig' %}
             <li class="{{ navbar.versions|default('') }}"><a href="/ui/versions">Versions</a></li>
             <li class="{{ navbar.sources|default('') }}"><a href="/ui/sources">Sources</a></li>
@@ -64,7 +55,7 @@
             {% if is_granted('ROLE_ADMIN') %}
               <li class="dropdown {{ navbar.settings|default('') }} {{ navbar.users|default('') }}">
                 <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Admin <span class="caret"></span>
+                  Settings <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
                   <li class="{{ navbar.settings|default('') }}"><a href="/ui/admin/settings">Settings</a></li>
@@ -72,6 +63,8 @@
                 </ul>
               </li>
             {% endif %}
+
+            <li class=""><a href="/auth/logout">Logout</a></li>
             
           </ul>
       </div>

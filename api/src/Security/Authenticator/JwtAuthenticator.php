@@ -25,14 +25,8 @@ class JwtAuthenticator extends RogerAuthenticator
 	 */
 	public function supports(Request $request): ?bool
 	{
-		if ($request->headers->has('Authorization'))
-			$this->token = $request->headers->get('Authorization');
-		elseif ($request->cookies->has('access_token'))
-			$this->token = $request->cookies->get('access_token');
-		else
-			return false;
-
-		return true;
+		return $this->parameterBag->get('auth.jwt.enabled') &&
+		 ($request->headers->has('Authorization') || $request->cookies->has('access_token'));
 	}
 
 	/**
@@ -42,6 +36,12 @@ class JwtAuthenticator extends RogerAuthenticator
 	 */
 	public function authenticate(Request $request): Passport
 	{
+		if ($request->headers->has('Authorization'))
+			$this->token = $request->headers->get('Authorization');
+		elseif ($request->cookies->has('access_token'))
+			$this->token = $request->cookies->get('access_token');
+		else
+			throw new AuthenticationException('Token not in header nor cookie');
 
 		// Get token from header
 		$jwtToken = $this->token;
@@ -67,7 +67,7 @@ class JwtAuthenticator extends RogerAuthenticator
 			echo $e->getMessage();exit;
 			throw new AuthenticationException($e->getMessage());
 		}
-		return $this->userPassport($decodedToken->email, $decodedToken->roles);
+		return $this->userPassport($decodedToken->sub, $decodedToken->email, $decodedToken->roles);
 	}
 
 	/**

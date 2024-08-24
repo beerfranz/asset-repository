@@ -12,6 +12,10 @@ final class AuthorizationRoleState implements ProviderInterface
 	public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
 	{
 		$roles = [
+			'ROLE_SUPER_ADMIN' => [
+				'label' => 'admin of all tenants',
+				'description' => 'Can manage authorization',
+			],
 			'ROLE_ADMIN' => [
 				'label' => 'admin',
 				'description' => 'Can manage authorization',

@@ -2,13 +2,13 @@
 
 namespace App\Tasks\Service;
 
-use App\Entity\Frequency;
+use App\Common\Entity\Frequency;
 use App\Tasks\Entity\Task;
 use App\Tasks\Entity\TaskType;
 use App\Tasks\Entity\TaskTemplate;
 use Beerfranz\RogerBundle\Entity\RogerEntityInterface;
-use App\Service\FrequencyService;
-use App\Service\UserTemplate;
+use App\Common\Service\FrequencyService;
+use App\Common\Service\UserTemplate;
 
 use App\Tasks\Service\TaskTagService;
 

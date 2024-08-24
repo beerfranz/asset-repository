@@ -5,6 +5,7 @@ namespace App\Assets\Entity;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Serializer\Filter\GroupFilter;
 
 use Beerfranz\RogerBundle\Filter\AutocompleteFilter;

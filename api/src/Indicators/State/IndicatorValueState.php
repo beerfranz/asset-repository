@@ -6,7 +6,7 @@ use App\Indicators\ApiResource\IndicatorValue as IndicatorValueApi;
 use App\Indicators\Entity\Indicator;
 use App\Indicators\Entity\IndicatorValue as IndicatorValueEntity;
 use App\Indicators\Service\IndicatorValueService;
-use App\Service\TriggerService;
+use App\Common\Service\TriggerService;
 
 use Beerfranz\RogerBundle\State\RogerState;
 use Beerfranz\RogerBundle\State\RogerStateFacade;

@@ -5,7 +5,7 @@ namespace App\Assets\Service;
 use App\Assets\Entity\Asset;
 use App\Assets\Entity\Instance;
 
-use App\Service\UserTemplate;
+use App\Common\Service\UserTemplate;
 
 use Doctrine\ORM\EntityManagerInterface;
 

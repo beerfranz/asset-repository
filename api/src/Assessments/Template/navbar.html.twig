@@ -1,11 +1,12 @@
 {% if is_granted('ASSESSMENT_READ') %}
-  <li class="dropdown {{ navbar.assessment_plans|default('') }} {{ navbar.assessment_templates|default('') }}">
+  <li class="dropdown {{ navbar.assessment_plans|default('') }} {{ navbar.assessment_templates|default('') }} {{ navbar.assessment_tasks|default('') }}">
     <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       Assessments <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
       <li class="{{ navbar.assessment_plans|default('') }}"><a href="/ui/assessments/plans">Plans</a></li>
       <li class="{{ navbar.assessment_templates|default('') }}"><a href="/ui/assessments/templates">Templates</a></li>
+      <li class="{{ navbar.assessment_tasks|default('') }}"><a href="/ui/task-templates?taskType.identifier=QA">Tasks</a></li>
     </ul>
   </li>
 {% endif %}

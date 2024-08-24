@@ -1,9 +1,12 @@
 {% if is_granted('ROLE_ADMIN') %}
-  <li class="dropdown {{ navbar.security_users|default('') }} {{ navbar.security_groups|default('') }} {{ navbar.security_policies|default('') }}">
+  <li class="dropdown {{ navbar.security_users|default('') }} {{ navbar.security_groups|default('') }} {{ navbar.security_policies|default('') }} {{ navbar.security_tenants|default('') }}">
     <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       Admin <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
+      {% if is_granted('ROLE_SUPER_ADMIN') %}
+        <li class="{{ navbar.security_tenants|default('') }}"><a href="/ui/security/tenants">Tenants</a></li>
+      {% endif %}
       <li class="{{ navbar.security_users|default('') }}"><a href="/ui/security/users">Users</a></li>
       <li class="{{ navbar.security_groups|default('') }}"><a href="/ui/security/groups">Groups</a></li>
       <li class="{{ navbar.security_policies|default('') }}"><a href="/ui/security/policies">Policies</a></li>

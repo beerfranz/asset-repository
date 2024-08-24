@@ -1,6 +1,8 @@
 var RogerForm = {
   id: '',
   fields: [],
+  textArea: null,
+  textAreaPlugin: null,
   initModal: function(options) {
     $('#modal-body').html(this.getForm(options));
 
@@ -25,25 +27,34 @@ var RogerForm = {
 
   populate: function(options) {
     let formId = this.id;
+    let fields = this.fields;
+    let textAreaPlugin = this.textAreaPlugin;
     $.ajax({
       url: options.action,
       method: 'GET',
       dataType: 'json',
       headers: { 'Accept': 'application/ld+json' },
       success: function(data) {
-        for (const [key, value] of Object.entries(data)) {
-          let e;
-          let id;
-          try {
-            e = $('#' + formId + '_' + key).get(0);
-            id = e.id;
-          } catch(e) { continue; }
-          e.initValue = function() {
-            $(this).val(value);
-            var event = new Event('change');
-            this.dispatchEvent(event);
-          };
-          e.initValue();
+        for (k in fields) {
+          if (fields[k].onPopulate !== undefined) {
+            fields[k].onPopulate(data);
+          }
+          k.split('.').reduce((a, c) => {
+            if (a !== undefined) {
+              if (a[c] !== undefined) {
+                fields[k].initValue = function() {
+                  $(this).val(a[c]);
+                  var event = new Event('change');
+                  this.dispatchEvent(event);
+                  if (this.nodeName == 'TEXTAREA') {
+                    textAreaPlugin.value($(this).val());
+                  }
+                };
+                fields[k].initValue();
+              }
+              return a[c];
+            }
+          }, data);
         }
       }
     });
@@ -70,6 +81,12 @@ var RogerForm = {
     if (['select', 'multiselect'].includes(options.type)) {
       input = this.generateSelectElement(options);
     }
+    if (options.type === 'textarea') {
+      input = document.createElement("textarea");
+      input.setAttribute('cols', 40);
+      input.setAttribute('rows', 4);
+      input.setAttribute('class', 'form-control');
+    }
 
     input.setAttribute('name', options.name);
     input.setAttribute('id', fieldId);
@@ -78,6 +95,10 @@ var RogerForm = {
       $.each(options.events, function(e, f) {
         input.addEventListener(e, f);
       });
+    }
+
+    if (options.hasOwnProperty('onPopulate')) {
+      input.onPopulate = options.onPopulate;
     }
 
     if (!options.hasOwnProperty('disabled')) {
@@ -118,6 +139,33 @@ var RogerForm = {
     group.appendChild(input);
 
     $('#' + this.id).append(group);
+
+    if (input.nodeName == 'TEXTAREA') {
+      // https://github.com/Ionaru/easy-markdown-editor?tab=readme-ov-file#quick-access
+      this.textAreaPlugin = new EasyMDE({
+        element: input,
+        uploadImage: true,
+        imageUploadFunction: async (file, onSuccess, onError) => {
+          const formData  = new FormData();
+          formData.append('file', file);
+          return $.ajax({ ...commonAjaxOptions(), ...{
+            url: '/media_objects',
+            method: 'POST',
+            headers: { 'accept': 'application/ld+json' },
+            data: formData,
+            processData: false,
+            contentType: false,
+            cache:false,
+            success: function(data) {
+              onSuccess(data.contentUrl);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+              onError();
+            }
+          }});
+        }
+      });
+    }
   },
 
   generateSelectElement: function(options) {
@@ -180,12 +228,26 @@ var RogerForm = {
 
       var data = {};
 
+      const dotPathToObject = (pathStr, value) => pathStr
+        .split(".")
+        .reverse()
+        .reduce((acc, cv, index) => ({
+            [cv]: index === 1 && value ? {[acc]: value} : acc
+        }));
+
       formData.forEach(function(value, key){
-        let e = form.querySelector('[name='+key+']');
+        let e = form.querySelector('[name="'+key+'"]');
+
         if (e.getAttribute('multiple') === 'multiple') {
-          data[key] = formData.getAll(key);
-        } else {
+          value = formData.getAll(key);
+        }
+
+        let trucChelou = dotPathToObject(key, value);
+
+        if (typeof trucChelou === 'string')
           data[key] = value;
+        else {
+          $.extend(data, trucChelou);
         }
       });
 

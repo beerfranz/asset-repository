@@ -1,0 +1,24 @@
+service: lambda
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+
+functions:
+  function1:
+    handler: index.handler
+
+  email:
+    handler: email.handler
+    environment:
+      SMTP_URL: ${env:SMTP_URL}
+      NODE_TLS_REJECT_UNAUTHORIZED: ${env:NODE_TLS_REJECT_UNAUTHORIZED}
+      KEY_ARN: ${env:KEY_ARN}
+      KEY_ALIAS: ${env:KEY_ALIAS}
+
+  signup:
+    handler: signup.handler
+
+plugins:
+  - serverless-offline
