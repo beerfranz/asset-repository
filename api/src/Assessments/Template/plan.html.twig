@@ -14,23 +14,47 @@
 	</div>
 </div>
 
-<div class="row">
+{# <div class="row">
 	<div class="col-md-12">
 		<h3>Tasks</h3>
 		<table class="table" id="plan-tasks">
 			<tr><th>Identifier</th><th>Title</th></tr>
 			{% for task in plan.tasks %}
-				<tr><td>{{ task.identifier }}</td><td>{{ task.title }}</td></tr>
+				<tr><td><a href="/ui/tasks/{{ task.identifier }}">{{ task.identifier }}</a></td><td>{{ task.title }}</td></tr>
 			{% endfor %}
 		</table>
 	</div>
 </div>
+ #}
+<div class="row">
+  <div class="col-md-12">
+		<table class="table" id="tasks"></table>
+  </div>
+</div>
+
 
 {% endblock %}
 
 {% block js %}
 
 <script>
+
+$(document).ready(function () {
+	var dataTableOpts = commonDataTableOpts();
+	dataTableOpts.ajax.url = `/tasks?assessments={{ plan.id }}`;
+	dataTableOpts.columns = [ 
+		{ data: 'identifier', title: 'identifier', render: function(data, type, row, meta){ return '<a href="/ui/tasks/' + data + '">' + data + '</a>'} },
+		{ data: 'title', title: 'Title', render: function(data, type, row, meta){ return '<a href="/ui/tasks/' + row.identifier + '">' + data + '</a>'} },
+    { data: 'status', title: 'Status', render: function(data, type, row, meta){ return renderTaskStatus(row); } },
+    { data: 'taskType', title: 'Type', render: function(data, type, row, meta){ return renderNullableString(data, '-').replace('/task_types/',''); } },
+    { data: 'identifier', title: 'Actions', render: function(data, type, row, meta){ return renderUD({ edit: { enabled: true, function: `update('${data}')`}, remove: { enabled: true, function: `remove('${data}')` }}) ; } }
+  ];
+
+	rogerInit('tasks', dataTableOpts);
+
+});
+
+{% include '@tasks/component/task.js' %}
 
 </script>
 

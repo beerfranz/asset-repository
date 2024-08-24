@@ -52,8 +52,8 @@ class SecurityTest extends Functional
 	{
 		$output = [
 			'hydra:member' => [
+				[ 'identifier' => 'ROLE_SUPER_ADMIN' ],
 				[ 'identifier' => 'ROLE_ADMIN' ],
-				[ 'identifier' => 'ROLE_USER' ],
 			]
 			
 		];

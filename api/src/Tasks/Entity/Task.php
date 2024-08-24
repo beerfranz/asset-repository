@@ -6,6 +6,7 @@ use App\Tasks\Entity\TaskTemplate;
 use App\Tasks\Entity\TaskType;
 use App\Tasks\Entity\TaskTag;
 use App\Tasks\Message\TaskMessage;
+use App\Assessments\Entity\AssessmentPlan;
 
 use App\Tasks\Repository\TaskRepository;
 use Beerfranz\RogerBundle\Doctrine\RogerListener;
@@ -84,10 +85,15 @@ class Task extends RogerEntity
 	#[Groups(['Task'])]
 	private ?array $attributes = null;
 
+	#[ManyToMany(targetEntity: AssessmentPlan::class, inversedBy: 'tasks')]
+	#[Groups(['Task'])]
+    private Collection $assessments;
+
 	public function __construct()
 	{
 		$this->children = new ArrayCollection();
 		$this->tags = new ArrayCollection();
+		$this->assessments = new ArrayCollection();
 	}
 
 	public function __getMessengerSerializationGroups(): ?array
@@ -306,6 +312,30 @@ class Task extends RogerEntity
 	public function removeTag(TaskTag $tag): static
 	{
 		$this->tags->removeElement($tag);
+
+		return $this;
+	}
+
+	/**
+	 * @return Collection<int, AssessmentPlan>
+	 */
+	public function getAssessments(): Collection
+	{
+		return $this->assessments;
+	}
+
+	public function addAssessment(AssessmentPlan $assessment): static
+	{
+		if (!$this->assessments->contains($assessment)) {
+			$this->assessments->add($assessment);
+		}
+
+		return $this;
+	}
+
+	public function removeAssessment(AssessmentPlan $assessment): static
+	{
+		$this->assessments->removeElement($assessment);
 
 		return $this;
 	}

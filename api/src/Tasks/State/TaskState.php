@@ -15,7 +15,7 @@ use ApiPlatform\Metadata\Operation;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-final class TaskState extends RogerState
+class TaskState extends RogerState
 {
 
 	public function __construct(
