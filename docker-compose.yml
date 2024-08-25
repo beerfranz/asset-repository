@@ -89,6 +89,15 @@ services:
   #   environment:
   #     NEXT_PUBLIC_ENTRYPOINT: http://caddy
 
+  quasar:
+    build:
+      target: quasar-dev
+    volumes:
+      - ./quasar2:/home/app
+    command: "quasar dev"
+    ports:
+      - "9000:9000"
+
   caddy:
     build:
       context: api/
