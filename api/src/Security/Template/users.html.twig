@@ -66,7 +66,7 @@ function loadGroups(e, form) {
 		success: function(data) {
 			e.removeOptions();
 			data['hydra:member'].forEach(o => {
-				e.addOption({ label: o.identifier, value: '/user_groups/'+o.id });
+				e.addOption({ label: o.identifier, value: '/admin/user_groups/'+o.id });
 			});
 			if (typeof e.initValue === 'function') {
 				e.initValue();
