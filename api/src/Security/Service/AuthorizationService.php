@@ -16,18 +16,11 @@ use Psr\Log\LoggerInterface;
 
 class AuthorizationService extends RogerService
 {
-	protected $frequencyService;
-	protected $taskRepo;
-	protected $taskTemplateRepo;
-	protected $userTemplateService;
-
 	public function __construct(
 		EntityManagerInterface $entityManager,
 		LoggerInterface $logger,
 	) {
 		parent::__construct($entityManager, $logger, Authorization::class);
-
-		
 	}
 
 	public function newEntity(): Authorization
@@ -78,5 +71,13 @@ class AuthorizationService extends RogerService
 		return $authorization;
 	}
 
-
+	protected function isNamespaceEnabled(User $user, string $namespace): bool
+	{
+		$authz = $this->repo->findBy([ 'user' => $user, 'namespace' => $namespace ]);
+		
+		if (count($authz) === 0)
+			return false;
+		else
+			return true;
+	}
 }
