@@ -2,7 +2,7 @@
 
 namespace App\Security\Entity;
 
-use App\Security\Repository\TenantRepository;
+use App\Security\Repository\OrganizationRepository;
 
 use Beerfranz\RogerBundle\Entity\RogerEntity;
 use Beerfranz\RogerBundle\Entity\RogerIdentifierTrait;
@@ -14,13 +14,13 @@ use ApiPlatform\Metadata\ApiResource;
 
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: TenantRepository::class)]
+#[ORM\Entity(repositoryClass: OrganizationRepository::class)]
 #[ORM\EntityListeners([RogerListener::class])]
 #[ApiResource(
     security: "is_granted('ROLE_SUPER_ADMIN')",
     routePrefix: '/admin',
 )]
-class Tenant extends RogerEntity
+class Organization extends RogerEntity
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

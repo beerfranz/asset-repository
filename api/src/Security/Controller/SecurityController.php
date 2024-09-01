@@ -29,9 +29,9 @@ class SecurityController extends AbstractController
 		return $this->render('@security/policies.html.twig', [ 'navbar' => [ 'security_policies' => 'active' ]]);
 	}
 
-	#[Route('/tenants', name: 'getSecurityTenants', methods: ['GET'])]
+	#[Route('/organizations', name: 'getSecurityOrganizations', methods: ['GET'])]
 	public function getSecurityTenants(Request $request): Response
 	{
-		return $this->render('@security/tenants.html.twig', [ 'navbar' => [ 'security_tenants' => 'active' ]]);
+		return $this->render('@security/organizations.html.twig', [ 'navbar' => [ 'security_organizations' => 'active' ]]);
 	}
 }

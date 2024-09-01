@@ -87,6 +87,11 @@ var RogerForm = {
       input.setAttribute('rows', 4);
       input.setAttribute('class', 'form-control');
     }
+    if (options.type === 'switch') {
+      input = document.createElement("input");
+      input.setAttribute('type', 'checkbox');
+      input.setAttribute('class', 'form-check-input');
+    }
 
     input.setAttribute('name', options.name);
     input.setAttribute('id', fieldId);
@@ -131,7 +136,11 @@ var RogerForm = {
 
   addInputElement: function(fieldId, label, input) {
     let group = document.createElement('div');
-    group.setAttribute('class', 'form-group');
+    if (input.type === 'checkbox') {
+      group.setAttribute('class', 'form-check form-switch')
+    } else {
+      group.setAttribute('class', 'form-group');
+    }
     let groupLabel = document.createElement('label');
     groupLabel.setAttribute('for', fieldId);
     groupLabel.appendChild(document.createTextNode(label));
@@ -240,6 +249,10 @@ var RogerForm = {
 
         if (e.getAttribute('multiple') === 'multiple') {
           value = formData.getAll(key);
+        }
+        if (e.getAttribute('type') === 'checkbox') {
+          console.log('ici: ' + value);
+          value = (value === "true");
         }
 
         let trucChelou = dotPathToObject(key, value);

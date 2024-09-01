@@ -1,14 +1,14 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Tenants{% endblock %}
+{% block title %}Organization{% endblock %}
 
 {% block body %}
 
-{% include '@roger/page-header.html.twig' with { 'title': 'Tenants', 'add_button': true, 'add_function': 'add()' } %}
+{% include '@roger/page-header.html.twig' with { 'title': 'Organizations', 'add_button': true, 'add_function': 'add()' } %}
 
 <div class="row">
 	<div class="col-md-12">
-		<table class="table" id="tenants">
+		<table class="table" id="organizations">
 		</table>
 	</div>
 </div>
@@ -21,7 +21,7 @@
 
 $(document).ready(function () {
 	var dataTableOpts = commonDataTableOpts();
-	dataTableOpts.ajax.url = '/admin/tenants';
+	dataTableOpts.ajax.url = '/admin/organizations';
 	dataTableOpts.columns = [ 
 		{ data: 'id', title: 'ID' },
 		{ data: 'identifier', title: 'Identifier', render: function(data, type, row, meta){ return '<a href="/groups/' + row.id + '">' + data + '</a>'} },
@@ -30,15 +30,16 @@ $(document).ready(function () {
 
   	];
 
-	rogerInit('tenants', dataTableOpts);
+	rogerInit('organizations', dataTableOpts);
 
 });
 
 function add() {
 	var method = 'POST';
-	var action = '/admin/tenants';
+	var action = '/admin/organizations';
 	var fields = [
 		{ name: 'identifier', label: 'Identifier' },
+		{ name: 'enabled', label: 'Enabled', type: 'switch' },
 	];
 
 	RogerForm.initModal({ method: method, action: action, fields: fields });
@@ -46,7 +47,7 @@ function add() {
 
 function remove(id) {
 	var method = 'DELETE';
-	var action = `/admin/tenants/${id}`;
+	var action = `/admin/organizations/${id}`;
 
 	var fields = [
 		{ name: 'identifier', label: 'Identifier' }
@@ -57,10 +58,11 @@ function remove(id) {
 
 function update(id) {
 	var method = 'PUT';
-	var action = `/admin/tenants/${id}`;
+	var action = `/admin/organizations/${id}`;
 
 	var fields = [
 		{ name: 'identifier', label: 'Identifier' },
+		{ name: 'enabled', label: 'Enabled', type: 'switch' },
 	];
 
 	RogerForm.initModal({ method: method, action: action, fields: fields, populate: true });
