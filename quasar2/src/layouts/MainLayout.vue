@@ -71,6 +71,12 @@ const navList = [
     icon: 'settings',
     link: '/settings'
   },
+  {
+    title: 'Indicators',
+    icon: 'settings',
+    link: '/indicators'
+  },
+
 ]
 
 const leftDrawerOpen = ref(false)
