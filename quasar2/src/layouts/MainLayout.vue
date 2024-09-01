@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="hHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
         <q-btn
@@ -12,7 +12,9 @@
         />
 
         <q-toolbar-title>
-          Quasar App
+          <div class="absolute-center">
+            Asset repository
+          </div>
         </q-toolbar-title>
 
         <div>Quasar v{{ $q.version }}</div>
@@ -28,11 +30,11 @@
         <q-item-label
           header
         >
-          Essential Links
+          Navigation
         </q-item-label>
 
-        <EssentialLink
-          v-for="link in linksList"
+        <NavLink
+          v-for="link in navList"
           :key="link.title"
           v-bind="link"
         />
@@ -47,55 +49,28 @@
 
 <script setup>
 import { ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
+import NavLink from 'components/Nav/NavLink.vue'
 
 defineOptions({
   name: 'MainLayout'
 })
 
-const linksList = [
+const navList = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
+    title: 'Index',
     icon: 'code',
-    link: 'https://github.com/quasarframework'
+    link: '/'
   },
   {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
+    title: 'Assets',
+    icon: 'school',
+    link: '/assets'
   },
   {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
+    title: 'Settings',
+    icon: 'settings',
+    link: '/settings'
   },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
 ]
 
 const leftDrawerOpen = ref(false)
