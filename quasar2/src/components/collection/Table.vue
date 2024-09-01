@@ -1,4 +1,7 @@
 <template>
+  <Toolbar :actions="['add']" @add="$emit('goToCreatePage')">
+  </Toolbar>
+
   <div class="q-pa-md">
     <q-table
       flat bordered
@@ -13,6 +16,15 @@
       binary-state-sort
       @request="onRequest"
     >
+      <template #body-cell-actions="{ row }">
+        <ActionCell
+          :actions="['show', 'update', 'delete']"
+          @show="$emit('goToShowPage(row)')"
+          @update="goToUpdatePage(row)"
+          @delete="deleteItem(row)"
+        />
+      </template>
+
       <template v-slot:top-right>
         <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
           <template v-slot:append>
@@ -34,12 +46,27 @@
 </template>
 
 <script setup>
+import Toolbar from '../common/CommonToolbar.vue';
+import Breadcrumb from '../common/CommonBreadcrumb.vue';
+import ActionCell from '../common/CommonActionCell.vue';
+
 
 const props = defineProps({
   title: String,
   columns: Array,
   api: Object,
+  canCreate: Boolean,
+  canShow: Boolean,
+  canUpdate: Boolean,
+  canDelete: Boolean,
 })
+
+const emit = defineEmits([
+  'goToCreatePage',
+  'goToShowPage',
+  'goToUpdatePage',
+  'deleteItem',
+])
 
 import { ref, onMounted } from 'vue'
 
@@ -63,7 +90,11 @@ function onRequest (props) {
 
   loading.value = true
 
-  const res = api.get()
+  const res = api.get({
+    page: page,
+    itemsPerPage: rowsPerPage,
+  })
+
   res.then((response) => {
     pagination.value.rowsNumber = api.getTotalItems(response)
     rows.value = api.getData(response)

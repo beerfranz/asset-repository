@@ -28,8 +28,15 @@ class Api {
 		return this._backend_api + this._path
 	}
 
-	get() {
-		return http.get(this.getEndpoint());
+	get(opts = {}) {
+		let params = {};
+		if (opts.hasOwnProperty('itemsPerPage'))
+			params.itemsPerPage = opts.itemsPerPage
+		if (opts.hasOwnProperty('page'))
+			params.page = opts.page
+
+		params.order = {}
+		return http.get(this.getEndpoint(), { params: params })
 	}
 
 	getData(response) {
