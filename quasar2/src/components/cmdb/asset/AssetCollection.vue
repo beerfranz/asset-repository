@@ -4,6 +4,7 @@
     :api="asset"
     :columns="columns"
     :actions="actions"
+    :urlHistory="urlHistory"
   />
 </template>
 
@@ -11,6 +12,10 @@
 
 import Collection from 'components/common/collection/Collection.vue'
 import { asset, columns, actions } from 'src/services/asset'
+
+defineProps({
+  urlHistory: Boolean,
+})
 
 defineOptions({
   name: 'AssetCollection'
