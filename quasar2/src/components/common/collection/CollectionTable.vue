@@ -58,19 +58,24 @@ const props = defineProps({
   actions: Object,
   isGrid: String,
   selection: String,
+  urlHistory: Boolean,
 })
 
 import { ref, onMounted } from 'vue'
+
+import { useRoute } from 'vue-router'
+const route = useRoute()
 
 const tableRef = ref()
 const rows = ref([])
 const filter = ref('')
 const loading = ref(false)
+
 const pagination = ref({
-  sortBy: 'identifier',
-  descending: false,
-  page: 1,
-  rowsPerPage: 10,
+  sortBy: props.urlHistory ? (route.query.sortBy||'identifier') : 'identifier',
+  descending: props.urlHistory ? (route.query.sortTo == 'DESC' ? true : false) : false,
+  page: props.urlHistory ? (route.query.page||1) : 1,
+  rowsPerPage: props.urlHistory ? (route.query.itemsPerPage||10) : 10,
 })
 
 // Selection
@@ -81,11 +86,57 @@ function getSelectedString() {
 
 const api = props.api
 
-function onRequest (props) {
-  const { page, rowsPerPage, sortBy, descending } = props.pagination
-  const filter = props.filter
+function urlSerialize (obj) {
+  var str = [];
+  for (var p in obj)
+    if (obj.hasOwnProperty(p)) {
+      if (typeof(obj[p]) === 'object')
+        for (var n in obj[p]) {
+          str.push(encodeURIComponent(p) + "[" + n + "]=" + encodeURIComponent(obj[p][n]))
+        }
+      else {
+        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+      }
+    }
+  return str.join("&");
+}
+
+function onRequest (opts) {
+  const { page, rowsPerPage, sortBy, descending } = opts.pagination
+  const filter = opts.filter
 
   loading.value = true
+
+  // Save page state in the URL
+  if (props.urlHistory === true) {
+    var url = new URL(window.location);
+
+    var params = {
+      itemsPerPage: rowsPerPage,
+      page: page,
+      sortBy: sortBy,
+      sortTo: descending ? 'DESC' : 'ASC'
+    };
+
+    // Add filters
+    // $('.dataTableFilters').serializeArray().forEach(filter => {
+    //   // console.log(filter);
+
+    //   if (filter.value != '') {
+    //     urlParams.set(filter.name, filter.value);
+    //     params[filter.name] = filter.value;
+    //   }
+      
+    //   // If multiple values:
+    //   // urlParams.append('id', '101');
+    //   // urlParams.append('id', '102');
+    // });
+
+
+    var newURL = location.protocol + '//' + location.host + location.pathname + "?" + urlSerialize(params)
+    window.history.pushState(params, 'JS filter', newURL)
+
+  }
 
   const res = api.get({
     page: page,

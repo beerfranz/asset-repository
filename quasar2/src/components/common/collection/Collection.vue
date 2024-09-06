@@ -9,6 +9,7 @@
     	:api="api"
       :actions="actions"
       :selection="selection"
+      :urlHistory="urlHistory"
 	/>
   <CollectionTable v-if="presentation === 'grid'"
       :title="title"
@@ -45,7 +46,11 @@ const props = defineProps({
   },
   selection: {
     type: String,
-    default: 'multiple', // none, single, multiple
+    default: 'none', // none, single, multiple
+  },
+  urlHistory: {
+    type: Boolean,
+    default: false,
   }
 })
 

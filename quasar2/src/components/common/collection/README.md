@@ -16,6 +16,7 @@ Use the Collection.vue component for abstraction of the presentation.
 * TODO filters
 * TODO exports integration
 * TODO save filters in URL
+  * DONE: save pagination in URL
 
 ## Props
 

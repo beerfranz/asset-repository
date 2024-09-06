@@ -1,6 +1,8 @@
 <template>
   <q-page>
-    <AssetCollection />
+    <AssetCollection 
+      :urlHistory=true
+    />
   </q-page>
 </template>
 

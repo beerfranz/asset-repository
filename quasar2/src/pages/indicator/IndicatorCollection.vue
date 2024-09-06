@@ -1,6 +1,8 @@
 <template>
   <q-page>
-    <IndicatorCollection />
+    <IndicatorCollection
+      :urlHistory=true
+    />
   </q-page>
 </template>
 
