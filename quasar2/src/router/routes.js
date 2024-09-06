@@ -13,6 +13,16 @@ const routes = [
       { name: 'asset_show', path: ':id', component: () => import("pages/asset/AssetShow.vue") },
     ]
   },
+  {
+    path: '/indicators',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { name: 'indicator_collection', path: '', component: () => import('pages/indicator/IndicatorCollection.vue') },
+      { name: 'indicator_create', path: 'create', component: () => import("pages/indicator/IndicatorCreate.vue") },
+      { name: 'indicator_update', path: 'edit/:id/', component: () => import("pages/indicator/IndicatorUpdate.vue") },
+      { name: 'indicator_show', path: ':id', component: () => import("pages/indicator/IndicatorShow.vue") },
+    ]
+  },
 
   // Always leave this as last one,
   // but you can also remove it

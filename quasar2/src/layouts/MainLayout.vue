@@ -73,7 +73,7 @@ const navList = [
   },
   {
     title: 'Indicators',
-    icon: 'settings',
+    icon: 'troubleshoot',
     link: '/indicators'
   },
 

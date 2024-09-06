@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md page-show">
-    <h1>Asset {{ item.kind?.identifier || '' }} {{ item['identifier'] }}</h1>
+    <h1>Indicator {{ item['identifier'] }}</h1>
 
     <h2>Attributes</h2>
     <q-markup-table>
@@ -21,23 +21,6 @@
 
     <h2>Instances</h2>
 
-    <h2>Audits</h2>
-    <q-markup-table>
-      <thead>
-        <tr>
-          <th>Datetime</th>
-          <th>Actor</th>
-          <th>Action</th>
-          <th>Data</th>
-        </tr>
-      </thead>
-      <tbody>
-        <template v-for="audit in item.assetAudits">
-          <tr><td>{{ audit.datetime }}</td><td>{{ audit.actor }}</td><td>{{ audit.action }}</td><td>{{ audit.data }}</td></tr>
-        </template>
-      </tbody>
-    </q-markup-table>
-
   </div>
 </template>
 
@@ -45,7 +28,7 @@
 
 import { ref } from 'vue'
 
-import { asset } from 'src/services/asset'
+import { indicator } from 'src/services/indicator'
 
 const item = ref({})
 
@@ -61,7 +44,7 @@ import { useQuasar } from 'quasar'
 const $q = useQuasar()
 
 function getServerData() {
-  asset.getOne(props.itemId)
+  indicator.getOne(props.itemId)
   .then(response => {
     item.value = response.data
   })

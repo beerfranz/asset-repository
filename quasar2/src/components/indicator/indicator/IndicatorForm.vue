@@ -1,6 +1,6 @@
 <template>
   <Form
-    :api="asset"
+    :api="indicator"
     v-model="form"
     :itemId="itemId"
   >
@@ -14,7 +14,7 @@
 <script setup>
 
 import { ref } from 'vue'
-import { asset } from 'src/services/asset'
+import { indicator } from 'src/services/indicator'
 import Form from 'components/common/form/Form.vue'
 import FormIdentifier from 'components/common/form/FormIdentifier.vue'
 
