@@ -2,9 +2,15 @@ const routes = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
+  },
+  {
+    path: '/assets',
+    component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') },
-      { path: 'assets', component: () => import('pages/Assets.vue') },
+      { name: 'asset_collection', path: '', component: () => import('pages/asset/AssetCollection.vue') },
+      { name: 'asset_create', path: 'create', component: () => import("pages/asset/AssetCreate.vue") },
+      { name: 'asset_update', path: 'edit/:id/', component: () => import("pages/asset/AssetUpdate.vue") },
+      { name: 'asset_show', path: ':id', component: () => import("pages/asset/AssetShow.vue") },
     ]
   },
 
