@@ -3,6 +3,12 @@
   <Toolbar v-if="canAdd === true" :actions="['add']" @add="actions.goToCreatePage">
   </Toolbar>
 
+  <DataFilter v-if="Object.keys(props.filters).length > 0">
+    <template v-slot:filter>
+      <slot name="filter"></slot>
+    </template>
+  </DataFilter>
+  
 	<CollectionTable v-if="presentation === 'table'"
 		  :title="title"
     	:columns="columns"
@@ -24,6 +30,7 @@
 
 <script setup>
 import Toolbar from 'components/common/CommonToolbar.vue'
+import DataFilter from 'components/common/CommonDataFilter.vue'
 import CollectionTable from 'components/common/collection/CollectionTable.vue'
 
 import { useRouter } from 'vue-router'
@@ -51,6 +58,10 @@ const props = defineProps({
   urlHistory: {
     type: Boolean,
     default: false,
+  },
+  filters: {
+    type: Object,
+    default: {},
   }
 })
 

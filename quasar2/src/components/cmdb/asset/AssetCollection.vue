@@ -5,7 +5,19 @@
     :columns="columns"
     :actions="actions"
     :urlHistory="urlHistory"
-  />
+    :filters="filters"
+  >
+
+    <template v-slot:filter>
+      <q-input
+        filled
+        v-model="filters.identifier"
+        label="Identifier"
+        hint="Identifier"
+      />
+    </template>
+
+  </Collection>
 </template>
 
 <script setup>
@@ -20,5 +32,10 @@ defineProps({
 defineOptions({
   name: 'AssetCollection'
 });
+
+import { ref } from 'vue'
+const filters = ref({
+  identifier: null
+})
 
 </script>
