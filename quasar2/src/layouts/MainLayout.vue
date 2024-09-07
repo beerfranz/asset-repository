@@ -50,12 +50,15 @@
 <script setup>
 import { ref } from 'vue'
 import NavLink from 'components/Nav/NavLink.vue'
+import { Api } from 'src/services/apiPlatformBackend/api'
 
 defineOptions({
   name: 'MainLayout'
 })
 
-const navList = [
+const api = new Api({ path: '/.well-known'})
+
+const navList = ref([
   {
     title: 'Index',
     icon: 'code',
@@ -76,8 +79,14 @@ const navList = [
     icon: 'troubleshoot',
     link: '/indicators'
   },
+])
 
-]
+api.getOne('navigation.json')
+  .then(response => {
+    if (response.data.hasOwnProperty('assessment')) {
+      navList.value.push({ title: 'Assessments', icon: 'checklist', link: '/assessments' })
+    }
+  })
 
 const leftDrawerOpen = ref(false)
 

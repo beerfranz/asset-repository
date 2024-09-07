@@ -1,6 +1,6 @@
 import { api as http } from 'boot/axios'
 
-const ENTRYPOINT = "https://localhost"
+const ENTRYPOINT = ""
 const MIME_TYPE = "application/ld+json"
 
 class Api {
