@@ -19,6 +19,7 @@
       :loading="loading"
       @onRequest="getRows"
       v-model:pagination="pagination"
+      :classes="classes"
 	/>
 
   <CollectionTable v-if="presentation === 'grid'"
@@ -69,6 +70,10 @@ const props = defineProps({
   defaultFilters: {
     type: Object,
     default: {},
+  },
+  classes: {
+    type: String,
+    default: '', // Check classes in this file: css/table.scss
   }
 })
 

@@ -3,6 +3,7 @@
   <div class="q-pa-md">
     <q-table
       flat bordered
+      class=""
       :grid="isGrid === 'true'"
       ref="tableRef"
       :title="title"
@@ -60,6 +61,7 @@ const props = defineProps({
   urlHistory: Boolean,
   loading: Boolean,
   rows: Array,
+  classes: String,
 })
 
 const pagination = defineModel('pagination')

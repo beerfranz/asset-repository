@@ -10,7 +10,7 @@ Use the Collection.vue component for abstraction of the presentation.
 
 * Available presentations:
 	* table
-		* TODO sticky headers
+		* sticky headers (using style classes)
 	* card
 	* TODO map
 * filters:
