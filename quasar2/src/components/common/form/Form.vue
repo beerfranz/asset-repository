@@ -21,8 +21,8 @@ import { onMounted } from 'vue'
 const props = defineProps({
   api: Object,
   itemId: {
-	type: String,
-	default: '',
+		type: String,
+		default: '',
   }
 })
 

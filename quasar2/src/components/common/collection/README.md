@@ -13,10 +13,10 @@ Use the Collection.vue component for abstraction of the presentation.
 		* TODO sticky headers
 	* card
 	* TODO map
-* TODO filters
+* filters:
+	* text
 * TODO exports integration
-* TODO save filters in URL
-  * DONE: save pagination in URL
+* save state in URL for sharing
 
 ## Props
 

@@ -5,16 +5,21 @@
     :columns="columns"
     :actions="actions"
     :urlHistory="urlHistory"
-    :filters="filters"
+    v-model:filters="filters"
+    :defaultFilters="defaultFilters"
   >
 
     <template v-slot:filter>
-      <q-input
-        filled
-        v-model="filters.identifier"
-        label="Identifier"
-        hint="Identifier"
-      />
+      <div class="q-gutter-md" style="max-width: 300px">
+        <q-input
+          filled
+          clearable
+          dense
+          v-model="filters.identifier"
+          label="Identifier"
+          hint="Identifier"
+        />
+      </div>
     </template>
 
   </Collection>
@@ -33,9 +38,11 @@ defineOptions({
   name: 'AssetCollection'
 });
 
-import { ref } from 'vue'
-const filters = ref({
+const defaultFilters = {
   identifier: null
-})
+}
+
+import { ref } from 'vue'
+const filters = ref({...defaultFilters})
 
 </script>

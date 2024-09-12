@@ -46,6 +46,9 @@ class Api {
 			params.order = {}
 			params.order[opts.sortBy] = opts.sortDesc ? 'DESC' : 'ASC'
 		}
+		if (opts.hasOwnProperty('filters')) {
+			Object.assign(params, opts.filters)
+		}
 		return http.get(this.getEndpoint(), { params: params })
 	}
 
