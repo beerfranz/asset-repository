@@ -21,7 +21,7 @@
     {% include 'components/attributes.html.twig' with { 'attributes': instance.attributes, 'conformities': instance.conformities } %}
   </div>
   <div class="col-md-12">
-    Checked: {{ instance.conformities.date }}
+    Checked: {{ instance.conformities.date | default('') }}
   </div>
 </div>
 

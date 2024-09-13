@@ -48,6 +48,13 @@ security:
     prefix: /ui/security
     type: attribute
 
+securityPublic:
+    resource:
+        path: ../src/Security/ControllerPublic
+        namespace: App\Security\ControllerPublic
+    prefix: /.well-known
+    type: attribute
+
 file:
     resource:
         path: ../src/File/Controller
