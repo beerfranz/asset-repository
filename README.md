@@ -100,6 +100,12 @@ The PHP app use this HTTP headers to check authorizations.
 
 ## Developer guide
 
+### Misc docs
+
+* https://lokalise.com/blog/decoupling-a-monolithic-php-application-a-practical-example/
+* https://blog.eleven-labs.com/fr/creer-bundle-symfony-autonome/
+* https://davegebler.com/post/coding/build-oauth2-server-php-symfony
+
 ### Performances
 
 **Memory**
@@ -155,6 +161,16 @@ Foundry factories are used to generate random data.
 Factories are stored in `tests/Factory` folder
 ```
 docker compose exec php php bin/console make:factory --test
+```
+
+### Sonarqube
+
+```
+docker compose -f docker-compose-tools.yml up -d
+```
+
+```
+docker run --rm -e SONAR_HOST_URL="http://sonarqube:9000" --network asset-repository_default -v "$PWD:/usr/src" sonarsource/sonar-scanner-cli   -Dsonar.projectKey=asset-repo -Dsonar.login=sqp_6887874bd86ae7b144d0d9018cdcddeb958ae752 -X
 ```
 
 ## Credits

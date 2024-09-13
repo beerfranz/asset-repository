@@ -81,13 +81,6 @@ services:
   #     JWKS_URL: ${OAUTH_JWTS_URL}
   #     JWT_SKIP_VERIFY: "true"
   #     SYMFONY_PHPUNIT_REQUIRE: "nikic/php-parser:^4.13"  # fix test coverage
-    
-  # pwa:
-  #   build:
-  #     context: ./pwa
-  #     target: prod
-  #   environment:
-  #     NEXT_PUBLIC_ENTRYPOINT: http://caddy
 
   quasar:
     build:
@@ -107,7 +100,7 @@ services:
       - keycloak
       # - pwa
     environment:
-      PWA_UPSTREAM: pwa:3000
+      PWA_UPSTREAM: quasar:9000
       SERVER_NAME: localhost:443, caddy:80, http://caddy:8080
       SERVER_NAME_SSO: localhost:8443
       SERVER_NAME_BASIC_AUTH: localhost:8888
